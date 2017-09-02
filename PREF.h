@@ -24,10 +24,6 @@
 #ifndef Pref_h
 #define Pref_h
 
-#ifndef dbpresource_h
-#include "DbpResource.h"
-#endif // dbpinclude_h
-
 // DEFINES
 // DEFINES
 // DEFINES
@@ -555,7 +551,6 @@ int32 XTAPI AboutNecroWap(xdwapparamptr params) throw();
 
 #endif // Pref_hs
 
-#pragma mark -
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

@@ -13,10 +13,6 @@
 #ifndef SpazioColonna_h
 #define SpazioColonna_h
 
-#ifndef InfoNecrologi_h
-#include "InfoNec.h"
-#endif // InfoNecrologi_h
-
 // ENUMS
 // ENUMS
 // ENUMS

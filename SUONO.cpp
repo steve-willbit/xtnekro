@@ -10,9 +10,14 @@
 
 * ------------------------------------------------------------------------ */
 
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
+
 #include "Include.h"
 #include "Errori.h"
-#include "Define.h"
 #include "Suono.h"
 
 void Suona(short idrisorsasuono)

@@ -14,6 +14,14 @@
 #ifndef AppWare_h
 #define AppWare_h
 
+#ifndef LeggiFile_h
+#include "ReadFile.h"
+#endif // LeggiFile_h
+
+#ifndef XTNecro_h
+#include "XTNecro.h"
+#endif // XTNecro_h
+
 // ENUMS
 // ENUMS
 // ENUMS

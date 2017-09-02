@@ -11,11 +11,15 @@
 
 * ------------------------------------------------------------------------ */
 
-#include <process.h>
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
+
 #include "Include.h"
+
 #include "Errori.h"
-#include "Define.h"
-#include "Debug.h"
 #include "PresFile.h"
 #include "Appl.h"
 

@@ -14,8 +14,6 @@
 #include "Main.h"
 
 // Legacy
-#include "XTConfig.h"
-#include "QXPConfig.h"
 #include "defallrc.h"
 
 

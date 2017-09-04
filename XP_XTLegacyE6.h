@@ -2758,4 +2758,10 @@ C_INLINE bool8 XTAPI xesetstorylock(textboxid boxID, bool16 newstate)
 	return (XESetStoryLock(xeH,newstate));
 }
 
+#undef SysBeep
+C_INLINE void SysBeep(int16 i)
+{
+	MessageBeep(MB_ICONERROR);
+}
+
 #endif /* _XP_XTLEGACYE6_H_ */

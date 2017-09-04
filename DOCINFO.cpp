@@ -15,26 +15,13 @@
 
 * ----------------------------------------------------------------------------------- */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <cassert>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -65,7 +52,7 @@
 // STATICS GLOBALS
 
 // record che contiene le informazioni sulla pagina
-static newpageinfo *gPtrInfoPagina = NULL;
+static XTUNewPageInfo *gPtrInfoPagina = NULL;
 
 static Fixed gAltezzaPagina;
 static Fixed gLarghezzaPagina;
@@ -88,7 +75,7 @@ errorixtension XTAPI PrendiDocInfo() throw()
 	// punatore allo spread 
 	xtboxptr lPtrBoxSpread = NULL;
 	// handle ai dati delle pagine
-	pdatahandle lHndlDatiPagina = NULL;
+	XTUPageDataHandle lHndlDatiPagina = NULL;
 	// doc corrente
 	DocID gCurDoc;
 	xtget_curdoc(&gCurDoc);
@@ -145,7 +132,7 @@ errorixtension XTAPI PrendiDocInfo() throw()
 		// prendo puntatore al box
 		lPtrBoxSpread = getxtbox(NULL, lIdBoxSpread, FALSE);  
 		lHndlDatiPagina = lPtrBoxSpread->g.pagestuff;
-		&(*gPtrInfoPagina) = &(**lHndlDatiPagina).pgs[0];		
+		(*gPtrInfoPagina) = (**lHndlDatiPagina).pgs[0];		
 		
 		// dispose del puntatore all spread box
 		disposextbox(lPtrBoxSpread,TRUE);  

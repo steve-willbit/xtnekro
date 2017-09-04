@@ -74,6 +74,7 @@
 // XPRESS INCLUDE
 // XPRESS INCLUDE
 
+#if kOLD
 #if QXP40
 #if defined(__cplusplus)
 extern "C"
@@ -166,5 +167,6 @@ extern "C" {
 }
 #endif
 #endif // QXP70 || QXP70_s
+#endif // kOLD
 
 #endif // !defined(dbpinclude_h)

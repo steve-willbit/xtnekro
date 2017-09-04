@@ -15,10 +15,6 @@
 #ifndef Errori_h
 #define Errori_h
 
-#ifndef XTNecro_h
-// #include "XTNecro.h"
-#endif // XTNecro_h
-
 // ENUMS
 // ENUMS
 // ENUMS

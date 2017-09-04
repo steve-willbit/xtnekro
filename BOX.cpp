@@ -26,27 +26,13 @@
 
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <cassert>
-#include <stdio.h>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -1147,7 +1133,6 @@ void XTAPI CreaBoxImmagineAncorato() throw()
 	// creo il box immagine
 	lPtrBoxImmagine = newxtbox(CT_PICT, SH_RECT, TRUE);
 	lPtrBoxImmagine->p.box.s.r.fr = lCoordinateBox;
-	lPtrBoxImmagine->box.a.locked = TRUE;
 	
 	if (PrendiImmagineCampione() == NULL) 
 	{
@@ -1174,6 +1159,8 @@ void XTAPI CreaBoxImmagineAncorato() throw()
 	lIdBoxImmagine = xtinstallanchbox(lPtrBoxImmagine, NULL, BADCHARPOS);
 	disposextbox(lPtrBoxImmagine, TRUE);
 	xecalc(XEDOALL);
+
+	XTSetBoxPositionLock(lIdBoxImmagine, TRUE);
 		
 	xtset_curbox(lIdBoxImmagine);
 } // CreaBoxImmagineAncorato
@@ -1501,8 +1488,8 @@ void XTAPI CreaFiletto(Fixed coordinatasinistra, Fixed coordinataalta, int16 pag
 						   gCaratteristicheFiletto.rientroDestro;
 	lPtrFiletto->box.frame.width = gCaratteristicheFiletto.spessore;
 	lPtrFiletto->box.frame.style = gCaratteristicheFiletto.stile;
-	lPtrFiletto->box.frame.shade = gCaratteristicheFiletto.intensita;
-	lPtrFiletto->box.frame.color = gCaratteristicheFiletto.colore;
+	lPtrFiletto->box.frame.qColor.mShade = gCaratteristicheFiletto.intensita;
+	lPtrFiletto->box.frame.qColor.mColorID = gCaratteristicheFiletto.colore;
 	
 	xtseq2page(pagina, FALSE, &lDatiPagina);	
 	pagept2sprd(&lDatiPagina, &lPtrFiletto->box.s.l.start.h, &lPtrFiletto->box.s.l.start.v);
@@ -1758,9 +1745,9 @@ void XTAPI PrendiModuliPagina(int16 pagina, int16 *ptrnumeromoduli) throw()
 	// puntatore allo spread di pagina
 	xtboxptr lPtrBoxSpread = NULL;
 	// puntatore alle info sulla pagina corrente
-	pdata *lPtrPData= NULL;
+	XTUPageData *lPtrPData= NULL;
 	// info sulla pagina corrente
-	newpageinfo lNewPageInfo;
+	XTUNewPageInfo lNewPageInfo;
 	// posizione della mastro
 	int lMastro = 0;
 	
@@ -1770,7 +1757,7 @@ void XTAPI PrendiModuliPagina(int16 pagina, int16 *ptrnumeromoduli) throw()
 	lPtrBoxSpread = (xtboxptr) lIdentificatoreSpread;
 	
 	// creo lo spazio per le info di pdata
-	lPtrPData = (pdata *) NewPtrClear(sizeof(pdata));
+	lPtrPData = (XTUPageData *) NewPtrClear(sizeof(XTUPageData));
 	lPtrPData = *(lPtrBoxSpread->g.pagestuff);
 	lNewPageInfo = lPtrPData->pgs[lDatiPagina.pageindex];
 	
@@ -1817,12 +1804,11 @@ void XTAPI PrendiModuliPaginaMastro(int16 mastro, int16 *ptrnumeromoduli) throw(
 		if (lIdentificatoreBox == NULL) break;
 
 		xtset_curbox(lIdentificatoreBox);
+		xtgetboxpage(lIdentificatoreBox, FALSE, &lDatiPagina);
 		
 		// prendo il box di testo corrente
 		lPtrBox = getxtbox(NULL, NULL, FALSE);
-		
-		xtseq2page(curbox, FALSE, &lDatiPagina);
-		
+
 		// prendo box corrente
 		xtget_curbox(&curbox);
 		

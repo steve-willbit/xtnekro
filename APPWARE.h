@@ -323,7 +323,6 @@ void XTAPI ImpostaCollegato(appware *ptrappware, Boolean collegato) throw();
 */
 void XTAPI ImpostaCodiceBox(appware *ptrappware, uint32 codicebox) throw();
 
-#pragma mark -
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

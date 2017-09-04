@@ -11,9 +11,24 @@
 * ------------------------------------------------------------------------ */
 
 // QXP2017
+// QXP2017
+// QXP2017
+
 #include "Main.h"
 
-// Legacy
+// LEGACY: QXP60
+// LEGACY: QXP60
+// LEGACY: QXP60
+
+extern "C" {
+#include "XP_XTLegacyE7.h" 
+#include "XP_XTLegacyE6.h" 
+}
+
+// always the first: they must be present in the project files
+#include "XTConfig.h"
+#include "QXPConfig.h"
+
 #include "defallrc.h"
 
 

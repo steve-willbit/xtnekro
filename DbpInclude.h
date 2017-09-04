@@ -62,6 +62,7 @@
 #if !defined(dbpinclude_h)
 #define dbpinclude_h
 
+#if kOLD
 // CONFIG INCLUDES
 // CONFIG INCLUDES
 // CONFIG INCLUDES
@@ -74,7 +75,6 @@
 // XPRESS INCLUDE
 // XPRESS INCLUDE
 
-#if kOLD
 #if QXP40
 #if defined(__cplusplus)
 extern "C"

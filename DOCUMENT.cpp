@@ -22,33 +22,19 @@
 	
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <string.h>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
 // DBP INCLUDES
 
 #include "DbpInclude.h"
-#include "DbpAssert.h"
 
 // PROJECT INCLUDES
 // PROJECT INCLUDES
@@ -172,11 +158,18 @@ static errorixtension XTAPI Salva(uchar *nomedocumento, int32 idcartella, int16 
 	
 	FSSpec spec;
 	int16 makeFSSpecErr = FSMakeFSSpec(0, 0, gNomeDocumento, &spec);
+
+	XFileInfoRef fileInfoRef;
+	QXStringRef pathRef = NULL;
+	QXStringCreateFromCString((char*) gNomeDocumento, 0, (int32) CSTRLEN(gNomeDocumento), &pathRef);
+	APIERR apiErr = XTCreateEmptyXFileInfoRef(&fileInfoRef);
+	apiErr = XTSetFileTypeInXFileInfoRef(fileInfoRef, XPRJ);
+	apiErr = XTSetUniPathInXFileInfoRef(fileInfoRef, pathRef);
 	
 	STRCPY((*gHndlPathDocumento)->longpath, gNomeDocumento);
 	(*gHndlPathDocumento)->volnum = spec.vRefNum;
 	(*gHndlPathDocumento)->dirnum = spec.parID;
-//	gErrore = xtsave(gHndlPathDocumento, FALSE, FALSE);
+//	gErrore = xtsave(gHndlPathDocumento, FALSE, FALSE); <-- already commented in QXP60
 	
 	if ((makeFSSpecErr == noErr) || (makeFSSpecErr == fnfErr))
 	{
@@ -184,11 +177,14 @@ static errorixtension XTAPI Salva(uchar *nomedocumento, int32 idcartella, int16 
 		if (makeFSSpecErr == (fBsyErr))
 		{
 			// se sto cercando di salvare il file aperto correntemente faccio un save normale
-			gErrore = xtsave(gHndlPathDocumento, FALSE, FALSE);
+			 
+			// gErrore = xtsave(gHndlPathDocumento, FALSE, FALSE);
+			gErrore = XTSave(fileInfoRef, FALSE);
 		}
 		else if ((makeFSSpecErr == noErr) || (makeFSSpecErr == fnfErr))
 		{
-			APIERR checkSave = XTSaveProject(projectID, gHndlPathDocumento, DOC_6_0_VER, &gErrore);	
+			// APIERR checkSave = XTSaveProject(projectID, gHndlPathDocumento, DOC_6_0_VER, &gErrore);	
+			APIERR checkSave = XTUSaveProject(projectID, fileInfoRef, DOCCRVER, &gErrore);	
 		}
 	}
 	else
@@ -198,6 +194,10 @@ static errorixtension XTAPI Salva(uchar *nomedocumento, int32 idcartella, int16 
 	}
 	
 	LiberaHandle((Handle *) &gHndlPathDocumento);
+
+	QXStringDestroy(pathRef);
+    XTDisposeXFileInfoRef(fileInfoRef);
+	
 	if (gErrore != noErr)
 	{
 		// errore sul save del documento
@@ -281,12 +281,26 @@ errorixtension XTAPI ChiudiTuttiIDocumenti(bool8 devosalvare) throw()
 					return(gErroreXtension);
 				}
 
+				XFileInfoRef fileInfoRef;
+				QXStringRef pathRef = NULL;
+				QXStringCreateFromCString((char*) gNomeDocumento, 0, (int32) CSTRLEN(gNomeDocumento), &pathRef);
+				APIERR apiErr = XTCreateEmptyXFileInfoRef(&fileInfoRef);
+				apiErr = XTSetFileTypeInXFileInfoRef(fileInfoRef, XPRJ);
+				apiErr = XTSetUniPathInXFileInfoRef(fileInfoRef, pathRef);
+
 				STRCPY((*gHndlPathDocumento)->longpath,(StringPtr) gNomeDocumento);
 				(*gHndlPathDocumento)->type = 0;
 				(*gHndlPathDocumento)->volnum = gNumeroVolumeXpress;
 				(*gHndlPathDocumento)->dirnum = 0;
-				gErrore = xtsave(gHndlPathDocumento, FALSE, FALSE);
+
+				// gErrore = xtsave(gHndlPathDocumento, FALSE, FALSE);
+				gErrore = XTSave(fileInfoRef, FALSE);
+				
 				LiberaHandle((Handle *) &gHndlPathDocumento);
+
+				QXStringDestroy(pathRef);
+				XTDisposeXFileInfoRef(fileInfoRef);
+
 				if (gErrore != noErr) 
 				{
 					// errore sul save del documento
@@ -360,6 +374,8 @@ void XTAPI StampaDocumento() throw()
 	    xtset_printrange((Handle)myprintrange);
 */		
 		// stampo in automatico il documento appena impaginato
-		start_printdoc(PRINT_THRU_NONE, (THPrint) NULL, NULL);
+		// start_printdoc(PRINT_THRU_NONE, (THPrint) NULL, NULL);
+		DocRef docRef = XTGetDocRefFromDocID(curdoc);
+		XTPrintDoc(docRef, kOutputUI_SuppressOutputWap);
 	}
 } // StampaDocumento

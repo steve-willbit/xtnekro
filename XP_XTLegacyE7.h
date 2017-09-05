@@ -4791,7 +4791,8 @@ cleanup:
 	return (apiErr);
 }
 
-void XTAPI QXStringRef2CStr(QXStringRef& iQXString, char *oCStr) {
+#undef QXStringRef2CStr
+C_INLINE void XTAPI QXStringRef2CStr(QXStringRef& iQXString, char *oCStr) {
     
     oCStr[0] = 0;
     

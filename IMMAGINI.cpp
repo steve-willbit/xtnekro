@@ -12,27 +12,13 @@
 		
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <stdio.h>
-#include <string.h>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -68,8 +54,8 @@
 // per memorizzare l'immagine campione
 static xtboxptr gPtrImmagineCampione = NULL;
 
-// FSSpec dell'immagine da importare
-static uchar  gFSSpecImmagine[kDimensioneStringhe];
+// nome competo dell'immagine da importare con estensione
+static uchar  gNomeCompletoImmagineConEstensione[kDimensioneStringhe] = "";
 
 // nome completo dell'immagine
 static char gNomeCompletoImmagine[kDimensioneStringhe] = "";
@@ -159,8 +145,8 @@ OSErr XTAPI PresenzaImmagine(uchar *nomeimmagine) throw()
 	STRCAT(gNomeCompletoImmagine, nomeimmagine);
 	
 	// controllo se l'immagine e' presente su file system
-	STRCPY( gFSSpecImmagine, gNomeCompletoImmagine);
-	gErrore = PresenzaFile(gFSSpecImmagine);
+	STRCPY( gNomeCompletoImmagineConEstensione, gNomeCompletoImmagine);
+	gErrore = PresenzaFile(gNomeCompletoImmagineConEstensione);
 	if (gErrore == noErr)
 		goto _Uscita;
 	
@@ -176,8 +162,8 @@ OSErr XTAPI PresenzaImmagine(uchar *nomeimmagine) throw()
 	}
 	
 	// controllo la presenza del relativo file immagine EPS
-	STRCPY(gFSSpecImmagine, gNomeCompletoImmagine);
-	gErrore = PresenzaFile(gFSSpecImmagine);
+	STRCPY(gNomeCompletoImmagineConEstensione, gNomeCompletoImmagine);
+	gErrore = PresenzaFile(gNomeCompletoImmagineConEstensione);
 	
 _Uscita:	
 	return(gErrore);
@@ -302,7 +288,7 @@ void XTAPI ImportaImmagine(uchar *nomeimmagine) throw()
 		return;
 
 	// prepara il pathhandle per l'immagine da importare
-	gErroreXtension = CreaHandle((Handle *) &lHndlNomeImmagine, (int32) (sizeof(pathrec) + STRLEN(gFSSpecImmagine) + 1));
+	gErroreXtension = CreaHandle((Handle *) &lHndlNomeImmagine, (int32) (sizeof(pathrec) + STRLEN(gNomeCompletoImmagineConEstensione) + 1));
 	if (gErroreXtension != kNessunErrore) 
 	{
 		// errore nell'allocazione di memoria
@@ -310,22 +296,65 @@ void XTAPI ImportaImmagine(uchar *nomeimmagine) throw()
 		return;
 	}
 									
-	STRCPY((*lHndlNomeImmagine)->longpath, gFSSpecImmagine);
+	STRCPY((*lHndlNomeImmagine)->longpath, gNomeCompletoImmagineConEstensione);
 	(*lHndlNomeImmagine)->type = 1;
 	(*lHndlNomeImmagine)->volnum = 0L;
 	(*lHndlNomeImmagine)->dirnum = 0L;
 
+	boxid pictureBoxId = NULL;
+	xtget_curbox(&pictureBoxId);
+	assert( NULL != pictureBoxId );
+	assert( isapicture(pictureBoxId) );
+
+	XFileInfoRef fileInfoRef = INVALID_XFILEINFOREF;
+	bool8 found = FileExist((char*) gNomeCompletoImmagineConEstensione, &fileInfoRef);
+	if ( !found ) {
+		if ( NULL != fileInfoRef ) {
+			XTDisposeXFileInfoRef(fileInfoRef);
+			fileInfoRef = NULL;
+		}
+		return;
+	}
+
+	xioFileDefRec xioFileDef;
+	zerodata(&xioFileDef, sizeof(xioFileDefRec));
+	xioFileDef.structSize = sizeof(xioFileDefRec);
+	xioFileDef.xioKind = xioDiskFileKind;
+
+	QXStringRef fullPathRef = NULL;
+	XTGetUniPathFromXFileInfoRef(fileInfoRef, &fullPathRef);
+	XTDisposeXFileInfoRef(fileInfoRef);
+
+	XTCreateURIRef(fullPathRef, &xioFileDef.fileDef.uriRef);
+	QXStringDestroy(fullPathRef);
+        
+	xioFileHandle xFileHandle;
+	OSErr err = XioCreateFileHandle(&xioFileDef, &xFileHandle);
+
+	err = XioCreateFileHandle(&xioFileDef, &xFileHandle);
+
 	// prelevamento dell'immagine
-	gErrore = xtgettextpict(lHndlNomeImmagine, 0);
+	// gErrore = xtgettextpict(lHndlNomeImmagine, 0);
+	OSErr importOSErr = noErr;
+	gErrore = XioGetPicture(pictureBoxId, xFileHandle, 0, NOFLAG, &importOSErr);
 	if (gErrore != noErr) 
 	{
+		if ( NULL != xFileHandle ) {
+			XioDisposeFileHandle(&xFileHandle);
+		}
 		// errore di importazione: probabilmente manca l'immagine
-		ConcatenaAllaStringaErrore(gFSSpecImmagine);
+		ConcatenaAllaStringaErrore(gNomeCompletoImmagineConEstensione);
 		DaiErrore(kErroreMancaImmagine);
 		return;
 	}
 
-  	// modifica del 24 agosto su suggerimento dalla quark
+	XioDisposeFileHandle(&xFileHandle);
+        
+	XTReleaseURIRef(xioFileDef.fileDef.uriRef);
+
+	LiberaHandle((Handle *) &lHndlNomeImmagine);
+
+	// modifica del 24 agosto su suggerimento dalla quark
   	// FSClose(fnum); <- penso non serva +
 
 	// per posizionare l'immagine
@@ -333,7 +362,8 @@ void XTAPI ImportaImmagine(uchar *nomeimmagine) throw()
 	boxid curbox;
 	xtget_curbox(&curbox);
 	my_positionpict(curbox, 1L);
-	LiberaHandle((Handle *) &lHndlNomeImmagine);
+
+	XTReDrawPicture(curbox); 
 
 	return;
 } // ImportaImmagine
@@ -435,7 +465,7 @@ static errorixtension XTAPI ControllaPresenzaImmagini(uchar** handle) throw()
 			if (gErrore != noErr) 
 			{
 				// errore presenza immagine
-				ConcatenaAllaStringaErrore(gFSSpecImmagine);
+				ConcatenaAllaStringaErrore(gNomeCompletoImmagineConEstensione);
 				DaiErrore(kErroreMancaImmagine);
 			}
 			

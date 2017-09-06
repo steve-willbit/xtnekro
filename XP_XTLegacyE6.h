@@ -2758,10 +2758,59 @@ C_INLINE bool8 XTAPI xesetstorylock(textboxid boxID, bool16 newstate)
 	return (XESetStoryLock(xeH,newstate));
 }
 
+// QXP2017
+
+#define IF_NOT_ERR_SUCCESS_BREAK(e) if ( ERR_SUCCESS != e ) {break;}
+#define IF_NULL_BREAK(p) if ( NULL == p ) {break;}
+#define IF_NOT_NULL_BREAK(p) if ( NULL != p ) {break;}
+#define IF_TRUE_BREAK(b) if ( b ) {break;}
+#define IF_FALSE_BREAK(b) if ( !b ) {break;}
+#define IF_ERR_BREAK(e) if ( e ) {break;}
+#define IF_NO_ERR_BREAK(e) if ( noErr == e ) {break;}
+
 #undef SysBeep
 C_INLINE void SysBeep(int16 i)
 {
 	MessageBeep(MB_ICONERROR);
+}
+
+#undef FileExist
+C_INLINE bool8 FileExist(const char* iFilePath, XFileInfoRef* oXFileInfoRef)
+{
+	assert( NULL != oXFileInfoRef );
+    assert( NULL != iFilePath );
+    
+    bool8 fileExist = FALSE;
+    
+    QXStringRef fullPathRef = NULL;
+    XFileInfoRef fullPathFileInfoRef = NULL;
+    
+    do {
+        APIERR apiErr = QXStringCreateFromCString(iFilePath, 0, (int32) CSTRLEN(iFilePath), &fullPathRef);
+        IF_NOT_ERR_SUCCESS_BREAK(apiErr);
+        
+        apiErr = XTCreateXFileInfoRefFromFullPath(fullPathRef, 0, FALSE, TRUE, &fullPathFileInfoRef);
+        IF_NOT_ERR_SUCCESS_BREAK(apiErr);
+        
+        bool8 isValid = FALSE;
+        apiErr = XTIsValidXFileInfoRef(fullPathFileInfoRef, &isValid);
+        IF_NOT_ERR_SUCCESS_BREAK(apiErr);
+        IF_FALSE_BREAK(isValid);
+        
+        apiErr = XTFileExist(fullPathFileInfoRef, &fileExist);
+        IF_NOT_ERR_SUCCESS_BREAK(apiErr);
+    }
+    while (0);
+    
+    if ( fullPathRef ) {
+        QXStringDestroy(fullPathRef);
+    }
+    
+    if ( fullPathFileInfoRef && oXFileInfoRef ) {
+        (*oXFileInfoRef) = fullPathFileInfoRef;
+    }
+    
+    return(fileExist);
 }
 
 #endif /* _XP_XTLEGACYE6_H_ */

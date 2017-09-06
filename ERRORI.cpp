@@ -89,8 +89,15 @@ static void XTAPI InizializzaErrore(errorixtension errore) throw();
 * ------------------------------------------------------------------------ */
 static void XTAPI InizializzaErrore(errorixtension errore) throw()
 {
-	gIdErroriBloccanti[errore - 1] = 
-		allocerror((StringPtr) gStrErrori[errore - 1]);
+	//gIdErroriBloccanti[errore - 1] = allocerror((StringPtr) gStrErrori[errore - 1]);
+
+	QXStringRef resStrRef = NULL;
+	int16 userErrID = 0;
+	QXStringCreateFromCString((char*) gStrErrori[errore-1], 0 , (int32) CSTRLEN(gStrErrori[errore-1]),&resStrRef);
+	XTAllocateErrorNumberForString(resStrRef, &userErrID);	// allocate custom error
+	QXStringDestroy(resStrRef);
+
+
 } // InizializzaErrore
 
 /* ------------------------------------------------------------------------ *

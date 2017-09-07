@@ -4791,35 +4791,6 @@ cleanup:
 	return (apiErr);
 }
 
-#undef QXStringRef2CStr
-C_INLINE void XTAPI QXStringRef2CStr(QXStringRef& iQXString, char *oCStr) {
-    
-    oCStr[0] = 0;
-    
-    int32 uniCharCountLocalStr;
-    QXStringGetLength(iQXString, &uniCharCountLocalStr);
-    if (uniCharCountLocalStr > 0) {
-        UniChar *uniCharNameBuffer;
-        QXStringGetBuffer(iQXString, &uniCharNameBuffer);
-        
-        uint8 *uCharStr = NULL;
-        
-        XTextEncoding xTextEncoding = kUTextEncodingPlatform;
-        int32 charCount = 0;
-        bool8 isConverted = FALSE;
-        APIERR err = XUFromUnicode(uniCharCountLocalStr, uniCharNameBuffer, &charCount, &uCharStr, &isConverted, xTextEncoding);
-        if (err == ERR_SUCCESS)  {
-            CSTRCPY(oCStr, uCharStr);
-            XUReleaseCharBuffer(uCharStr);
-        }
-    }
-    
-    // QXStringDestroy(iQXString); // fatta fuori la destroy della QXStringRef
-    
-    return;
-    
-} // QXStringRef2CStr
-
 #undef ExtractFileName
 C_INLINE void XTAPI ExtractFileName(uchar *inOutName)
 {

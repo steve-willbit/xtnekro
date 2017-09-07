@@ -21,6 +21,7 @@
 // LEGACY: QXP60
 
 extern "C" {
+#include "XP_XTLegacy.h" 
 #include "XP_XTLegacyE7.h" 
 #include "XP_XTLegacyE6.h" 
 }

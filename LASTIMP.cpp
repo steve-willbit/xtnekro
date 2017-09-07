@@ -15,30 +15,13 @@
 
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <cassert>
-#include <string>
-#include <vector>
-#include <string.h>
-#include <stdio.h>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -242,16 +225,20 @@ static errorixtension XTAPI ApriDatiUltimaImpaginazione(uchar* nomefiledati, Boo
 	strcat(lNomeFileUltimaImpaginazione, nomefiledati);
 #endif // OPERATION
 
+	XFileInfoRef fileInfoRef = INVALID_XFILEINFOREF;
+
 	wsprintf((char*) lNomeFileUltimaImpaginazione, "%s\\%s", /*PercorsoCompleto(*/gXtPreferences.cartellePref.cartellaLastImp/*)*/, nomefiledati);
 	if (cancellare == TRUE) 
 	{
 		// creo il file dei dati dell'ultima impaginazione
 		while (1) 
 		{
-			gErrore = Create(lNomeFileUltimaImpaginazione,
-							 0,
-							 kCreatoreDatiUltimaImpaginazione,
-							 kTipoDatiUltimaImpaginazione);
+			//gErrore = Create(lNomeFileUltimaImpaginazione,
+			//				 0,
+			//				 kCreatoreDatiUltimaImpaginazione,
+			//				 kTipoDatiUltimaImpaginazione);
+			FileExist((char*) lNomeFileUltimaImpaginazione, &fileInfoRef);
+			gErrore = XTCreateFile(fileInfoRef, kCreatoreDatiUltimaImpaginazione);
 			if (gErrore == noErr) 
 				break;
 			if (gErrore == dupFNErr) 
@@ -261,12 +248,18 @@ static errorixtension XTAPI ApriDatiUltimaImpaginazione(uchar* nomefiledati, Boo
 									0);
 				if (gErrore != noErr) 
 				{
+					if ( NULL != fileInfoRef ) {
+						XTDisposeXFileInfoRef(fileInfoRef);
+					}
 					// errore di cancellazione file ultima impaginazione
 					return(kErroreDiSistema);
 				}	
 			} 
 			else 
 			{
+				if ( NULL != fileInfoRef ) {
+					XTDisposeXFileInfoRef(fileInfoRef);
+				}
 				// errore nella creazione del FSSpec
 				return(kErroreDiSistema);
 			}
@@ -274,16 +267,25 @@ static errorixtension XTAPI ApriDatiUltimaImpaginazione(uchar* nomefiledati, Boo
 	}
 	
 	// apertura del file dei dati dell'ultima impaginazione
-	gErrore = FSOpen(lNomeFileUltimaImpaginazione,
-					 0,
-					 &gIdFileUltimaImpaginazione);
+	//gErrore = FSOpen(lNomeFileUltimaImpaginazione,
+	//				 0,
+	//				 &gIdFileUltimaImpaginazione);
+	gErrore = XTOpenFileDataFork(fileInfoRef, fsWrPerm, &gIdFileUltimaImpaginazione);
 	if (gErrore != noErr) 
 	{
+		if ( NULL != fileInfoRef ) {
+			XTDisposeXFileInfoRef(fileInfoRef);
+		}
 		// errore nell'apertura del file dell'ultima impaginazione
 		return(kErroreDiSistema);
 	}
 	
+	if ( NULL != fileInfoRef ) {
+		XTDisposeXFileInfoRef(fileInfoRef);
+	}
+
 	return(kNessunErrore);
+
 } // ApriDatiUltimaImpaginazione
 
 /* ------------------------------------------------------------------------ *
@@ -1638,7 +1640,6 @@ errorixtension XTAPI ScriviSpazioColonna() throw()
 	return(kNessunErrore);
 } // ScriviSpazioColonna
 
-#pragma mark -
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

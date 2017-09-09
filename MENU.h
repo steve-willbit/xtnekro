@@ -64,6 +64,8 @@ extern uint16 gAboutMenuId;
 // globale che contiene lo stato del menu abilita
 extern bool8 gFlagAbilita;
 
+#if 0
+
 // PROTOTYPES
 // PROTOTYPES
 // PROTOTYPES
@@ -121,6 +123,20 @@ int32 XTAPI domenuitem_callback(xthandlecommandrec* cbparam);
 int32 XTAPI handlecommand_callback(xthandlecommandrec *cbparam);
 
 /*!
+	@function			AggiornaMenu
+	@abstract 		gestione menu
+	@discussion		Per aggiornare tutte le voci del menu dell'Xtension
+
+					8 Aprile 2005			Fabrizio.
+
+	@param 			nessuno
+	@result  			nessuno
+*/
+void XTAPI AggiornaMenu() throw();
+
+#endif // 0
+
+/*!
 	@function			AbilitaMenu
 	@abstract 		gestione menu
 	@discussion		Per abilitare un menu
@@ -143,18 +159,6 @@ void XTAPI AbilitaMenu(int32 comandomenu) throw();
 	@result  			nessuno
 */
 void XTAPI  DisabilitaMenu(int32  comandomenu) throw();
-
-/*!
-	@function			AggiornaMenu
-	@abstract 		gestione menu
-	@discussion		Per aggiornare tutte le voci del menu dell'Xtension
-
-					8 Aprile 2005			Fabrizio.
-
-	@param 			nessuno
-	@result  			nessuno
-*/
-void XTAPI AggiornaMenu() throw();
 
 #endif // menu_h
 

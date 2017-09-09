@@ -36,40 +36,21 @@
 
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <cassert>
-#include <string>
-#include <sstream>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
 // DBP INCLUDES
 
-#include "DbpHasp.h"
 #include "DbpInclude.h"
-#include "DbpMenu.h"
 #include "DbpOkDialog.h"
 #include "DbpResource.h"
-#include "DbpUndoEngine.h"
-#include "DbpView.h"
 
 // PROJECT INCLUDES
 // PROJECT INCLUDES
@@ -155,11 +136,13 @@ bool8 gFlagAbilita = TRUE;
 	@param			comandomenu contiene l'identificatore alla voce da menu da controllare
 	@result  			nessuno
 */
-static XTAPI bool8 IsAbilitareMenu(int32 comandomenu) throw();
+static bool8 XTAPI IsAbilitareMenu(int32 comandomenu) throw();
 
 // FUNCTIONS
 // FUNCTIONS
 // FUNCTIONS
+
+#if 0
 
 /* ------------------------------------------------------------------------ *
 
@@ -472,13 +455,68 @@ _Exit:
 	
 } // domenuitem_callback
 
+/* ------------------------------------------------------------------------ *
+
+	AggiornaMenu
+
+* ------------------------------------------------------------------------ */
+void XTAPI AggiornaMenu() throw()
+{
+	if (IsAbilitareMenu(PREPARADOCUMENTOMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gPreparaDocMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gPreparaDocMenuId);
+
+	if (IsAbilitareMenu(CALCPOSMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gCalcPosMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gCalcPosMenuId);
+	
+	if (IsAbilitareMenu(POSIZIONAMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gPosizionaMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gPosizionaMenuId);
+	
+	if (IsAbilitareMenu(RIPRISTINADATIULTIMAMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gRipristinaDatiUltimaMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gRipristinaDatiUltimaMenuId);
+
+	if (IsAbilitareMenu(RIPRISTINADOCMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gRipristinaDocMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gRipristinaDocMenuId);
+
+	if (IsAbilitareMenu(CREAIMGCAMPIONEMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gCreaImgCampioneMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gCreaImgCampioneMenuId);
+
+	if (IsAbilitareMenu(CONTROLLAIMGMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gControllaImgMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gControllaImgMenuId);
+
+	if (IsAbilitareMenu(IMPORTAIMGMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gImportaImgMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gImportaImgMenuId);
+
+	if (IsAbilitareMenu(IMPOSTAPAXMENUID) == TRUE) 
+		DBP::EnableMenuItem(gNecroMenu, gImpostaPaxMenuId);
+	else 
+		DBP::DisableMenuItem(gNecroMenu, gImpostaPaxMenuId);
+	
+} // AggiornaMenu
+
+#endif // 0
 
 /* ------------------------------------------------------------------------ *
 
 	IsAbilitareMenu
 
 * ------------------------------------------------------------------------ */
-static XTAPI bool8 IsAbilitareMenu(int32 comandomenu) throw()
+static bool8 XTAPI IsAbilitareMenu(int32 comandomenu) throw()
 {
 	bool8 lBool = FALSE;
 
@@ -620,7 +658,6 @@ void XTAPI AbilitaMenu(int32 comandomenu) throw()
 	}
 } // AbilitaMenu
 
-
 /* ------------------------------------------------------------------------ *
 
 	DisabilitaMenu
@@ -665,57 +702,3 @@ void XTAPI DisabilitaMenu(int32 comandomenu) throw()
 	}
 } //  DisabilitaMenu
 
-
-/* ------------------------------------------------------------------------ *
-
-	AggiornaMenu
-
-* ------------------------------------------------------------------------ */
-void XTAPI AggiornaMenu() throw()
-{
-	if (IsAbilitareMenu(PREPARADOCUMENTOMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gPreparaDocMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gPreparaDocMenuId);
-
-	if (IsAbilitareMenu(CALCPOSMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gCalcPosMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gCalcPosMenuId);
-	
-	if (IsAbilitareMenu(POSIZIONAMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gPosizionaMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gPosizionaMenuId);
-	
-	if (IsAbilitareMenu(RIPRISTINADATIULTIMAMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gRipristinaDatiUltimaMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gRipristinaDatiUltimaMenuId);
-
-	if (IsAbilitareMenu(RIPRISTINADOCMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gRipristinaDocMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gRipristinaDocMenuId);
-
-	if (IsAbilitareMenu(CREAIMGCAMPIONEMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gCreaImgCampioneMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gCreaImgCampioneMenuId);
-
-	if (IsAbilitareMenu(CONTROLLAIMGMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gControllaImgMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gControllaImgMenuId);
-
-	if (IsAbilitareMenu(IMPORTAIMGMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gImportaImgMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gImportaImgMenuId);
-
-	if (IsAbilitareMenu(IMPOSTAPAXMENUID) == TRUE) 
-		DBP::EnableMenuItem(gNecroMenu, gImpostaPaxMenuId);
-	else 
-		DBP::DisableMenuItem(gNecroMenu, gImpostaPaxMenuId);
-	
-} // AggiornaMenu

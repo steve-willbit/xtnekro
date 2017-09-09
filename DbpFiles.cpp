@@ -149,11 +149,6 @@
 
 #include "DbpFiles.h"
 
-#if QXP40
-// macro che contiene la definizione delle variabili globali di XPress
-EXTERN_XT_GLOBALS
-#endif // QXP40
-
 // DEFINES
 // DEFINES
 // DEFINES

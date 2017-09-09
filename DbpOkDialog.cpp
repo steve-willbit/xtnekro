@@ -37,16 +37,6 @@
 #define OKNOCANCELALERTID 544
 #endif // MACOS
 
-
-// GLOBALS
-// GLOBALS
-// GLOBALS
-
-#if QXP40
-// XPress globals variables
-EXTERN_XT_GLOBALS
-#endif // QXP40
-
 // FUNCTIONS
 // FUNCTIONS
 // FUNCTIONS

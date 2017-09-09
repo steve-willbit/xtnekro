@@ -1427,7 +1427,7 @@ errorixtension XTAPI LeggiContenutoFSSpecFile(uchar *name, Handle *ptrhandle) th
 	int32 lLunghezzaFile = 0;
 
 	// apertura del file
-	lIdentificatoreFile = _lopen((char*)name, OF_SHARE_EXCLUSIVE);
+	lIdentificatoreFile = _lopen((char*)name, OF_SHARE_EXCLUSIVE);  // <-- was FSOpen
 	if (lIdentificatoreFile == HFILE_ERROR) 
 	{
 		return(kErroreLetturaFile);

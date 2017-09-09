@@ -11,27 +11,13 @@
 	
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <stdio.h>
-#include <string.h>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -134,10 +120,10 @@ static void XTAPI ApriFileRapporto() throw()
 	// apertura del file	
 	while (1)
 	{
-		OSErr err = FSOpen(gFSSpecFileRapporto.name, 0, &gRiferimentoFileRapporto);
-		if (!err) 
+		gRiferimentoFileRapporto = _lopen((char*) gFSSpecFileRapporto.name, OF_SHARE_EXCLUSIVE);  // <-- was FSOpen
+		if ( gRiferimentoFileRapporto == HFILE_ERROR ) 
 			break;
-		Create(gFSSpecFileRapporto.name, 0, kCreatoreFileRapporto, kTipoFileRapporto);
+		HCreate(gFSSpecXtension.vRefNum, gFSSpecXtension.parID, gFSSpecFileRapporto.name, kCreatoreFileRapporto, kTipoFileRapporto);
 	}
 } // ApriFileRapporto
 

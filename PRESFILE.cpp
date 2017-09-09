@@ -599,7 +599,7 @@ errorixtension XTAPI PresenzaFileDaQuattroD(uchar  *name, bool8 *risultato) thro
 	}
 
 	// verifico che il file non sia gi… aperto in scrittura
-	lIdentificatoreFile = _lopen((char*)lNomeFileDaImpaginare, OF_SHARE_EXCLUSIVE);
+	lIdentificatoreFile = _lopen((char*)lNomeFileDaImpaginare, OF_SHARE_EXCLUSIVE); // <-- was FSOpen
 	if (lIdentificatoreFile == HFILE_ERROR) 
 	{
 		// significa che non e' possibile ancora leggere il file
@@ -792,7 +792,7 @@ errorixtension XTAPI PrendiFileElencoImmagini(uchar *name) throw()
 	}
 
 	// verifico che il file non sia gi… aperto in scrittura
-	lIdentificatoreFile = _lopen((char*)lNomeFileDaControllare, OF_SHARE_EXCLUSIVE);
+	lIdentificatoreFile = _lopen((char*)lNomeFileDaControllare, OF_SHARE_EXCLUSIVE); // <-- was FSOpen
 	if (lIdentificatoreFile == HFILE_ERROR) 
 	{
 		// significa che non e' possibile ancora leggere il file
@@ -1049,7 +1049,6 @@ errorixtension PresenzaFileDaAppWare(char *name, Boolean *risultato)
 	lIdentificatoreFile = _lopen(lNomeFileDaAppWare, OF_SHARE_EXCLUSIVE);
 	if (lIdentificatoreFile == HFILE_ERROR) {
 		/* significa che non Š possibile ancora leggere il file */
-		StampaDebug("_lopen", (long) lIdentificatoreFile);
 		return(kNessunErrore);
 	}
 

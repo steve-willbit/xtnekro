@@ -4798,7 +4798,7 @@ C_INLINE void XTAPI ExtractFileName(uchar *inOutName)
 	QXMutableStringCreateEmpty(&ioName);
 	XTUExtractFileName(ioName);
 	if (ioName) {
-		QXStringRef2CStr((QXStringRef&) ioName, (char*) inOutName);
+		QXString2CStr((QXStringRef&) ioName, (char*) inOutName);
 		QXMutableStringDestroy(ioName);
 	}
 	else {
@@ -5453,7 +5453,7 @@ C_INLINE void XTAPI extractflname(uchar *fileName)
 #endif
 	XTUExtractFileName(fileNameStrRef);
 	if ( fileNameStrRef ) {
-		QXStringRef2CStr((QXStringRef&) fileNameStrRef, (char*) fileName);
+		QXString2CStr((QXStringRef&) fileNameStrRef, (char*) fileName);
 		QXMutableStringDestroy(fileNameStrRef);
 	}
 }

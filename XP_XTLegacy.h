@@ -52,8 +52,8 @@ C_INLINE void SysBeep(int16 i)
 	MessageBeep(MB_ICONERROR);
 }
 
-#undef QXStringRef2CStr
-C_INLINE void XTAPI QXStringRef2CStr(QXStringRef& iQXString, char *oCStr) {
+#undef QXString2CStr
+C_INLINE void XTAPI QXString2CStr(QXStringRef& iQXString, char *oCStr) {
     
     oCStr[0] = 0;
     
@@ -79,7 +79,7 @@ C_INLINE void XTAPI QXStringRef2CStr(QXStringRef& iQXString, char *oCStr) {
     
     return;
     
-} // QXStringRef2CStr
+} // QXString2CStr
 
 #undef FileExist
 C_INLINE bool8 FileExist(const char* iFilePath, XFileInfoRef* oXFileInfoRef)
@@ -133,14 +133,19 @@ C_INLINE APIERR xd_lst_setrowtext(dlgitemid itemid, xrow row, uchar* text)
 } 
 
 #undef xd_edt_set
-C_INLINE APIERR xd_edt_set(dlgitemid itemid, uchar* text, void* ptr)
+C_INLINE APIERR xd_edt_set(dlgitemid itemid, uchar* text, Fixed fix)
 {
-	QXStringRef textRef = NULL;
-	QXStringCreateFromCString((char*) text, 0, (int32) CSTRLEN(text), &textRef);
-	APIERR apiErr = XDUTxtSetText(itemid, textRef);
-	QXStringDestroy(textRef);
-	textRef = NULL;
-
+	APIERR apiErr = ERR_SUCCESS;
+	if ( NULL != text ) {
+		QXStringRef textRef = NULL;
+		QXStringCreateFromCString((char*) text, 0, (int32) CSTRLEN(text), &textRef);
+		apiErr = XDUEditSet(itemid, textRef, NULL);
+		QXStringDestroy(textRef);
+		textRef = NULL;
+	}
+	else {
+		apiErr = XDUEditSet(itemid, NULL, fix);
+	}
 	return(apiErr);
 }
 
@@ -149,11 +154,35 @@ C_INLINE APIERR xd_lst_getrowstring(dlgitemid itemid, xrow row, uchar* text)
 {
 	QXStringRef textRef = NULL;
 	APIERR apiErr = XDULstGetRowString(itemid, row, &textRef);
-	QXStringRef2CStr(textRef, (char*) text);
-	QXStringDestroy(textRef);
-	textRef = NULL;
+	if ( NULL != textRef ) {
+		QXString2CStr(textRef, (char*) text);
+		QXStringDestroy(textRef);
+		textRef = NULL;
+	}
 
 	return(apiErr);
 }
 
+#undef xd_edt_get
+C_INLINE APIERR xd_edt_get(dlgitemid itemid, uchar* text, Fixed* fix, void* ptr)
+{
+	bool8 invalid = TRUE;
+	QXStringRef textRef = NULL;
+	APIERR apiErr = XDUEditGet(itemid, &textRef, fix, &invalid);
+	if ( NULL != textRef ) {
+		QXString2CStr(textRef, (char*) text);
+		QXStringDestroy(textRef);
+		textRef = NULL;
+	}
+
+	return(apiErr);
+}
+
+#undef xd_tab_addtab
+C_INLINE APIERR xd_tab_addtab(dlgitemid itemid,xtcbcode cbcode, int32 param,uint32 flags)
+{
+	APIERR apiErr = XDTabAddTabWithCBCode(itemid, cbcode, (void*) param, flags);
+
+	return(apiErr);
+}
 #endif /* _XP_XTLEGACY_H_ */

@@ -25,28 +25,13 @@
 
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <cassert>
-#include <string>
-#include <vector>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -205,8 +190,8 @@ static void XTAPI DeleteEndFilePathSeparator(uchar* ioString) throw()
 	if (STRLEN(ioString) > 0)
 	{
 		std::string stringTmpString((char*)(ioString));
-		int16 strLength = stringTmpString.length();
-		if (stringTmpString.at(strLength - 1) == DBP::kDirSeparatorChar)
+		int16 strLength = (int16) stringTmpString.length();
+		if (stringTmpString.at(strLength - 1) == kDirSeparatorChar)
 		{
 			stringTmpString.erase((strLength - 1), strLength);
 		}
@@ -225,63 +210,141 @@ static bool8 XTAPI GetFileGenerico(uchar* nomefile, uchar* directorydipartenza, 
 {
 	bool8 result=FALSE;
 
-	OPENFILENAME ofn;
-	uchar szDirName[256];
-	uchar szFile[256], szFileTitle[256];
-	UINT  i, cbString;
-	uchar  chReplace;    // string separator for szFilter
-	uchar  szFilter[256];
-	uchar	lFILTERSTRING[256];
+	//OPENFILENAME ofn;
+	//uchar szDirName[256];
+	//uchar szFile[256], szFileTitle[256];
+	//UINT  i, cbString;
+	//uchar  chReplace;    // string separator for szFilter
+	//uchar  szFilter[256];
+	//uchar	lFILTERSTRING[256];
 
-	// Get the system directory name, and store in szDirName 
-	STRCPY(lFILTERSTRING, spiega_filtro);
-	STRCAT(lFILTERSTRING,"|");
-	STRCAT(lFILTERSTRING,filtro);
-	STRCAT(lFILTERSTRING,"|");
-	STRCPY(szFilter,lFILTERSTRING);
-	cbString = STRLEN(lFILTERSTRING);
-	chReplace = szFilter[cbString - 1]; // retrieve wildcard
+	//// Get the system directory name, and store in szDirName 
+	//STRCPY(lFILTERSTRING, spiega_filtro);
+	//STRCAT(lFILTERSTRING,"|");
+	//STRCAT(lFILTERSTRING,filtro);
+	//STRCAT(lFILTERSTRING,"|");
+	//STRCPY(szFilter,lFILTERSTRING);
+	//cbString = STRLEN(lFILTERSTRING);
+	//chReplace = szFilter[cbString - 1]; // retrieve wildcard
 
-	for (i = 0; szFilter[i] != '\0'; i++) {
-	 if (szFilter[i] == chReplace)
-		 szFilter[i] = '\0';
-	}
+	//for (i = 0; szFilter[i] != '\0'; i++) {
+	// if (szFilter[i] == chReplace)
+	//	 szFilter[i] = '\0';
+	//}
 
-	// Set all structure members to zero.
-	STRCPY(szFile,nomeattualefile);
-	STRCPY(szDirName,directorydipartenza);
-	// ho settato la directory da cui partire
-	memset(&ofn, 0, sizeof(OPENFILENAME));
-	
-	// prendo puntatore alla dialog corrente
-	DialogPtr dlgPtr;
-	xtget_frontmost(&dlgPtr); 
+	//// Set all structure members to zero.
+	//STRCPY(szFile,nomeattualefile);
+	//STRCPY(szDirName,directorydipartenza);
+	//// ho settato la directory da cui partire
+	//memset(&ofn, 0, sizeof(OPENFILENAME));
+	//
+	//// prendo puntatore alla dialog corrente
+	//DialogPtr dlgPtr;
+	//xtget_frontmost(&dlgPtr); 
 
-	ofn.lStructSize = sizeof(OPENFILENAME);
-	ofn.hwndOwner = dlgPtr;
-	ofn.lpstrFilter = (char*)szFilter;
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFile = (char*)szFile;
-	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFileTitle = (char*)szFileTitle;
-	ofn.nMaxFileTitle = sizeof(szFileTitle);
-	ofn.lpstrInitialDir = (char*)szDirName;
-	ofn.Flags = OFN_SHOWHELP | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-	
-	bool8 OpenErr = GetOpenFileName(&ofn);
-	
-	if (OpenErr)
-	{
-		STRCPY(nomefile, ofn.lpstrFile);
-		result= FALSE;
-	}
-	else
-	{
-		// e' successo qualche casino o qualcosa non e' andato bene
-		result=TRUE;
-	}
+	//ofn.lStructSize = sizeof(OPENFILENAME);
+	//ofn.hwndOwner = dlgPtr;
+	//ofn.lpstrFilter = (char*)szFilter;
+	//ofn.nFilterIndex = 1;
+	//ofn.lpstrFile = (char*)szFile;
+	//ofn.nMaxFile = sizeof(szFile);
+	//ofn.lpstrFileTitle = (char*)szFileTitle;
+	//ofn.nMaxFileTitle = sizeof(szFileTitle);
+	//ofn.lpstrInitialDir = (char*)szDirName;
+	//ofn.Flags = OFN_SHOWHELP | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+	//
+	//bool8 OpenErr = GetOpenFileName(&ofn);
+	//
+	//if (OpenErr)
+	//{
+	//	STRCPY(nomefile, ofn.lpstrFile);
+	//	result= FALSE;
+	//}
+	//else
+	//{
+	//	// e' successo qualche casino o qualcosa non e' andato bene
+	//	result=TRUE;
+	//}
 
-	return (result);
+	//return (result);
+
+	static FSSpec sCurDirFSSpec; // Qui va messa la cartella di partenza
+    OSErr err = noErr;
+    
+    uchar getFileName[256] = "\0";
+    strcpy((char *)getFileName, (char*) directorydipartenza);
+    strcat((char *)getFileName, (char*) nomeattualefile);
+    
+    memset(&sCurDirFSSpec, '\0', sizeof(FSSpec));
+    FSMakeFSSpec(0, 0L, directorydipartenza, &sCurDirFSSpec);
+    
+    XFileInfoRef fileInfo = NULL;
+    XTCreateEmptyXFileInfoRef(&fileInfo);
+    
+    XFileInfoRef startLocationFileInfo = NULL;
+    XTCreateEmptyXFileInfoRef(&startLocationFileInfo);
+    XTSetFSSpecInXFileInfoRef(startLocationFileInfo, &sCurDirFSSpec);
+    
+    LPEXTUFILEARRAY typeList;
+    LPEXTUFILETYPE  ptrList;
+    typeList = (LPEXTUFILEARRAY) NewPtrClear( 2*sizeof(LPEXTUFILETYPE) );
+    typeList[ 0 ] = ptrList = (LPEXTUFILETYPE) NewPtrClear(sizeof(EXTUFILETYPE) );
+    typeList[ 1 ] = 0L;
+    
+    QXStringRef titleRef = NULL;
+    QXStringCreateFromCString("Nekro Document", 0,
+                                  (int32) CSTRLEN("Nekro Document"), &titleRef);
+    
+    QXStringRef tempStrRef = NULL;
+    QXStringCreateFromCString("Nekro Document", 0,
+                                  (int32) CSTRLEN("Nekro Document"), &tempStrRef);
+    
+    QXStringExtractIntoUniChars(tempStrRef, 0, kNoPos, &(ptrList->tname[0]), 0);
+    ptrList->tdata[ 0 ].ftype = PROJTYPE;
+    ptrList->tdatacount = 1;
+    
+    err = XTUGetFileUsingXD(fileInfo, startLocationFileInfo, titleRef, titleRef, NULL, NULL, typeList);
+    
+    DisposePtr((::Ptr) ptrList );
+    DisposePtr((::Ptr) typeList);
+
+	QXStringDestroy(titleRef);
+    QXStringDestroy(tempStrRef);
+
+    XTDisposeXFileInfoRef(startLocationFileInfo);
+
+	int32 navResponse = kInvalidState;
+    XTGetNavResponseFromXFileInfoRef(fileInfo, &navResponse);
+
+    if ( kUserPressedOk == navResponse )
+    {
+        FSSpec fileSpec;
+        XTGetFSSpecFromXFileInfoRef(fileInfo,&fileSpec);
+        
+        QXStringRef fileNameRef = NULL;
+        QXStringRef fullPathRef = NULL;
+        QXStringCreateFromLocalString(fileSpec.name, 0, STRLEN(fileSpec.name), &fileNameRef);
+        XTUGetFullPathEX(fileSpec.vRefNum, fileSpec.parID, fileNameRef, &fullPathRef);
+        
+        uchar outFullPath[kMaxLongFileName];
+        QXString2CStr(fullPathRef, (char*) outFullPath);
+        
+        QXStringDestroy(fileNameRef);
+        QXStringDestroy(fullPathRef);
+        
+        XTDisposeXFileInfoRef(fileInfo);
+        fileInfo=NULL;
+        
+        strcpy((char*) nomefile, (char *)outFullPath);
+        result = TRUE;
+    }
+    else {
+        XTDisposeXFileInfoRef(fileInfo);
+        result = FALSE;
+    }
+
+	return(result);
+
 } // GetFileGenerico 
 
 /* ------------------------------------------------------------------------ *
@@ -364,7 +427,6 @@ static bool8 XTAPI SelezionaFileDialog(uchar* iPercorsoCompleto) throw()
 		return(-1);
 	}	
 	
-_Errore:
 	// gestione errore
 	return(noErr);
 	
@@ -385,8 +447,15 @@ static bool8 XTAPI MyPickFolder
 	int32 dirId; 
 	bool8 myPickFolder = FALSE;
 	
-#if WINOS
-	int16 pickFolderErr = PickFolderUsingXD(iTitle, ioPath, NULL, &vol, &dirId, NULL, NULL); 
+    QXStringRef titleRef = NULL;
+    QXStringCreateFromCString((char*) iTitle, 0,
+                                  (int32) CSTRLEN((char*) iTitle), &titleRef);
+    
+    QXStringRef pathRef = NULL;
+    QXStringCreateFromCString((char*) ioPath, 0,
+                                  (int32) CSTRLEN((char*) ioPath), &pathRef);
+ #if WINOS
+	int16 pickFolderErr = XTUPickFolderUsingXD(titleRef, pathRef, NULL, &vol, &dirId, NULL, NULL); 
 #endif // WINOS
 #if MACOS
 	int16 pickFolderErr = PickFolderUsingXD(iTitle, ioPath, NULL, &vol, &dirId, NULL);
@@ -394,26 +463,40 @@ static bool8 XTAPI MyPickFolder
 	
 	if (pickFolderErr == noErr)
 	{	
+		QXStringRef inputFileNameRef;
+		QXStringCreateFromCString("Dummy.qxp", 0, (int32) CSTRLEN("Dummy.qxp"), &inputFileNameRef);
+
+		QXMutableStringRef outputFullPathRef = NULL;
+		QXMutableStringCreateEmpty(&outputFullPathRef);
+
 		// per prendere il pathname corretto del folder selezionato
 		// concateno un file fittizio (Dummy.qxp)
-		GetFullPathHFS(ioPath, vol, dirId, (const uchar*)"Dummy.qxp", FALSE);
+		XTUGetFullPath(vol, dirId, inputFileNameRef, outputFullPathRef);
+
+		QXStringDestroy(inputFileNameRef);
+
 		// elimino il file dummy
-		extractpathname(ioPath);
-		// Aggiunta by MANS la conversione in stringa C e viceversa,
-		// altrimenti la DeleteEndFilePathSeparator non funzionava.
-#if MACOS	
-		P2CSTR(ioPath);
-#endif // MACOS		
+		//extractpathname(ioPath);
+
+		QXStringRef pathRef = NULL;
+		XTUExtractPathName((QXStringRef) outputFullPathRef, &pathRef);
+		
+		QXMutableStringDestroy(outputFullPathRef);
+
+		QXString2CStr(pathRef, (char*) ioPath);
+
+		QXStringDestroy(pathRef);
+
 		DeleteEndFilePathSeparator(ioPath);
-#if MACOS				
-		C2PSTR(ioPath);
-#endif // MACOS		
 		myPickFolder = TRUE;
 	}	
 	else
 		myPickFolder = FALSE;
 	
-return(myPickFolder);
+	QXStringDestroy(titleRef);
+	QXStringDestroy(pathRef);
+
+	return(myPickFolder);
 
 } // MyPickFolder
 
@@ -1354,10 +1437,10 @@ int32 XTAPI DocumentoWap(xdwapparamptr params) throw()
 			xd_edt_set(ALTEZZAMODULOEDTID, NULL, (*xtPrefPtr).documentoPref.altezzaModulo);
 			xd_edt_set(DISTANZAMODULIEDTID, NULL, (*xtPrefPtr).documentoPref.distanzaModuli);
 			
-			NumToString((*xtPrefPtr).documentoPref.moduliColonna,  tmpStr);
+			NumToPlatformString((*xtPrefPtr).documentoPref.moduliColonna,  tmpStr);
 			xd_edt_set(MODULICOLANNAEDTID, tmpStr, NULL);
 			
-			NumToString((*xtPrefPtr).documentoPref.colonnePagina,  tmpStr);
+			NumToPlatformString((*xtPrefPtr).documentoPref.colonnePagina,  tmpStr);
 			xd_edt_set(COLONNEPAGINAEDTID, tmpStr, NULL);
 			
 			xd_edt_set(ALTEZZATESTATAEDTID, NULL, (*xtPrefPtr).documentoPref.altezzaTestata);
@@ -1970,7 +2053,6 @@ int32 XTAPI AboutNecroWap(xdwapparamptr params) throw()
 	
 } // AboutSmartClassWap
 
-#pragma mark -
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

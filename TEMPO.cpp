@@ -8,27 +8,14 @@
 	
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <stdio.h>
-#include <time.h>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -65,7 +52,7 @@ static struct tm gTempoMacchina = {0,0,0,0,0,0,0,0,0};
 uchar* XTAPI PrendiData() throw()
 {
 	// per prelevare i secondi della data corrente
-	int32 lSecs = 0;
+	time_t lSecs = 0;
 	
 	// prendo i secondi da 01/01/1904
 	lSecs = time(NULL);
@@ -87,7 +74,7 @@ uchar* XTAPI PrendiData() throw()
 uchar* XTAPI PrendiDataXNomeFile() throw()
 {
 	// per prelevare i secondi della data corrente
-	int32 lSecs = 0;
+	time_t lSecs = 0;
 
 	// prendo i secondi da 01/01/1904
 	lSecs = time(NULL);

@@ -17,81 +17,52 @@
 	
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-#if QXP60
 #define MAINFILE 1
-#endif // QXP60
 
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <cassert>
-#include <vector>
-#include <string>
-#include <sstream>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
 // DBP INCLUDES
 
-#include "DbpInclude.h"
-#include "DbpHasp.h"
-#include "DbpMenu.h"
-#include "DbpResource.h"
-#include "DbpPascalString.h"
-#include "DbpPref.h"
-#include "DbpVersion.h"
-#include "DbpOkDialog.h"
-#include "DbpConsts.h"
-#include "DbpSplashScreen.h"
-#include "DbpUndoEngine.h"
+//#include "DbpInclude.h"
+//#include "DbpMenu.h"
+//#include "DbpResource.h"
+//#include "DbpPascalString.h"
+//#include "DbpPref.h"
+//#include "DbpVersion.h"
+//#include "DbpOkDialog.h"
+//#include "DbpConsts.h"
+//#include "DbpSplashScreen.h"
+//#include "DbpUndoEngine.h"
 
 // XTNECRO INCLUDES
 // XTNECRO INCLUDES
 // XTNECRO INCLUDES
 
-/*
-#include "Appl.h"
-#include "Immagini.h"
-#include "Suono.h"
-#include "Ripristi.h"
-#include "Box.h"
-#include "ExPos.h"
-#include "Justify.h"
-#include "SimbPax.h"
-*/
-#include "AppWare.h"
-#include "CalcPos.h"
-#include "Coord.h"
-#include "DocInfo.h"
-#include "Errori.h"
-#include "InfoNec.h"
-#include "Impag.h"
-#include "Menu.h"
-#include "OpXt.h"
-#include "Paletta.h"
-#include "Pref.h"
-#include "PrepDoc.h"
-#include "ReadFile.h"
-#include "ResStr.h"
-#include "StMes.h"
-#include "SpaceCol.h"
-#include "Tempo.h"
+//#include "AppWare.h"
+//#include "CalcPos.h"
+//#include "Coord.h"
+//#include "DocInfo.h"
+//#include "Errori.h"
+//#include "InfoNec.h"
+//#include "Impag.h"
+//#include "Menu.h"
+//#include "OpXt.h"
+//#include "Paletta.h"
+//#include "Pref.h"
+//#include "PrepDoc.h"
+//#include "ReadFile.h"
+//#include "ResStr.h"
+//#include "StMes.h"
+//#include "SpaceCol.h"
+//#include "Tempo.h"
 
 #include "XTNecro.h"
 
@@ -156,6 +127,8 @@ uchar gNomeCartellaXpress[MAXPATHNAME] = "";
 
 // volume di partenza di QuarkXpress
 int16 gNumeroVolumeXpress = 0;
+
+#if 0
 
 // PROTOTYPES
 // PROTOTYPES
@@ -661,7 +634,10 @@ int32 XTActivateCallback(xtactivaterec *cbparam)
 		END_ACTIVATE_XTUNACTIVATED;
 	}
 	END_ACTIVATE_XT;
+
 } // xtactivate_cb
+
+#endif // 0
 
 /* ------------------------------------------------------------------------ *
 

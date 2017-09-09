@@ -18,7 +18,6 @@
 // DBP INCLUDES
 // DBP INCLUDES
 
-#include "DbpAssert.h"
 #include "DbpConsts.h"
 
 // NAMESPACE DBP
@@ -34,27 +33,15 @@ namespace DBP
 
 	const char kCopyDeskFileExtension[] = ".QCD";
 
-#if QXP60 || QXP70	
 	const char kXpressFileExtension[] = ".QXP";
-#else
-	const char kXpressFileExtension[] = ".QXD";
-#endif // QXP60 || QXP70	
 	const char kPdfFileExtension[] = ".PDF";
 	const char kPsFileExtension[] = ".PS";
 	const char kXmlFileExtension[] = ".XML";
 	const char kJpegFileExtension[] = ".JPG";
 	const char kLogFileExtension[] = ".LOG";
 
-#if QXP70
 	const char kXtensionFolder[] = "XTensions";
-#else
-	const char kXtensionFolder[] = "XTension";
-#endif // QXP70
 	
-#if MACOS
-	const uchar kMenuSeparator[] = "\p(-";
-#endif // MACOS
-
 	const char kReturnChar = '\r';
 	const char kNewLineChar = '\n';
 	const char kTabChar = '\t';
@@ -66,20 +53,12 @@ namespace DBP
 	const char kUnderlineChar = '_';
 	const char kOpenAngular = '<';
 	const char kCloseAngular = '>';
-#if MACOS
-	const char kEllipsisChar = 'ƒ';
-#endif // MACOS
 
 	const char kMacDirSeparatorChar = ':';
 	const char kWinDirSeparatorChar = '\\';
 	const char kUnixDirSeparatorChar = '/';
 	
-#if MACOS
-	const char kDirSeparatorChar = ':';
-#endif // MACOS
-#if WINOS
 	const char kDirSeparatorChar = '\\';
-#endif // WINOS
 
 } // namespace DBP
 

@@ -15,26 +15,13 @@
 
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <stdio.h>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -75,7 +62,7 @@ caratteristichefiletto gCaratteristicheFiletto = {FALSE, 0, 0, 0, 0, 0, 0};
 					di cui cercare l'indice
 	@result			ritorna l'indice dello stile ricercato
 */
-static int16 CercaNomeStileForte(uchar* nomestile) throw();
+static AssetUID CercaNomeStileForte(uchar* nomestile) throw();
 
 /*! 
 	@function			CercaNomeStileDebole
@@ -89,7 +76,7 @@ static int16 CercaNomeStileForte(uchar* nomestile) throw();
 					di cui cercare l'indice
 	@result			ritorna l'indice dello stile ricercato
 */
-static int16 CercaNomeStileDebole(uchar* nomestile) throw();
+static AssetUID CercaNomeStileDebole(uchar* nomestile) throw();
 
 /*! 
 	@function			ApplicaStileDeboleSuTesto
@@ -105,7 +92,7 @@ static int16 CercaNomeStileDebole(uchar* nomestile) throw();
 	@param			indicestile indice dello stile da applicare
 	@result			nessuno
 */
-static void XTAPI ApplicaStileDeboleSuTesto(int16 indicestile) throw();
+static void XTAPI ApplicaStileDeboleSuTesto(AssetUID indicestile) throw();
 
 
 // FUNCTIONS
@@ -117,27 +104,61 @@ static void XTAPI ApplicaStileDeboleSuTesto(int16 indicestile) throw();
 	CercaNomeStileForte
 
 * ------------------------------------------------------------------------ */
-static int16 CercaNomeStileForte(uchar* nomestile) throw()
+static AssetUID CercaNomeStileForte(uchar* nomestile) throw()
 {
- 	int16 lIndiceStilePara = 0;
+ 	AssetUID lIndiceStilePara = 0;
 
-	if (getparastylebyname(nomestile, NULL, &lIndiceStilePara) == TRUE)
-	{
-		// lo stile e' definito 
-		return(lIndiceStilePara);
-	} 
-	else 
-	{
-		// lo stile non e' definito
-		if (gErroreSulloStile == FALSE) 
-		{
-			// devo segnalare l'errore perche' e' il primo di questo tipo
-			ConcatenaAllaStringaErrore(nomestile);
-			DaiErrore(kErroreStileNonDefinito);
-			gErroreSulloStile = TRUE;
-		}
-		return(0);
+	QXStringRef stileRef = NULL;
+	QXStringCreateFromCString((char*) nomestile, 0, (int32) CSTRLEN((char*) nomestile), &stileRef);
+
+	DocID docID = INVAL_DOCID;
+	xtget_curdoc(&docID);
+	DocRef docRef = XTGetDocRefFromDocID(docID);
+	AssetSpaceRef assetSpaceRef = XTGetDocAssetSpace(docRef);
+	if (assetSpaceRef == INVAL_ASSETSPACEREF) {
+		assetSpaceRef = XTCreateDefaultAssetSpace();
 	}
+
+	bool8 found = FALSE;
+
+	int32 index = 0;   
+	int32 assetCount = XTGetAssetCount(assetSpaceRef, kAssetParaStyle);   
+	for(index = 0; index < assetCount; index++) {   
+		QXStringRef  assetNameRef = NULL;   
+		AssetUID paraAssetUID = INVAL_ASSETUID;   
+
+		APIERR apiErr = XTGetAsset(assetSpaceRef, kAssetParaStyle, index, &paraAssetUID);    
+		if ( apiErr == ERR_SUCCESS && paraAssetUID != INVAL_ASSETUID) { 
+
+			apiErr = XTGetAssetName(assetSpaceRef, kAssetParaStyle, paraAssetUID, &assetNameRef);     
+			
+			QXStringCompareResult cmpResult;   
+			QXStringCompare(stileRef, 0, kNoPos, assetNameRef, 0, kNoPos, &cmpResult);
+
+			QXStringDestroy(assetNameRef);   
+
+			if ( cmpResult == kQXStringEqualTo ) {
+				lIndiceStilePara = (AssetUID) index;
+				found = TRUE;
+				break;
+			}
+		}   
+	}   
+
+	XTDeleteAssetSpace(assetSpaceRef);
+
+	QXStringDestroy(stileRef);
+
+	if ( !found ) {
+		lIndiceStilePara = (AssetUID) -1;
+
+		ConcatenaAllaStringaErrore(nomestile);
+		DaiErrore(kErroreStileNonDefinito);
+		gErroreSulloStile = TRUE;
+	}
+
+	return(lIndiceStilePara);
+
 } // CercaNomeStileForte
 
 /* ------------------------------------------------------------------------ *
@@ -145,27 +166,61 @@ static int16 CercaNomeStileForte(uchar* nomestile) throw()
 	CercaNomeStileDebole
 
 * ------------------------------------------------------------------------ */
-static int16 CercaNomeStileDebole(uchar* nomestile) throw()
+static AssetUID CercaNomeStileDebole(uchar* nomestile) throw()
 {
-	int16 lIndiceStileChar = 0;
+ 	AssetUID lIndiceStileChar = 0;
 
-	if (getcharstylebyname(nomestile, NULL, &lIndiceStileChar) == TRUE)
-	{
-		// lo stile e' definito 
-		return(lIndiceStileChar);
-	} 
-	else 
-	{
-		// lo stile non e' definito
-		if (gErroreSulloStile == FALSE) 
-		{
-			// devo segnalare l'errore perche' e' il primo di questo tipo
-			ConcatenaAllaStringaErrore(nomestile);
-			DaiErrore(kErroreStileNonDefinito);
-			gErroreSulloStile = TRUE;
-		}
-		return(0);
+	QXStringRef stileRef = NULL;
+	QXStringCreateFromCString((char*) nomestile, 0, (int32) CSTRLEN((char*) nomestile), &stileRef);
+
+	DocID docID = INVAL_DOCID;
+	xtget_curdoc(&docID);
+	DocRef docRef = XTGetDocRefFromDocID(docID);
+	AssetSpaceRef assetSpaceRef = XTGetDocAssetSpace(docRef);
+	if (assetSpaceRef == INVAL_ASSETSPACEREF) {
+		assetSpaceRef = XTCreateDefaultAssetSpace();
 	}
+
+	bool8 found = FALSE;
+
+	int32 index = 0;   
+	int32 assetCount = XTGetAssetCount(assetSpaceRef, kAssetCharStyle);   
+	for(index = 0; index < assetCount; index++) {   
+		QXStringRef  assetNameRef = NULL;   
+		AssetUID charAssetUID = INVAL_ASSETUID;   
+
+		APIERR apiErr = XTGetAsset(assetSpaceRef, kAssetCharStyle, index, &charAssetUID);    
+		if ( apiErr == ERR_SUCCESS && charAssetUID != INVAL_ASSETUID) { 
+
+			apiErr = XTGetAssetName(assetSpaceRef, kAssetCharStyle, charAssetUID, &assetNameRef);     
+			
+			QXStringCompareResult cmpResult;   
+			QXStringCompare(stileRef, 0, kNoPos, assetNameRef, 0, kNoPos, &cmpResult);
+
+			QXStringDestroy(assetNameRef);   
+
+			if ( cmpResult == kQXStringEqualTo ) {
+				lIndiceStileChar = (AssetUID) index;
+				found = TRUE;
+				break;
+			}
+		}   
+	}   
+
+	XTDeleteAssetSpace(assetSpaceRef);
+
+	QXStringDestroy(stileRef);
+
+	if ( !found ) {
+		lIndiceStileChar = (AssetUID) -1;
+
+		ConcatenaAllaStringaErrore(nomestile);
+		DaiErrore(kErroreStileNonDefinito);
+		gErroreSulloStile = TRUE;
+	}
+
+	return(lIndiceStileChar);
+
 } // CercaNomeStiledebole
 
 /* ------------------------------------------------------------------------ *
@@ -173,28 +228,41 @@ static int16 CercaNomeStileDebole(uchar* nomestile) throw()
 	ApplicaStileDeboleSuTesto
 
 * ------------------------------------------------------------------------ */
-static void XTAPI ApplicaStileDeboleSuTesto(int16 indicestile) throw()
+static void XTAPI ApplicaStileDeboleSuTesto(AssetUID indicestile) throw()
 {
+/*
  	charstylerec lStile;
 	
 	if (getcharstylebyindex(indicestile, &lStile) == TRUE) 
 	{ 							  								  		
-/*
-		xesetattrib(T_FACE, PLAIN);
-		xesetattrib(T_FACE, lStile.t.face);
-		xesetattrib(T_SIZE, lStile.t.size);
-		xesetattrib(T_FONT, lStile.t.font);
-		xesetattrib(T_COLOR, lStile.t.a.color);
-		xesetattrib(T_SHADE, lStile.t.shade);
-		xesetattrib(T_KERN, lStile.t.kern );
-		xesetattrib(T_TRACK, lStile.t.track);
-		xesetattrib(T_BASESHIFT, lStile.t.baseshift);
-		xesetattrib(T_HSCALE,lStile.t.hscale);
-*/
+		//xesetattrib(T_FACE, PLAIN);
+		//xesetattrib(T_FACE, lStile.t.face);
+		//xesetattrib(T_SIZE, lStile.t.size);
+		//xesetattrib(T_FONT, lStile.t.font);
+		//xesetattrib(T_COLOR, lStile.t.a.color);
+		//xesetattrib(T_SHADE, lStile.t.shade);
+		//xesetattrib(T_KERN, lStile.t.kern );
+		//xesetattrib(T_TRACK, lStile.t.track);
+		//xesetattrib(T_BASESHIFT, lStile.t.baseshift);
+		//xesetattrib(T_HSCALE,lStile.t.hscale);
 		// dovrebbe essere preferibile fare un set generale piuttosto che settare
 		// singolarmente gli attributi
 		setcharstylebyindex(indicestile, &lStile, TRUE);
 	}
+/**/
+
+	xehandle lHndlXE = NULL;
+	int32 lInizioSelezione = 0;
+	int32 lFineSelezione = 0;
+	int32 lLunghezzaTesto = 0;
+
+	boxid curbox;
+	xtget_curbox(&curbox);
+	xegetinfo(curbox, &lHndlXE, &lInizioSelezione, &lFineSelezione, &lLunghezzaTesto);
+
+	XTSetCharStyleOnText((AssetUID) -1, FALSE, lHndlXE);
+	XTSetCharStyleOnText(indicestile, FALSE, lHndlXE);
+
 } // ApplicaStileDeboleSuTesto
 
 /* ------------------------------------------------------------------------ *
@@ -208,20 +276,21 @@ void XTAPI ApplicaStileForte(uchar *nomestile) throw()
 	int32 lInizioSelezione = 0;
 	int32 lFineSelezione = 0;
 	int32 lLunghezzaTesto = 0;
-	int16 lIndiceStile = 0;
+	AssetUID lIndiceStile = 0;
 	
 	// porto il cursore alla fine del flusso di testo corrente
 	boxid curbox;
 	xtget_curbox(&curbox);
 	xegetinfo(curbox, &lHndlXE, &lInizioSelezione, &lFineSelezione, &lLunghezzaTesto);
-	xesetsel(lLunghezzaTesto, lLunghezzaTesto, FALSE);
+	// xesetsel(lLunghezzaTesto, lLunghezzaTesto, FALSE);
 
 	// cerca lo stile da applicare
 	lIndiceStile = CercaNomeStileForte(nomestile);
 	
 	// applica lo stile in modo forte
-	setparastyleontext(-1, FALSE); 
-	setparastyleontext(lIndiceStile, FALSE);
+	XTSetStyleOnText((AssetUID) -1, TRUE, FALSE, lHndlXE);
+	XTSetStyleOnText(lIndiceStile, TRUE, FALSE, lHndlXE);
+
 } // ApplicaStileForte
 
 /* ------------------------------------------------------------------------ *
@@ -235,7 +304,7 @@ void XTAPI ApplicaStileDebole(uchar *nomestile) throw()
 	int32 lInizioSelezione = 0;
 	int32 lFineSelezione = 0;
 	int32 lLunghezzaTesto = 0;
-	int16 lIndiceStile = 0;
+	AssetUID lIndiceStile = 0;
 	
 	// porto il cursore alla fine del flusso di testo corrente
 	xegetinfo(NULL, &lHndlXE, &lInizioSelezione, &lFineSelezione, &lLunghezzaTesto);
@@ -246,6 +315,7 @@ void XTAPI ApplicaStileDebole(uchar *nomestile) throw()
 	
 	// applica lo stile in modo debole
 	ApplicaStileDeboleSuTesto(lIndiceStile);
+
 } // ApplicaStileDebole
 
 /* ------------------------------------------------------------------------ *
@@ -265,7 +335,7 @@ void XTAPI InizializzaErroreSulloStile() throw()
 * ------------------------------------------------------------------------ */
 void XTAPI ImpostaCaratteristicheFiletto(uchar *nomestile) throw()
 {
-	int16 lIndiceStile = 0;
+	AssetUID lIndiceStile = 0;
  	parastylerec lStile; // vecchio stylerec
  	bool8 lVecchioErroreSulloStile = FALSE;
  	
@@ -285,8 +355,8 @@ void XTAPI ImpostaCaratteristicheFiletto(uchar *nomestile) throw()
 			gCaratteristicheFiletto.definito = TRUE;
 			gCaratteristicheFiletto.spessore = lStile.p.rabove.width;
 			gCaratteristicheFiletto.stile = lStile.p.rabove.style;
-			gCaratteristicheFiletto.colore = lStile.p.rabove.color;
-			gCaratteristicheFiletto.intensita = lStile.p.rabove.shade;
+			gCaratteristicheFiletto.colore = lStile.p.rabove.qColor.mColorID;
+			gCaratteristicheFiletto.intensita = lStile.p.rabove.qColor.mShade;
 			gCaratteristicheFiletto.rientroSinistro = lStile.p.rabove.leftindent;
 			gCaratteristicheFiletto.rientroDestro = lStile.p.rabove.rightindent;
 			return;

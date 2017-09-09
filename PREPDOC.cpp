@@ -12,30 +12,13 @@
 
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <stdio.h>
-#include <string.h>
-#include <cassert>
-#include <vector>
-#include <sstream>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -1133,26 +1116,48 @@ int32 XTAPI PreparaDocWap(xdwapparamptr params) throw()
 				{
 					// prendo valori correnti dei pop-up
 					xrow row;
-					uchar textRow[kDimensioneStringhe] = "";
+					// uchar textRow[kDimensioneStringhe] = "";
 					
 					// pagine
 					xd_lst_getselection(PAGINEPREPDOCPOPID, &row);
-					xd_lst_getrowtext(PAGINEPREPDOCPOPID, row, 256, textRow);
-					int32 pagine;
-					StringToNum (textRow, &pagine);
+					//xd_lst_getrowtext(PAGINEPREPDOCPOPID, row, 256, textRow);
 					
+					QXStringRef textRef = NULL;
+					XDULstGetRowText(PAGINEPREPDOCPOPID, row, &textRef);
+					
+					int32 pagine;
+					//StringToNum (textRow, &pagine);
+					XTUStringToNum(textRef, &pagine);
+					
+					QXStringDestroy(textRef);
+					textRef = NULL;
+
 					// colonne
 					xd_lst_getselection(COLONNEPREPDOCPOPID, &row);
-					xd_lst_getrowtext(COLONNEPREPDOCPOPID, row, 256, textRow);
-					int32 colonne;
-					StringToNum (textRow, &colonne);
+					//xd_lst_getrowtext(COLONNEPREPDOCPOPID, row, 256, textRow);
+
+					XDULstGetRowText(COLONNEPREPDOCPOPID, row, &textRef);
 					
+					int32 colonne;
+					//StringToNum (textRow, &colonne);
+					XTUStringToNum(textRef, &colonne);
+					
+					QXStringDestroy(textRef);
+					textRef = NULL;
+
 					// moduli
 					xd_lst_getselection(MODULIPREPDOCPOPID, &row);
-					xd_lst_getrowtext(MODULIPREPDOCPOPID, row, 256, textRow);
-					int32 moduli;
-					StringToNum (textRow, &moduli);
+					//xd_lst_getrowtext(MODULIPREPDOCPOPID, row, 256, textRow);
+
+					XDULstGetRowText(MODULIPREPDOCPOPID, row, &textRef);
 					
+					int32 moduli;
+					//StringToNum (textRow, &moduli);
+					XTUStringToNum(textRef, &moduli);
+					
+					QXStringDestroy(textRef);
+					textRef = NULL;
+
 					InserisciPagineColonneEModuli(pagine, colonne, moduli, gCheckCancella);
 					
 					break;
@@ -1162,13 +1167,21 @@ int32 XTAPI PreparaDocWap(xdwapparamptr params) throw()
 				{
 					// prendo valori correnti dei pop-up
 					xrow row;
-					uchar textRow[kDimensioneStringhe] = "";
+					// uchar textRow[kDimensioneStringhe] = "";
 					
 					// pagina
 					xd_lst_getselection(PAGINEMASTROPOPID, &row);
-					xd_lst_getrowtext(PAGINEMASTROPOPID, row, 256, textRow);
+					//xd_lst_getrowtext(PAGINEMASTROPOPID, row, 256, textRow);
+
+					QXStringRef textRef = NULL;
+					XDULstGetRowText(PAGINEMASTROPOPID, row, &textRef);
+					
 					int32 paginaMastro;
-					StringToNum (textRow, &paginaMastro);
+					//StringToNum(textRow, &paginaMastro);
+					XTUStringToNum(textRef, &paginaMastro);
+					
+					QXStringDestroy(textRef);
+					textRef = NULL;
 					
 					// nome mastro
 					xd_lst_getselection(MASTROPOPID, &row);
@@ -1186,16 +1199,31 @@ int32 XTAPI PreparaDocWap(xdwapparamptr params) throw()
 					
 					// colonne
 					xd_lst_getselection(COLONNEINGOMBRIPOPID, &row);
-					xd_lst_getrowtext(COLONNEINGOMBRIPOPID, row, 256, textRow);
+					//xd_lst_getrowtext(COLONNEINGOMBRIPOPID, row, 256, textRow);
+
+					QXStringRef textRef = NULL;
+					XDULstGetRowText(COLONNEINGOMBRIPOPID, row, &textRef);
+
 					int32 colonne;
-					StringToNum (textRow, &colonne);
+					//StringToNum (textRow, &colonne);
+					XTUStringToNum(textRef, &colonne);
+					
+					QXStringDestroy(textRef);
+					textRef = NULL;
 					
 					// moduli
 					xd_lst_getselection(MODULIINGOMBRIPOPID, &row);
-					xd_lst_getrowtext(MODULIINGOMBRIPOPID, row, 256, textRow);
+					//xd_lst_getrowtext(MODULIINGOMBRIPOPID, row, 256, textRow);
+
+					XDULstGetRowText(MODULIINGOMBRIPOPID, row, &textRef);
+
 					int32 moduli;
-					StringToNum (textRow, &moduli);
+					//StringToNum (textRow, &moduli);
+					XTUStringToNum(textRef, &moduli);
 					
+					QXStringDestroy(textRef);
+					textRef = NULL;
+
 					ModificaPrimaPagina(colonne, moduli);
 					break;
 				}
@@ -1271,10 +1299,10 @@ void XTAPI PreparaDocumento() throw()
 	CercaBoxIngombro();
 
 //	dodlgboxparam( hinst, hwndmainframe, (FARPROC)PreparaDocumentoWAP, DIALOG_20150, NULL );
-	xd_createdialog(_XT_PREPARADOCWAP, 0, NULL);
+	//xd_createdialog(_XT_PREPARADOCWAP, 0, NULL);
+	XDCreateDialogWithCBCode(_XT_PREPARADOCWAP, 0, NULL);
 }
 
-#pragma mark -
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

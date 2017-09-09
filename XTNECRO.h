@@ -104,10 +104,10 @@ typedef double DoubleFixed;
 // MACROS
 
 // per la conversione da long a fixed
-#define mLong(x) ((long) x >> 16)
-#define mResto(x) ((long) x % 65536)
-#define mFixed(x) ((long) x << 16)
-#define mDoubleFixed2Long(x) (x / (DoubleFixed) 65536)
+#define mLong(x) ((long) (x) >> 16)
+#define mResto(x) ((long) (x) % 65536)
+#define mFixed(x) ((long) (x) << 16)
+#define mDoubleFixed2Long(x) ((x) / (DoubleFixed) 65536)
 
 // DEFINES
 // DEFINES

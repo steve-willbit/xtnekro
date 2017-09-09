@@ -25,27 +25,13 @@
 
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <string.h>
-#include <stdio.h>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -151,7 +137,7 @@ uchar gStrMessaggi[kNumeroMessaggi][64];
 	@result  			TRUE - se e' stato possibile alloccare la memoria
 					FALSE - se si e' verificato un errore di memoria
 */
-static XTAPI void CreaELeggiStringaC(uchar *ptrstringa, int16 idrisorsa, int16 posizione) throw();
+static void XTAPI CreaELeggiStringaC(uchar *ptrstringa, int16 idrisorsa, int16 posizione) throw();
 
 /*!
 	@function			CreaStringaErrore
@@ -163,7 +149,7 @@ static XTAPI void CreaELeggiStringaC(uchar *ptrstringa, int16 idrisorsa, int16 p
 	@param 			errore  puntatore da settare, in uscita contiene la stringa letta dal file di risorsa
 	@result  			nessuno
 */
-static XTAPI void CreaStringaErrore(errorixtension errore) throw();
+static void XTAPI CreaStringaErrore(errorixtension errore) throw();
 
 /*!
 	@function			CreaStringaMessaggio
@@ -186,7 +172,7 @@ static void XTAPI CreaStringaMessaggio(messaggixtension messaggio) throw();
 	CreaELeggiStringaC
 
 * ------------------------------------------------------------------------ */
-static XTAPI void CreaELeggiStringaC(uchar *ptrstringa, int16 idrisorsa, int16 posizione) throw()
+static void XTAPI CreaELeggiStringaC(uchar *ptrstringa, int16 idrisorsa, int16 posizione) throw()
 {
 	int16 lLung = 0;
 	
@@ -278,7 +264,6 @@ void XTAPI CreaTutteLeStringhe() throw()
 	}
 } // CreaTutteLeStringhe
 
-#pragma mark -
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

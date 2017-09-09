@@ -143,21 +143,10 @@
 	
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-
-// always the first include, this is include must be present in all the xtensions
-
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
 // DBP INCLUDES
 // DBP INCLUDES
 // DBP INCLUDES
 
-#include "DbpAssert.h"
-#include "DbpPascalString.h"
 #include "DbpFiles.h"
 
 #if QXP40
@@ -169,19 +158,10 @@ EXTERN_XT_GLOBALS
 // DEFINES
 // DEFINES
 
-#if WINOS	
-	#define INTSIZE int32
-#endif // WINOS	
-
-#if MACOS 
-	#define INTSIZE int16
-#endif //MACOS	
-
+#define INTSIZE int32
 // FUNCTIONS
 // FUNCTIONS
 // FUNCTIONS
-
-#if QXP60 || QCD35
 
 /* ------------------------------------------------------------------------ *
 
@@ -205,7 +185,7 @@ bool8 XTAPI DBP::IsFile(const uchar* iFilePath) throw()
 	
 	if (!makeFSSpec)
 	{
-		OSErr openError = FSpOpenDF(&f, fsRdWrPerm, &lFileReference);
+		OSErr openError = HOpenDF(f.vRefNum, f.parID, f.name, fsRdWrPerm,&lFileReference);
 		
 		if (openError==noErr || openError==opWrErr || openError==permErr)
 			ret = TRUE;
@@ -220,46 +200,6 @@ bool8 XTAPI DBP::IsFile(const uchar* iFilePath) throw()
 	return(ret);
 	
 } // DBP::IsFile
-
-#endif // QXP60 || QCD35
-
-#if QXP40 || QXP50
-/* ------------------------------------------------------------------------ *
-
-	DBP::IsFile
-	
-* ------------------------------------------------------------------------ */
-bool8 XTAPI DBP::IsFile(const uchar* const iFilePath) throw()
-{
-	assert(NULL != iFilePath);
-	assert(0 != iFilePath[0]);
-	assert(STRLEN(iFilePath) < MAXPATHNAME);
-
-	// risultato della funzione	
-	bool8 isFile = FALSE;
-
-	// provo ad aprire il file
-	int16 refNum;
-	OSErr error =
-		FSOpenPerm
-		(
-			iFilePath,
-			0, // vRefNum
-			&refNum,
-			1 // (1=read, 2=write, etc)
-		);
-	
-	// se non si e' verificato alcun errore ritorno TRUE e chiudo immediatamente il file,
-	// in ogni altro caso FALSE
-	if (error != fnfErr)
-	{
-		FSClose(refNum);
-		isFile = TRUE;
-	}
-
-	return(isFile);	
-} // DBP::IsFile
-#endif // QXP40 || QXP50
 
 #if QXP40 || QXP50
 /* ------------------------------------------------------------------------ *
@@ -813,66 +753,38 @@ bool8 XTAPI DBP::CopyFile(const uchar* const iFilePathIn, const uchar* const iFi
 
 	OSErr copyError = noErr;
 
-#if MACOS
-
-	FSSpec fsSpecFolderIN;
-	FSSpec fsSpecFolderOUT;
-	
-	FSMakeFSSpec(0, 0, iFilePathIn, &fsSpecFolderIN);
-	FSMakeFSSpec(0, 0, iFilePathOut, &fsSpecFolderOUT);
-	
-// duplicazione file
-#if QCD35
-	XFileInfoRef srcFileInfoRef;
-	XFileInfoRef destFileInfoRef;
+	XFileInfoRef srcFileInfoRef = INVALID_XFILEINFOREF;
+	XFileInfoRef destFileInfoRef = INVALID_XFILEINFOREF;
 
 	copyError = XTCreateEmptyXFileInfoRef(&srcFileInfoRef);
 	if (copyError != ERR_SUCCESS) {
 		copyError = memFullErr;
-		goto _Exit;
+		goto _CleanUp;
 	}
 
 	copyError = XTCreateEmptyXFileInfoRef(&destFileInfoRef);
 	if (copyError != ERR_SUCCESS) {
 		copyError = memFullErr;
-		goto _Exit;
-	}
-
-	copyError = XTSetFSSpecInXFileInfoRef(srcFileInfoRef, &fsSpecFolderIN);
-	if (copyError != ERR_SUCCESS) {
 		goto _CleanUp;
 	}
 
-	copyError = XTSetFSSpecInXFileInfoRef(destFileInfoRef, &fsSpecFolderOUT);
-	if (copyError != ERR_SUCCESS) {
-		goto _CleanUp;
-	}
-
-	copyError = XTDuplicateFile(srcFileInfoRef, destFileInfoRef, TRUE, TRUE, FALSE);
+	copyError = XTDuplicateFile(srcFileInfoRef, destFileInfoRef, TRUE, TRUE, FALSE, kReplaceFile );
 	if (copyError != ERR_SUCCESS) {
 		goto _CleanUp;
 	}
 
 _CleanUp:
 	
-	XTDisposeXFileInfoRef(srcFileInfoRef);
-	XTDisposeXFileInfoRef(destFileInfoRef);
+	if ( srcFileInfoRef != INVALID_XFILEINFOREF ) {
+		XTDisposeXFileInfoRef(srcFileInfoRef);
+	}
+	if ( destFileInfoRef != INVALID_XFILEINFOREF ) {
+		XTDisposeXFileInfoRef(destFileInfoRef);
+	}
 
-#else
-	// duplicazione file
-	copyError = DuplicateFileFSp(&fsSpecFolderIN, &fsSpecFolderOUT, TRUE, TRUE, FALSE);
-#endif // QCD35
-
-#endif // MACOS
-	
-#if WINOS
-	// setto l'ultimo flag a TRUE se voglio che mi venga chiesto di sovrascrivere
-
-	// un file che esiste gia'	
-	copyError = ::CopyFile((const char*)iFilePathIn, (const char*) iFilePathOut, FALSE);
-#endif //WINOS
-
-_Exit:
+	//setto l'ultimo flag a TRUE se voglio che mi venga chiesto di sovrascrivere
+	//un file che esiste gia'	
+	//copyError = ::CopyFile((const char*)iFilePathIn, (const char*) iFilePathOut, FALSE);
 
 	return(copyError == noErr);
 
@@ -912,10 +824,10 @@ bool8 XTAPI DBP::DeleteFile(const uchar* const iFilePath) throw()
 #endif // MACOS
 
 #if WINOS	
-	uchar volName;
+	uchar volName[MAXPATHNAME] = "";
 	int16 vRefNum;
 	int32 dirID;
-	HGetVol(&volName, &vRefNum, &dirID);
+	HGetVol(volName, &vRefNum, &dirID);
 	
 	testError = HDelete(vRefNum, 0, iFilePath);
 #endif // WINOS	
@@ -1050,7 +962,7 @@ bool8 XTAPI DBP::GetFullPathName(FSSpec& iFileSpec, std::string& oFilePath) thro
 {	
 	// prendo il pathname completo del file 
 	uchar filePath[MAXPATHNAME];
-	GetFullPathFSp(filePath, &iFileSpec, FALSE);
+	DBP::GetFullPathInLocalString(&iFileSpec, filePath);
 
 	// ritorno il fullpathname	
 	oFilePath = (char*) filePath;
@@ -1062,19 +974,6 @@ bool8 XTAPI DBP::GetFullPathName(FSSpec& iFileSpec, std::string& oFilePath) thro
 	return(fileName == endFilePath);
 } // DBP::GetFullPathName
 
-#if QXP40 || QXP50
-/* ------------------------------------------------------------------------ *
-
-	DBP::GetFullPathName
-
-* ------------------------------------------------------------------------ */
-bool8 XTAPI DBP::GetFullPathName(StandardFileReply& iFileSFR, std::string& oFilePath) throw()
-{			
-	return(DBP::GetFullPathName(iFileSFR.sfFile, oFilePath));	
-	
-} // DBP::GetFullPathName
-#endif // QXP40 || QXP50
-
 /* ------------------------------------------------------------------------ *
 
 	DBP::BuildPathOnFs
@@ -1085,7 +984,6 @@ OSErr XTAPI DBP::BuildPathOnFs(const uchar* iPath) throw()
 	// variabile di ritorno
 	OSErr retErr = noErr;
 
-#if MACOS && QXP60	
 	// estraggo il solo nome file
 	uchar fileTmp[MAXPATHNAME] = "";
 	uchar foldersToCreate[MAXPATHNAME] = "";
@@ -1096,7 +994,7 @@ OSErr XTAPI DBP::BuildPathOnFs(const uchar* iPath) throw()
 	STRNCPY(foldersToCreate, iPath, (STRLEN(iPath) - STRLEN(fileTmp)));
 	
 	// copio path in stringa per facilitare la costruzione
-	std::string pathTmp(DBP::CCC(foldersToCreate));
+	std::string pathTmp((char*) foldersToCreate);
 	
 	// per contenere il path costruito
 	uchar folderInPascalStr[256] = "";
@@ -1105,8 +1003,8 @@ OSErr XTAPI DBP::BuildPathOnFs(const uchar* iPath) throw()
 	int16 foldersNum = std::count (pathTmp.begin(), pathTmp.end(), ':');
 	
 	// inizializzo gli indici per scorrere la stringa
-	int16 idxStart = 0;
-	int16 idxEnd = pathTmp.find(':', idxStart);
+	size_t idxStart = 0;
+	size_t idxEnd = pathTmp.find(':', idxStart);
 	
 	for (int16 i = 0; i < foldersNum; i++)
 	{
@@ -1114,7 +1012,7 @@ OSErr XTAPI DBP::BuildPathOnFs(const uchar* iPath) throw()
 		std::string folder = pathTmp.substr(idxStart, (idxEnd - idxStart + 1)).c_str();
 		
 		// copio il risultato in una stringa pascal
-		STRCAT(folderInPascalStr, DBP::PPP(folder.c_str())); 
+		STRCAT(folderInPascalStr, folder.c_str()); 
 		
 		// posiziono gli indici sul folder successivo
 		// idxStart = idxEnd;
@@ -1137,11 +1035,11 @@ OSErr XTAPI DBP::BuildPathOnFs(const uchar* iPath) throw()
 			}
 			else
 			{
-				std::cout << "directory: " << DBP::CCC(folderInPascalStr) << " creata su file system";
+				std::cout << "directory: " << folderInPascalStr << " creata su file system";
 			}
 		}
 	}
-#endif // MACOS && QXP60
+
 _Exit:	
 	return(retErr);
 } // DBP::BuildPathOnFs
@@ -1204,4 +1102,205 @@ void XTAPI DBP::ExtractFolderPath(uchar* ioFileFullPath) throw()
 	
 } // DBP::ExtractFolderPath
 
+/* ------------------------------------------------------------------------ *
 
+	GetFullPathInLocalString
+	
+* ------------------------------------------------------------------------ */
+XTError XTAPI DBP::GetFullPathInLocalString(FSSpec* iFileSpec, uchar* oFileFullPath) throw()
+{
+	assert(iFileSpec != NULL);
+	
+	XTError xtErr = ERR_SUCCESS;
+	
+	QXStringRef fileNameRef = NULL; 
+	QXStringRef fullPathRef = NULL; 
+	QXStringCreateFromLocalString(iFileSpec->name, 0, STRLEN(iFileSpec->name), &fileNameRef);
+	xtErr = XTUGetFullPathEX(iFileSpec->vRefNum, iFileSpec->parID, fileNameRef, &fullPathRef);
+	
+	// converto stringref in local string
+	QXString2CStr(fullPathRef, (char*) oFileFullPath);
+		
+	QXStringDestroy(fileNameRef); 
+	QXStringDestroy(fullPathRef); 
+	
+	return(xtErr);
+	
+} // DBP::GetFullPathInLocalString
+
+/* ------------------------------------------------------------------------ *
+
+	ExtractFileNameInLocalString
+	
+* ------------------------------------------------------------------------ */
+XTError XTAPI DBP::ExtractFileNameInLocalString(uchar* ioFile) throw()
+{
+	assert(ioFile != NULL);
+	
+	XTError xtErr = ERR_SUCCESS;
+	
+#if QXP60 || QXP70		
+	ExtractFileName(ioFile);
+#endif // QXP60 || QXP70
+#if QXP80
+	QXStringRef fileNameRef = NULL; 
+	QXStringCreateFromLocalString(ioFile, 0, STRLEN(ioFile), &fileNameRef);
+	xtErr = XTUExtractFileName((QXMutableStringRef)fileNameRef);
+	
+	// converto stringref in local string
+	DBP::QXStringRef2LocalStr(fileNameRef, ioFile);
+		
+	QXStringDestroy(fileNameRef); 
+#endif // QXP80			
+	
+	return(xtErr);
+	
+} // DBP::ExtractFileNameInLocalString
+
+/* ------------------------------------------------------------------------ *
+
+	DbpFiles.cpp
+	
+	Copyright (c) Sinedita S.r.l 2003. All Rights Reserved.
+
+	$Log: not supported by cvs2svn $
+	Revision 1.4  2009/02/17 10:55:10  taretto
+	porting a QXP80
+	
+	Revision 1.3  2008/09/04 16:04:42  taretto
+	aggiunte funzioni
+	
+	Revision 1.2  2008/07/08 07:57:09  marchese
+	versione 1.2.0.7 - DataShop
+	
+	Revision 1.1  2007/09/18 14:09:01  marchese
+	creazione della cartella qxp650_dbp
+	
+	Revision 1.42  2006/10/11 13:01:11  taretto
+	 corretto salvataggio preferenze su QXP60
+	
+	Revision 1.41  2006/10/06 14:06:25  taretto
+	aggiunte funzioni varie
+	
+	Revision 1.40  2004/10/06 15:40:43  marchese
+	corretto un conflitto su un commento
+	
+	Revision 1.39  2004/05/13 07:09:24  taretto
+	eliminata la direttiva di precompilazione #error
+	
+	Revision 1.38  2004/03/23 15:12:32  marchese
+	inserito il cast (const uchar*) per evitare una ricorsione infinita
+	
+	Revision 1.37  2004/03/23 08:56:30  marchese
+	tolti dei #if WINOS inutili
+	
+	Revision 1.36  2004/03/23 08:01:36  taretto
+	prima compilazione sclass su win con codice unico
+	
+	Revision 1.35  2004/03/22 16:43:57  taretto
+	porting sclass macos
+	
+	Revision 1.34  2003/10/23 10:12:31  marchese
+	spostati degli #if QXP40 e QXP50
+	
+	Revision 1.33  2003/10/13 10:29:53  marchese
+	tolto qualche spazio di troppo
+	
+	Revision 1.32  2003/07/24 15:57:10  marchese
+	aggiunte le assert per controllare la lunghezza dei file
+	
+	Revision 1.31  2003/07/18 07:40:52  marchese
+	aggiunto codice WINOS nelle funzioone FindFirstFolder() e FindFirstFile()
+	
+	Revision 1.30  2003/07/15 08:22:46  marchese
+	prova di riscrittura delle funzione FindFirst* usando il codice nativo WINOS
+	
+	Revision 1.29  2003/07/11 12:35:40  taretto
+	compilazione XTRPDAds
+	
+	Revision 1.28  2003/07/01 16:05:25  marchese
+	nella funzione FindFirstFile() ho aggiunto un parametro per specificare l'indice del file da leggere
+	
+	Revision 1.27  2003/07/01 12:14:44  marchese
+	aggiunto un assert nella funzione FindFirstFile() per il controllo della lunghezza del campo con l'estensione
+	
+	Revision 1.26  2003/07/01 08:14:33  marchese
+	aggiunta la macro STRCONST al posto del cast (uchar*)
+	
+	Revision 1.25  2003/06/20 09:53:08  taretto
+	correnti conflitti
+	
+	Revision 1.24  2003/06/20 09:41:21  taretto
+	aggiunte funzioni per ricavare il path completo
+	
+	Revision 1.23  2003/06/20 08:53:52  marchese
+	cambiato il ritorno delle funzioni GetFullPathName, da void a bool8
+	
+	Revision 1.22  2003/06/19 11:25:58  marchese
+	aggiunto il prototipo della funzione GetFullPathName()
+	
+	Revision 1.21  2003/06/19 09:39:38  marchese
+	- cambiato il nome alle funzione di ricerca dei file e dei folder
+	- adesso la FindFirstFolder() ritorna la prima cartella valida trovata
+	
+	Revision 1.20  2003/06/19 08:25:37  taretto
+	aggiunta fuinzione per verificare la presenza di un file
+	
+	Revision 1.19  2003/06/17 16:35:43  marchese
+	la FindFirst() e la FindFisrtSubFolder() ricevono parametri di tipo std::string
+	
+	Revision 1.18  2003/06/17 14:32:49  marchese
+	aggiunto un return(TRUE)
+	
+	Revision 1.17  2003/06/17 14:28:24  marchese
+	uniformato il risultato di ritorno delle funzioni sui file: sempre TRUE/FALSE
+	
+	Revision 1.16  2003/06/17 14:13:04  marchese
+	creato il prototipo della funzione IsFile()
+	
+	Revision 1.15  2003/06/16 16:49:02  marchese
+	copia di alcune funzioni con parametri std::string
+	
+	Revision 1.14  2003/06/06 10:16:37  marchese
+	modificata l'implementazione delle funzione CreateHtmlFile
+	
+	Revision 1.13  2003/06/06 09:45:16  taretto
+	aggiunta funzione per creazione file html
+	
+	Revision 1.12  2003/06/06 07:53:15  marchese
+	aggiunte le assert nella funzione CreateHtmlFile
+	
+	Revision 1.11  2003/06/06 07:47:37  marchese
+	aggiunta la dichiarazione della funzione CreateHtmlFile
+	
+	Revision 1.10  2003/06/04 13:10:33  taretto
+	modificata funzione FindFirstFolder
+	
+	Revision 1.9  2003/05/07 07:16:22  marchese
+	spostati gli standard includes nei file .h
+	
+	Revision 1.8  2003/04/18 12:04:15  taretto
+	tolto commento inutile
+	
+	Revision 1.7  2003/04/17 14:39:25  taretto
+	cambiati alcuni commenti
+	
+	Revision 1.6  2003/04/17 12:56:49  taretto
+	apportate alcune modifiche, aggiunte assert
+	
+	Revision 1.5  2003/04/16 12:11:45  taretto
+	archiviazione provvisoria
+	
+	Revision 1.4  2003/04/08 08:08:34  taretto
+	da verificare la funzione copy
+	
+	Revision 1.3  2003/04/04 09:11:53  taretto
+	da aggiungere assert
+	
+	Revision 1.2  2003/03/31 10:03:38  marchese
+	piccole correzioni sui file
+	
+	Revision 1.1  2003/03/31 09:48:03  taretto
+	HdrsLibs per le operazioni sui file
+	
+* ------------------------------------------------------------------------ */

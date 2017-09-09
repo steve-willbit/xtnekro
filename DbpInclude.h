@@ -62,111 +62,24 @@
 #if !defined(dbpinclude_h)
 #define dbpinclude_h
 
-#if kOLD
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
+// QXP2017
+// QXP2017
+// QXP2017
+
+#include "Main.h"
+
+// LEGACY: QXP60
+// LEGACY: QXP60
+// LEGACY: QXP60
+
+extern "C" {
+#include "XP_XTLegacy.h" 
+#include "XP_XTLegacyE7.h" 
+#include "XP_XTLegacyE6.h" 
+}
 
 // always the first: they must be present in the project files
 #include "XTConfig.h"
 #include "QXPConfig.h"
-
-// XPRESS INCLUDE
-// XPRESS INCLUDE
-// XPRESS INCLUDE
-
-#if QXP40
-#if defined(__cplusplus)
-extern "C"
-{
-#endif // defined(__cplusplus)
-
-	#include "XTInc40.h"
-
-#if defined(__cplusplus)
-} // extern "C"
-#endif // defined(__cplusplus)
-#endif // QXP40
-
-#if QXP50
-#if defined(__cplusplus)
-extern "C"
-{
-#endif // defined(__cplusplus)
-
-	#include "XP_XtincE5.h"
-
-#if defined(__cplusplus)
-} // extern "C"
-#endif // defined(__cplusplus)
-#endif // QXP50
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-
-#if defined(__cplusplus)
-extern "C"
-{
-#endif // defined(__cplusplus)
-
-	#include "XP_XtincE6.h"
-
-#if DDS35
-	#include "DDSXTension.h"
-#endif // DDS35
-	
-#if defined(__cplusplus)
-} // extern "C"
-#endif // defined(__cplusplus)
-#endif // QXP60
-
-#if QCD35
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-
-#if defined(__cplusplus)
-extern "C"
-{
-#endif // defined(__cplusplus)
-
-	#include "CDXTinc.h"
-	
-typedef	int16		DocID;
-typedef	int16		DocRef;
-#define	INVALDOC	-1
-
-#if defined(__cplusplus)
-} // extern "C"
-#endif // defined(__cplusplus)
-#endif // QCD35
-
-#if QXP70 || QXP70_s
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#elif __GNUC__
-	#define TARGET_API_MAC_OSX 1
-	#include <carbon/carbon.h> 
-#endif // ifdef __MWERKS__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include "XP_XTIncE7.H"
-
-#if QXP70_s
-	#include "DDSXTension.h"
-#endif // QXP70_s
-
-#ifdef __cplusplus
-}
-#endif
-#endif // QXP70 || QXP70_s
-#endif // kOLD
 
 #endif // !defined(dbpinclude_h)

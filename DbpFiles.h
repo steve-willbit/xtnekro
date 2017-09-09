@@ -101,26 +101,6 @@
 #if !defined(dbpfiles_h)
 #define dbpfiles_h
 
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60 || QCD35
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <iostream>
-#include <sstream>
-#include <ostream>
-#include <fstream>
-#include <string>
-#include <vector>
-
-// #include <StandardFile.h>
-
 // DBP INCLUDES
 // DBP INCLUDES
 // DBP INCLUDES
@@ -381,23 +361,7 @@ namespace DBP
 						lungo).
 	*/
 	bool8 XTAPI GetFullPathName(FSSpec& iFileSpec, std::string& oFilePath) throw();
-#if QXP40 || QXP50
-	/*!
-		@function		GetFullPathName
-		@abstract 		creazione path name completo.
-		@discussion		Lo scopo di questa funzione e' determinare il path name completo del
-						file passato come parametro di input. 
-		
-						19 giugno 2003 - Taretto Fabrizio.
 
-		@param			iFileSFR StandardFileReply del file di cui cercare il path name completo.
-		@param			oFilePath ritorna il path name completo del file.
-		@result  		TRUE se e' andato tutto bene, FALSE in tutti i casi di errore (l'errore
-						piu' frequente che il path name completo e' stato troncato poiche' era troppo
-						lungo).
-	*/
-	bool8 XTAPI GetFullPathName(StandardFileReply& iFileSFR, std::string& oFilePath) throw();
-#endif // QXP40 || QXP50	
 	/*! 
 		@function		BuildPathOnFs
 		@abstract		creazione folder su file system
@@ -439,6 +403,10 @@ namespace DBP
 		@result			nessuno
 	*/
 	void XTAPI ExtractFolderPath(uchar* ioFileFullPath) throw();
+
+	XTError XTAPI GetFullPathInLocalString(FSSpec* iFileSpec, uchar* oFileFullPath) throw();
+
+	XTError XTAPI ExtractFileNameInLocalString(uchar* ioFile) throw();
 
 } // namespace DBP
 

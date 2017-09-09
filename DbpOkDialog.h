@@ -55,29 +55,6 @@
 #if !defined(dbpokdialog_h)
 #define dbpokdialog_h
 
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60 || QCD35
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60 || QCD35
-
-#if QXP70
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#elif __GNUC__
-	#define TARGET_API_MAC_OSX 1
-	#include <carbon/carbon.h> 
-#endif // ifdef __MWERKS__
-#endif // QXP70
-
-#include <string>
-
 // DBP INCLUDES
 // DBP INCLUDES
 // DBP INCLUDES

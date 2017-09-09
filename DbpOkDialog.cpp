@@ -6,19 +6,10 @@
 
 * ------------------------------------------------------------------------ */
 
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-
-// always the first include, this is include must be present in all the xtensions
-#include "XTConfig.h"
-#include "QXPConfig.h"
-
 // DBP INCLUDES
 // DBP INCLUDES
 // DBP INCLUDES
 
-#include "DbpAssert.h"
 #include "DbpOkDialog.h"
 
 // DEFINES

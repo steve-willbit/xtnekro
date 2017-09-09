@@ -1427,8 +1427,8 @@ errorixtension XTAPI LeggiContenutoFSSpecFile(uchar *name, Handle *ptrhandle) th
 	int32 lLunghezzaFile = 0;
 
 	// apertura del file
-	gErrore = FSOpen(name, 0, &lIdentificatoreFile);
-	if (gErrore != noErr) 
+	lIdentificatoreFile = _lopen((char*)name, OF_SHARE_EXCLUSIVE);
+	if (lIdentificatoreFile == HFILE_ERROR) 
 	{
 		return(kErroreLetturaFile);
 	}
@@ -1490,11 +1490,12 @@ errorixtension XTAPI LeggiNormContenutoFSSpecFile(uchar *name, Handle *ptrhandle
 	int32 lLunghezzaFile = 0;
 	
 	// apertura del file
-	gErrore = FSOpen(name, 0, &lIdentificatoreFile);
-	if (gErrore != noErr) 
+	lIdentificatoreFile = ((char*)name, OF_SHARE_EXCLUSIVE);
+	if (lIdentificatoreFile == HFILE_ERROR)
 	{
 		return(kErroreLetturaFile);
 	}
+
 	// imposto la lettura all'inizio del file
 	gErrore = SetFPos(lIdentificatoreFile, fsFromStart, 0);
 	if (gErrore != noErr) 

@@ -33,32 +33,14 @@
 	
 
 * ------------------------------------------------------------------------ */
-// CONFIG INCLUDES
-// CONFIG INCLUDES
-// CONFIG INCLUDES
 
-// always the first
-#include "XTConfig.h"
-#include "QXPConfig.h"
+/* Required Includes ********************************************************/
+#include PROJECT_HEADERS
+#if WINOS
+#pragma hdrstop		// force Visual C++ precompiled header
+#endif
 
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-// STANDARD INCLUDES
-
-#if QXP60
-#if defined(__MWERKS__) && defined(__MACH__)
-	#define TARGET_API_MAC_OSX 1
-	#include <MSL MacHeadersMach-O.h>
-#endif // defined(__MWERKS__) && defined(__MACH__)
-#endif // QXP60
-
-#include <cassert>
-#include <string>
-
-#include <io.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
+#include "Include.h"
 
 // DBP INCLUDES
 // DBP INCLUDES
@@ -126,7 +108,7 @@ static int16 gFlags;
 	@param 			nomefile puntatore alla stringa C che contiene il path da cui estrarre l'estensione.
 	@result  			torna l'estenzione se esiste NULL altrimenti.
 */
-static XTAPI uchar* Estensione(uchar* nomefile) throw();
+static uchar* XTAPI Estensione(uchar* nomefile) throw();
 
 /*!
 	@function			NomeFile
@@ -138,7 +120,7 @@ static XTAPI uchar* Estensione(uchar* nomefile) throw();
 	@param 			iFullPath puntatore alla stringa C che contiene il nome del file
 	@result  			torna l'estenzione se esiste NULL altrimenti.
 */
-static XTAPI uchar *NomeFile(uchar* iFullPath) throw();
+static uchar* XTAPI NomeFile(uchar* iFullPath) throw();
 
 /*!
 	@function			IsCartella
@@ -150,7 +132,9 @@ static XTAPI uchar *NomeFile(uchar* iFullPath) throw();
 	@param 			nomecartella puntatore al nome della cartella da verificare
 	@result  			ritorna il nome del file.
 */
-static XTAPI bool8 IsCartella(uchar* nomecartella) throw();
+static bool8 XTAPI IsCartella(uchar* nomecartella) throw();
+
+static bool8 XTAPI IsFile(const char* iNomeFile) throw();
 
 // FUNCTIONS
 // FUNCTIONS
@@ -161,7 +145,7 @@ static XTAPI bool8 IsCartella(uchar* nomecartella) throw();
 	Estensione
 	
 * ------------------------------------------------------------------------ */
-static XTAPI uchar *Estensione(uchar* nomefile) throw()
+static uchar* XTAPI Estensione(uchar* nomefile) throw()
 {
 	assert(nomefile);
 	
@@ -172,7 +156,7 @@ static XTAPI uchar *Estensione(uchar* nomefile) throw()
 	std::string s = (char*) nomefile;
 	
 	// cerco posizione del punto
-	int16 pos = s.find('.');
+	size_t pos = s.find('.');
 	
 	if (pos > 0)
 	{
@@ -180,7 +164,13 @@ static XTAPI uchar *Estensione(uchar* nomefile) throw()
 		STRCPY(gEstensione, s.substr(pos+1, s.length()).c_str());
 	}
 
-	return((uchar*)strupr((char*)gEstensione));
+	std::string str = (char*) gEstensione;
+	std::transform(str.begin(), str.end(), str.begin(), toupper);
+
+	CSTRCPY((char*) gEstensione, str.c_str()); 
+
+	return(gEstensione);
+
 } // Estensione
 
 /* ------------------------------------------------------------------------ *
@@ -188,7 +178,7 @@ static XTAPI uchar *Estensione(uchar* nomefile) throw()
 	NomeFile
 	
 * ------------------------------------------------------------------------ */
-static XTAPI uchar *NomeFile(uchar* iFullPath) throw()
+static uchar* XTAPI NomeFile(uchar* iFullPath) throw()
 {
 	assert(iFullPath);
 	
@@ -202,7 +192,13 @@ static XTAPI uchar *NomeFile(uchar* iFullPath) throw()
 	ExtractFileName(gNomeFile);
 	STRNCPY(gNomeFile, gNomeFile, (len - 4));
 
-	return((uchar*)strupr((char*)gNomeFile));
+	std::string str = (char*) gNomeFile;
+	std::transform(str.begin(), str.end(), str.begin(), toupper);
+
+	CSTRCPY((char*) gNomeFile, str.c_str()); 
+
+	return(gNomeFile);
+
 } // Estensione
 
 /* ------------------------------------------------------------------------ *
@@ -210,7 +206,7 @@ static XTAPI uchar *NomeFile(uchar* iFullPath) throw()
 	IsCartella
 
 * ------------------------------------------------------------------------ */
-static XTAPI bool8 IsCartella(uchar* nomecartella) throw()
+static bool8 XTAPI IsCartella(uchar* nomecartella) throw()
 {
 	
 	assert(NULL != nomecartella);
@@ -220,23 +216,55 @@ static XTAPI bool8 IsCartella(uchar* nomecartella) throw()
 	// creco di aprire la cartella
 	// risultato della funzione	
 	bool8 isDir = FALSE; 
-	
-	int16 refNum = 0;
-	
-	OSErr error = FSOpen(nomecartella, 0, &refNum);
-		
-	if (error == bdNamErr)
-	{
-		isDir = TRUE;
-	}
-	else
-	{
-		error = FSClose(refNum);
+
+	QXStringRef pathRef = NULL;
+	QXStringCreateFromCString((char*) nomecartella, 0, (int32) CSTRLEN((char*) nomecartella), &pathRef);
+
+	XFileInfoRef pathInfoRef = INVALID_XFILEINFOREF;
+	XTCreateXFileInfoRefFromFullPath(pathRef, 0, FALSE, TRUE, &pathInfoRef);
+
+	XTFileExist(pathInfoRef, &isDir);
+	if ( isDir ) {
+		XTGetIsFolderFromXFileInfoRef(pathInfoRef, &isDir);
 	}
 	
+	QXStringDestroy(pathRef);
+	XTDisposeXFileInfoRef(pathInfoRef);
+
 	return(isDir);
+
 } // IsCartella
 
+/* ------------------------------------------------------------------------ *
+
+	IsFile
+
+* ------------------------------------------------------------------------ */
+static bool8 XTAPI IsFile(const char* iNomeFile) throw()
+{
+	
+	assert(NULL != iNomeFile);
+	assert(0 != iNomeFile[0]);
+	assert(STRLEN(iNomeFile) < MAXPATHNAME);
+
+	// creco di aprire la cartella
+	// risultato della funzione	
+	bool8 isFile = FALSE; 
+
+	QXStringRef pathRef = NULL;
+	QXStringCreateFromCString((char*) iNomeFile, 0, (int32) CSTRLEN((char*) iNomeFile), &pathRef);
+
+	XFileInfoRef pathInfoRef = INVALID_XFILEINFOREF;
+	XTCreateXFileInfoRefFromFullPath(pathRef, 0, FALSE, TRUE, &pathInfoRef);
+
+	XTFileExist(pathInfoRef, &isFile);
+	
+	QXStringDestroy(pathRef);
+	XTDisposeXFileInfoRef(pathInfoRef);
+
+	return(isFile);
+
+} // IsFile
 
 /* ------------------------------------------------------------------------ *
 
@@ -249,15 +277,20 @@ OSErr XTAPI PresenzaFile(uchar *nomefile) throw()
 	assert(0 != nomefile[0]);
 	assert(STRLEN(nomefile) < MAXPATHNAME);
 	
-	// provo ad aprire il file
-	int16 refNum;
-	OSErr error = FSOpen(nomefile,0, &refNum);
+	Boolean res = FALSE;
 	
-	// se non si e' verificato alcun errore ritorno TRUE e chiudo immediatamente il file, in ogni altro caso FALSE
-	if (error != fnfErr)
-		FSClose(refNum);
+	// per sapere se e' una cartella 
+	uchar nomeFile[MAXPATHNAME] = "";
+	
+	STRCPY(nomeFile, nomefile);
 
-	return(error);	
+	res = IsFile(nomeFile);
+	
+	if (res == FALSE) 
+		return(-1);
+		
+	return(noErr);
+
 } // PresenzaFile
 
 
@@ -268,19 +301,24 @@ OSErr XTAPI PresenzaFile(uchar *nomefile) throw()
 * ------------------------------------------------------------------------ */
 int32 XTAPI  PresenzaCartella(uchar *nomecartella) throw()
 {
-	Boolean lRisultato = FALSE;
+	assert(NULL != nomecartella);
+	assert(0 != nomecartella[0]);
+	assert(STRLEN(nomecartella) < MAXPATHNAME);
+	
+	Boolean res = FALSE;
 	
 	// per sapere se e' una cartella 
-	uchar lNomeCartella[MAXPATHNAME] = "";
+	uchar nomeCartella[MAXPATHNAME] = "";
 	
-	STRCPY(lNomeCartella, nomecartella);
+	STRCPY(nomeCartella, nomecartella);
 
-	lRisultato = IsCartella(lNomeCartella);
+	res = IsCartella(nomeCartella);
 	
-	if (lRisultato == FALSE) 
+	if (res == FALSE) 
 		return(-1);
 		
 	return(noErr);
+
 } // PresenzaCartella
 
 /* ------------------------------------------------------------------------ *
@@ -561,9 +599,8 @@ errorixtension XTAPI PresenzaFileDaQuattroD(uchar  *name, bool8 *risultato) thro
 	}
 
 	// verifico che il file non sia gi… aperto in scrittura
-	// OSErr err = _lopen((char*)lNomeFileDaImpaginare, OF_SHARE_EXCLUSIVE);
-	OSErr err = FSOpen(lNomeFileDaImpaginare, 0, &lIdentificatoreFile);
-	if (lIdentificatoreFile == HFILE_ERROR || err != noErr) 
+	lIdentificatoreFile = _lopen((char*)lNomeFileDaImpaginare, OF_SHARE_EXCLUSIVE);
+	if (lIdentificatoreFile == HFILE_ERROR) 
 	{
 		// significa che non e' possibile ancora leggere il file
 		(*risultato) = FALSE;
@@ -571,8 +608,7 @@ errorixtension XTAPI PresenzaFileDaQuattroD(uchar  *name, bool8 *risultato) thro
 	}
 
 	// leggo la lunghezza del file
-	err = GetEOF(lIdentificatoreFile, &lLunghezza); // _filelength(lIdentificatoreFile);
-
+	OSErr err = GetEOF(lIdentificatoreFile, &lLunghezza); // _filelength(lIdentificatoreFile);
 	if (err != noErr) // lLunghezza == -1
 	{
 		// significa che non e' possibile ancora leggere il file
@@ -764,7 +800,7 @@ errorixtension XTAPI PrendiFileElencoImmagini(uchar *name) throw()
 	}
 
 	// leggo la lunghezza del file
-	lLunghezza = filelength(lIdentificatoreFile);
+	OSErr err = GetEOF(lIdentificatoreFile, &lLunghezza); // _filelength(lIdentificatoreFile);
 	if (lLunghezza == -1) 
 	{
 		// significa che non e' possibile ancora leggere il file 
@@ -798,8 +834,6 @@ errorixtension XTAPI PrendiFileElencoImmagini(uchar *name) throw()
 	}
 } // PrendiFileElencoImmagini
 
-
-#pragma mark -
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

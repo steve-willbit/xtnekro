@@ -75,9 +75,6 @@
 // GLOBALS
 // GLOBALS
 
-// l'indirizzo di base per la gestione delle WAP
-extern int32 gXtWapCbCode;
-
 // volume di partenza di QuarkXpress
 extern int16 gNumeroVolumeXpress;
 
@@ -132,104 +129,104 @@ typedef double DoubleFixed;
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra delle preferenze
 */
-#define _XT_PREFERENZEWAP gXtWapCbCode
+#define _XT_PREFERENZEWAP (MainXT::GetInstance().GetCustomCBCode() + 1)
 
 /*!
 	@defined			_XT_IMPAGINAZIONEWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra impaginazione
 */
-#define  _XT_IMPAGINAZIONEWAP (gXtWapCbCode + 1)
+#define  _XT_IMPAGINAZIONEWAP (MainXT::GetInstance().GetCustomCBCode() + 2)
 
 /*!
 	@defined			_XT_GIUSTIFICAZIONEWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra giustificazione
 */
-#define  _XT_GIUSTIFICAZIONEWAP (gXtWapCbCode + 2)
+#define  _XT_GIUSTIFICAZIONEWAP (MainXT::GetInstance().GetCustomCBCode() + 3)
 
 /*!
 	@defined			_XT_RIEMPITIVIWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra riempitivi
 */
-#define  _XT_RIEMPITIVIWAP (gXtWapCbCode + 3)
+#define  _XT_RIEMPITIVIWAP (MainXT::GetInstance().GetCustomCBCode() + 4)
 
 /*!
 	@defined			_XT_IMMAGINIWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra immagini 
 */
-#define  _XT_IMMAGINIWAP (gXtWapCbCode + 4)
+#define  _XT_IMMAGINIWAP (MainXT::GetInstance().GetCustomCBCode() + 5)
 
 /*!
 	@defined			_XT_BOZZAWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra bozza 
 */
-#define  _XT_BOZZAWAP (gXtWapCbCode + 5)
+#define  _XT_BOZZAWAP (MainXT::GetInstance().GetCustomCBCode() + 6)
 
 /*!
 	@defined			_XT_INGOMBROWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra ingombro
 */
-#define  _XT_INGOMBROWAP (gXtWapCbCode + 6)
+#define  _XT_INGOMBROWAP (MainXT::GetInstance().GetCustomCBCode() + 7)
 
 /*!
 	@defined			_XT_FINALEWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra finale 
 */
-#define  _XT_FINALEWAP (gXtWapCbCode + 7)
+#define  _XT_FINALEWAP (MainXT::GetInstance().GetCustomCBCode() + 8)
 
 /*!
 	@defined			_XT_DOCUMENTOWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra documento 
 */
-#define  _XT_DOCUMENTOWAP (gXtWapCbCode + 8)
+#define  _XT_DOCUMENTOWAP (MainXT::GetInstance().GetCustomCBCode() + 9)
 
 /*!
 	@defined			_XT_DATIWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra dati 
 */
-#define  _XT_DATIWAP (gXtWapCbCode + 9)
+#define  _XT_DATIWAP (MainXT::GetInstance().GetCustomCBCode() + 10)
 
 /*!
 	@defined			_XT_DISPOSIZIONEWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra disposizione
 */
-#define  _XT_DISPOSIZIONEWAP (gXtWapCbCode + 10)
+#define  _XT_DISPOSIZIONEWAP (MainXT::GetInstance().GetCustomCBCode() + 11)
 
 /*!
 	@defined			_XT_CARTELLEWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra prepara documento
 */
-#define  _XT_CARTELLEWAP (gXtWapCbCode + 11)
+#define  _XT_CARTELLEWAP (MainXT::GetInstance().GetCustomCBCode() + 12)
 
 /*!
 	@defined			_XT_PREPARADOCWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la finestra prepara documento
 */
-#define  _XT_PREPARADOCWAP (gXtWapCbCode + 12)
+#define  _XT_PREPARADOCWAP (MainXT::GetInstance().GetCustomCBCode() + 13)
 
 /*!
 	@defined			_XT_PREPARADOCWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la palette
 */
-#define  _XT_INFOPALETTEWAP (gXtWapCbCode + 13)
+#define  _XT_INFOPALETTEWAP (MainXT::GetInstance().GetCustomCBCode() + 14)
 
 /*!
 	@defined			_XT_ABOUTWAP
 	@abstract		WAP.
 	@discussion		Il cbcode per la palette
 */
-#define _XT_ABOUTWAP (gXtWapCbCode + 14)
+#define _XT_ABOUTWAP (MainXT::GetInstance().GetCustomCBCode() + 15)
 
 #endif // XTNecro_h

@@ -105,8 +105,6 @@ static bool8 gOpenPalettesCalled = FALSE;
 HINSTANCE gXTensionHinst = NULL;
 #endif //WINOS
 
-int32 gXtWapCbCode = NULL;
-
 // FSSpec cartella XTension
 FSSpec gFSSpecXtension= {0, 0, ""};
 

@@ -15,6 +15,7 @@
 // QXP2017
 
 #include "Main.h"
+#include "MainXT.h"
 
 // LEGACY: QXP60
 // LEGACY: QXP60

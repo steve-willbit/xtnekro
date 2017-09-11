@@ -657,7 +657,7 @@ void ChiudiPaletta(void)
   wlochndl = loadpalettepos(0,box,0,appname);
   /* All we save here is the showing flag. */
   (**wlochndl).a.locslug = showingflag;
-  savepalettepos(wlochndl);
+  savepalettepos(wlochndl, 0);
 
 #ifdef OPERATION
 
@@ -732,7 +732,7 @@ bool16 CALLBACK WAPPaletta(
 
 		case WM_COMMAND:
 	case WM_DESTROY:
-		savepalettepos(wlochndl);
+		savepalettepos(wlochndl, 0);
 		wlochndl = NULL;
 		break;
 

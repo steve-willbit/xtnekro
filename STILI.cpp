@@ -114,26 +114,26 @@ static AssetUID CercaNomeStileForte(uchar* nomestile) throw()
 	DocID docID = INVAL_DOCID;
 	xtget_curdoc(&docID);
 	DocRef docRef = XTGetDocRefFromDocID(docID);
-	AssetSpaceRef assetSpaceRef = XTGetDocAssetSpace(docRef);
-	if (assetSpaceRef == INVAL_ASSETSPACEREF) {
-		assetSpaceRef = XTCreateDefaultAssetSpace();
+	AssetSpaceRef docAssetSpaceRef = XTGetDocAssetSpace(docRef);
+	if (docAssetSpaceRef == INVAL_ASSETSPACEREF) {
+		docAssetSpaceRef = XTCreateDefaultAssetSpace();
 	}
 
 	bool8 found = FALSE;
 
 	int32 index = 0;   
-	int32 assetCount = XTGetAssetCount(assetSpaceRef, kAssetParaStyle);   
+	int32 assetCount = XTGetAssetCount(docAssetSpaceRef, kAssetParaStyle);   
 	for(index = 0; index < assetCount; index++) {   
 		QXStringRef  assetNameRef = NULL;   
 		AssetUID paraAssetUID = INVAL_ASSETUID;   
 
-		APIERR apiErr = XTGetAsset(assetSpaceRef, kAssetParaStyle, index, &paraAssetUID);    
+		APIERR apiErr = XTGetAsset(docAssetSpaceRef, kAssetParaStyle, index, &paraAssetUID);    
 		if ( apiErr == ERR_SUCCESS && paraAssetUID != INVAL_ASSETUID) { 
 
-			apiErr = XTGetAssetName(assetSpaceRef, kAssetParaStyle, paraAssetUID, &assetNameRef);     
+			apiErr = XTGetAssetName(docAssetSpaceRef, kAssetParaStyle, paraAssetUID, &assetNameRef);     
 			
 			QXStringCompareResult cmpResult;   
-			QXStringCompare(stileRef, 0, kNoPos, assetNameRef, 0, kNoPos, &cmpResult);
+			QXStringICompare(stileRef, 0, kNoPos, assetNameRef, 0, kNoPos, kQXSCaseCompareDefault, &cmpResult);
 
 			QXStringDestroy(assetNameRef);   
 
@@ -145,12 +145,10 @@ static AssetUID CercaNomeStileForte(uchar* nomestile) throw()
 		}   
 	}   
 
-	XTDeleteAssetSpace(assetSpaceRef);
-
 	QXStringDestroy(stileRef);
 
 	if ( !found ) {
-		lIndiceStilePara = (AssetUID) -1;
+		lIndiceStilePara = INVAL_ASSETUID;
 
 		ConcatenaAllaStringaErrore(nomestile);
 		DaiErrore(kErroreStileNonDefinito);
@@ -195,7 +193,7 @@ static AssetUID CercaNomeStileDebole(uchar* nomestile) throw()
 			apiErr = XTGetAssetName(assetSpaceRef, kAssetCharStyle, charAssetUID, &assetNameRef);     
 			
 			QXStringCompareResult cmpResult;   
-			QXStringCompare(stileRef, 0, kNoPos, assetNameRef, 0, kNoPos, &cmpResult);
+			QXStringICompare(stileRef, 0, kNoPos, assetNameRef, 0, kNoPos, kQXSCaseCompareDefault, &cmpResult);
 
 			QXStringDestroy(assetNameRef);   
 
@@ -335,8 +333,8 @@ void XTAPI InizializzaErroreSulloStile() throw()
 * ------------------------------------------------------------------------ */
 void XTAPI ImpostaCaratteristicheFiletto(uchar *nomestile) throw()
 {
-	AssetUID lIndiceStile = 0;
- 	parastylerec lStile; // vecchio stylerec
+	AssetUID lIndiceStile = INVAL_ASSETUID;
+ 	XTUParaStyleRec lStile; // vecchio stylerec
  	bool8 lVecchioErroreSulloStile = FALSE;
  	
  	// prendo l'impostazione sull'errore sullo stile
@@ -345,21 +343,33 @@ void XTAPI ImpostaCaratteristicheFiletto(uchar *nomestile) throw()
 	
 	// cerca lo stile da applicare
 	lIndiceStile = CercaNomeStileForte(nomestile);
-	
-	if (getparastylebyindex(lIndiceStile, &lStile) == TRUE) 
-	{
-		// controllo che lo stile abbia un filetto superiore e
-		// che la lughezza non sia sul testo 
-		if (lStile.p.a.ruleabove == TRUE && lStile.p.a.rabovetextlen == FALSE) 
-		{							  								  		
-			gCaratteristicheFiletto.definito = TRUE;
-			gCaratteristicheFiletto.spessore = lStile.p.rabove.width;
-			gCaratteristicheFiletto.stile = lStile.p.rabove.style;
-			gCaratteristicheFiletto.colore = lStile.p.rabove.qColor.mColorID;
-			gCaratteristicheFiletto.intensita = lStile.p.rabove.qColor.mShade;
-			gCaratteristicheFiletto.rientroSinistro = lStile.p.rabove.leftindent;
-			gCaratteristicheFiletto.rientroDestro = lStile.p.rabove.rightindent;
-			return;
+
+	if ( lIndiceStile != INVAL_ASSETUID ) { 
+		DocID docID = INVAL_DOCID;
+		xtget_curdoc(&docID);
+		DocRef docRef = XTGetDocRefFromDocID(docID);
+		AssetSpaceRef docAssetSpaceRef = XTGetDocAssetSpace(docRef);
+		if (docAssetSpaceRef == INVAL_ASSETSPACEREF) {
+			docAssetSpaceRef = XTCreateDefaultAssetSpace();
+		}
+
+		zerodata(&lStile, sizeof(XTUParaStyleRec));
+		APIERR apiErr = XTUGetParaStyleInfo(docAssetSpaceRef, lIndiceStile, &lStile);
+		if ( ERROR_SUCCESS == apiErr ) 
+		{
+			// controllo che lo stile abbia un filetto superiore e
+			// che la lughezza non sia sul testo 
+			if (lStile.p.a.ruleabove == TRUE && lStile.p.a.rabovetextlen == FALSE) 
+			{							  								  		
+				gCaratteristicheFiletto.definito = TRUE;
+				gCaratteristicheFiletto.spessore = lStile.p.rabove.width;
+				gCaratteristicheFiletto.stile = lStile.p.rabove.style;
+				gCaratteristicheFiletto.colore = lStile.p.rabove.qColor.mColorID;
+				gCaratteristicheFiletto.intensita = lStile.p.rabove.qColor.mShade;
+				gCaratteristicheFiletto.rientroSinistro = lStile.p.rabove.leftindent;
+				gCaratteristicheFiletto.rientroDestro = lStile.p.rabove.rightindent;
+				return;
+			}
 		}
 	}
 	

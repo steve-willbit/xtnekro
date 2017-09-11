@@ -29,11 +29,6 @@
 // the QuarkXPress language (only valid after XT_SETLANGUAGE call)
 int16 gXTensionLanguage = verItaly;
 
-#if WINOS
-// handle all'istanza dell'XTension
-extern HINSTANCE gXTensionHinst;
-#endif // WINOS
-
 // STATICS
 // STATICS
 // STATICS
@@ -89,8 +84,9 @@ int16 XTAPI DBP::GetResourceString(uchar* s, const int16 r, const int16 n, const
 #endif // MACOS
 
 #if WINOS
-	return(LoadString(gXTensionHinst,r + LANGUAGE + n,(char*)s,sz));
+	return(LoadString(hinst,r + LANGUAGE + n,(char*)s,sz));
 #endif // WINOS
+
 } // DBP::GetResourceString
 
 /* ------------------------------------------------------------------------ *
@@ -109,8 +105,9 @@ int16 XTAPI DBP::GetResourceString(char* s, const int16 r, const int16 n, const 
 #endif // MACOS
 
 #if WINOS
-	return(LoadString(gXTensionHinst,r + LANGUAGE + n,(char*)s, sz));
+	return(LoadString(hinst,r + LANGUAGE + n,(char*)s, sz));
 #endif // WINOS
+
 } // DBP::GetResourceString
 
 /* ------------------------------------------------------------------------ *
@@ -126,6 +123,7 @@ int16 XTAPI DBP::GetResourceString(std::string& s, const int16 r, const int16 n,
 	s = m;
 
 	return(toRet);
+
 } // DBP::GetResourceString
 
 /* ------------------------------------------------------------------------ *

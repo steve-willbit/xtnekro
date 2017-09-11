@@ -17,9 +17,9 @@
 #include "Main.h"
 #include "MainXT.h"
 
-// LEGACY: QXP60
-// LEGACY: QXP60
-// LEGACY: QXP60
+// LEGACY
+// LEGACY
+// LEGACY
 
 extern "C" {
 #include "XP_XTLegacy.h" 

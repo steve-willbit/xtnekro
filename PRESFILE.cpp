@@ -598,9 +598,9 @@ errorixtension XTAPI PresenzaFileDaQuattroD(uchar  *name, bool8 *risultato) thro
 		return(kNessunErrore);
 	}
 
-	// verifico che il file non sia gi… aperto in scrittura
-	lIdentificatoreFile = _lopen((char*)lNomeFileDaImpaginare, OF_SHARE_EXCLUSIVE); // <-- was FSOpen
-	if (lIdentificatoreFile == HFILE_ERROR) 
+	// verifico che il file non sia gia' aperto in scrittura
+	OSErr osErr = HOpenDF(0, 0, lNomeFileDaImpaginare, fsRdWrPerm, &lIdentificatoreFile); // <-- was FSOpen
+	if ( osErr != noErr ) 
 	{
 		// significa che non e' possibile ancora leggere il file
 		(*risultato) = FALSE;
@@ -608,8 +608,8 @@ errorixtension XTAPI PresenzaFileDaQuattroD(uchar  *name, bool8 *risultato) thro
 	}
 
 	// leggo la lunghezza del file
-	OSErr err = GetEOF(lIdentificatoreFile, &lLunghezza); // _filelength(lIdentificatoreFile);
-	if (err != noErr) // lLunghezza == -1
+	osErr = GetEOF(lIdentificatoreFile, &lLunghezza); // _filelength(lIdentificatoreFile);
+	if (osErr != noErr) // lLunghezza == -1
 	{
 		// significa che non e' possibile ancora leggere il file
 		(*risultato) = FALSE;
@@ -624,8 +624,8 @@ errorixtension XTAPI PresenzaFileDaQuattroD(uchar  *name, bool8 *risultato) thro
 	}
 
 	// lIdentificatoreFile = _lclose(lIdentificatoreFile);
-	err = FSClose(lIdentificatoreFile);
-	if ( err !=  noErr) 
+	osErr = FSClose(lIdentificatoreFile);
+	if ( osErr !=  noErr) 
 	{
 		// significa che non Š possibile ancora leggere il file
 		(*risultato) = FALSE;
@@ -716,8 +716,8 @@ errorixtension XTAPI PresenzaFileDaQuattroD(uchar  *name, bool8 *risultato) thro
 
 		return(kNessunErrore);
 
-	} else 
-	{
+	} 
+	else {
 		SysBeep(1);
 		return(kErroreDelCodice);
 	}
@@ -731,7 +731,7 @@ errorixtension XTAPI PresenzaFileDaQuattroD(uchar  *name, bool8 *risultato) thro
 errorixtension XTAPI PrendiFileElencoImmagini(uchar *name) throw()
 {
 	// identificatore del file da leggere
-	HFILE lIdentificatoreFile = 0;
+	int16 lIdentificatoreFile = 0;
 	// lunghezza del file aperto
 	int32 lLunghezza = 0;
 	// per caricare l'estensione del file da impaginare
@@ -791,16 +791,16 @@ errorixtension XTAPI PrendiFileElencoImmagini(uchar *name) throw()
 		return(kNessunFileElencoImmagini);
 	}
 
-	// verifico che il file non sia gi… aperto in scrittura
-	lIdentificatoreFile = _lopen((char*)lNomeFileDaControllare, OF_SHARE_EXCLUSIVE); // <-- was FSOpen
-	if (lIdentificatoreFile == HFILE_ERROR) 
+	// verifico che il file non sia gia' aperto in scrittura
+	OSErr osErr = HOpenDF(0, 0, lNomeFileDaControllare, fsRdWrPerm, &lIdentificatoreFile); // <-- was FSOpen
+	if ( osErr != noErr ) 
 	{
 		// significa che non e' possibile ancora leggere il file
 		return(kFileElencoImmaginiNonUsabile);
 	}
 
 	// leggo la lunghezza del file
-	OSErr err = GetEOF(lIdentificatoreFile, &lLunghezza); // _filelength(lIdentificatoreFile);
+	osErr = GetEOF(lIdentificatoreFile, &lLunghezza); // _filelength(lIdentificatoreFile);
 	if (lLunghezza == -1) 
 	{
 		// significa che non e' possibile ancora leggere il file 
@@ -1046,7 +1046,7 @@ errorixtension PresenzaFileDaAppWare(char *name, Boolean *risultato)
 	wsprintf( lNomeFileDaAppWare, "%s\\%s", kStrCartellaDaAppWare, myffblk.ff_name );
 //	strcpy( lNomeFileDaAppWare, myffblk.ff_name );
 	/* verifico che il file non sia gi… aperto in scrittura */
-	lIdentificatoreFile = _lopen(lNomeFileDaAppWare, OF_SHARE_EXCLUSIVE);
+	lIdentificatoreFile = _lopen(lNomeFileDaAppWare, OF_SHARE_EXCLUSIVE); // remember to use HOpenDF
 	if (lIdentificatoreFile == HFILE_ERROR) {
 		/* significa che non Š possibile ancora leggere il file */
 		return(kNessunErrore);

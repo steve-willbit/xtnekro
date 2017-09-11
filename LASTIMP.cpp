@@ -267,9 +267,6 @@ static errorixtension XTAPI ApriDatiUltimaImpaginazione(uchar* nomefiledati, Boo
 	}
 	
 	// apertura del file dei dati dell'ultima impaginazione
-	//gErrore = FSOpen(lNomeFileUltimaImpaginazione,
-	//				 0,
-	//				 &gIdFileUltimaImpaginazione);
 	gErrore = XTOpenFileDataFork(fileInfoRef, fsWrPerm, &gIdFileUltimaImpaginazione);
 	if (gErrore != noErr) 
 	{

@@ -38,6 +38,7 @@
 #include "SpaceCol.h"
 #include "XTNecro.h"
 
+#include "PreparaDocWap.h"
 #include "PrepDoc.h"
 
 // CONSTS
@@ -60,334 +61,40 @@ typedef struct
 // STATICS GLOBALS
 // STATICS GLOBALS
 
-// stringa d'utilita'
-static uchar tmpstr[kDimensioneStringhe];
-
 // per memorizzare il numero di moduli per ogni colonna
 static infoingombri *gPtrInfoIngombri = NULL;
 
-// per il popup per scegliere il numero delle pagine da creare
-static MenuHandle gHndlMenuPopUpPagine = NULL;
-
-// per il popup per associare un mastro alle pagine
-static MenuHandle gHndlMenuPopUpPagineMastro = NULL;
-
-// per il popup per scegliere il numero delle colonne da creare
-static MenuHandle gHndlMenuPopUpColonne = NULL;
-
-// per il popup per scegliere il numero dei moduli da creare
-static MenuHandle gHndlMenuPopUpModuli = NULL;
-
-// per il check per cancellare l'associazione delle pagine mastro
-static int16 gCheckCancella = FALSE;
-
-// per il popup per associare un mastro alle pagine
-static MenuHandle gHndlMenuPopUpNomiMastro = NULL;
-
-// per il check per fare la compensazione
-static int16 gCheckCompensa = FALSE;
-
-// per il popup per scegliere il numero delle colonne della prima pagina
-static MenuHandle gHndlMenuPopUpColonnaPrimaPagina = NULL;
-
-// per il popup per scegliere il numero dei moduli della prima pagina
-static MenuHandle gHndlMenuPopUpModuliPrimaPagina = NULL;
-
-// PROTOTYPES
-// PROTOTYPES
-// PROTOTYPES
-
-/*! 
-	@function			ImpostaPreparaDocumento
-	@abstract		preparazione documento
-	@discussion		Imposta gli item per prepara documento
-
-					21 Aprile 2005 - Fabrizio Taretto.
-
-	@param			nessuno.
-	@result			nessuno.
-*/
-static void XTAPI ImpostaPreparaDocumento() throw();
-
-/*! 
-	@function			InserisciColonneDiIngombro
-	@abstract		preparazione documento
-	@discussion		Inserisco tutti i box di ingombro
-
-					26 Aprile 2005 - Fabrizio Taretto.
-
-	@param			nessuno.
-	@result			nessuno.
-*/
-static void XTAPI InserisciColonneDiIngombro() throw();
-
-/*! 
-	@function			CancelloBoxIngombro
-	@abstract		preparazione documento
-	@discussion		Cancello tutti i box di ingombro
-
-					21 Aprile 2005 - Fabrizio Taretto.
-
-	@param			nessuno.
-	@result			nessuno.
-*/
-static void XTAPI CancelloBoxIngombro() throw();
-
-/*! 
-	@function			InserisciPagineColonneEModuli
-	@abstract		preparazione documento
-	@discussion		Inserisce le pagine al documento corrente. Il documento finale sara' sempre
-					formato dai parametri passati. Se il documento ha gia' piu' di una pagina le pagine
-					in piu' vengono cancellate
-
-					27 Aprile 2005 - Fabrizio Taretto.
-
-	@param			pagine - pagine da inserire
-	@param			colonne - colonne da inserire
-	@param			moduli - moduli da inserire
-	@param			cancella - per sapere se cancellare l'associazione alle pagine mastro.
-	@result			nessuno.
-*/
-static void XTAPI InserisciPagineColonneEModuli(int32 pagine, int32 colonne, int32 moduli, Boolean cancella) throw();
-
-/*! 
-	@function			ModificoIngombroPrimaPagina
-	@abstract		preparazione documento
-	@discussion		Togli dall'ingombro della prima pagina i moduli passati.
-
-					27 Aprile 2005 - Fabrizio Taretto.
-
-	@param			moduli - moduli da togliere
-	@result			nessuno.
-*/
-static void XTAPI ModificoIngombroPrimaPagina(int16 moduli) throw();
-
-/*! 
-	@function			AssociaPaginaMastro
-	@abstract		preparazione documento
-	@discussion		Associa una pagina mastro ad una pagina del documento
-
-					27 Aprile 2005 - Fabrizio Taretto.
-
-	@param			pagina - pagina a cui applicare la mastro
-	@param			mastro - mastro da applicare
-	@param			compensa - TRUE se si deve compensare sulla prima pagina
-	@result			nessuno.
-*/
-static void XTAPI AssociaPaginaMastro(int16 pagina, int16 mastro, Boolean compensa) throw();
-
-/*! 
-	@function			ModificaPrimaPagina
-	@abstract		preparazione documento
-	@discussion		Modifica la prima pagina inserendo gli ingombri necessari
-
-					27 Aprile 2005 - Fabrizio Taretto.
-
-	@param			colonna - colonna in cui inserire l'ingombro
-	@param			moduli - numero dei moduli da inserire
-	@result			nessuno.
-*/
-static void XTAPI ModificaPrimaPagina(int16 colonna, int16 moduli) throw();
-
-/*! 
-	@function			ImpostaPagineMastro
-	@abstract		preparazione documento
-	@discussion		Imposta gli item per associare un mastro alle pagine
-
-					21 Aprile 2005 - Fabrizio Taretto.
-
-	@param			ptrfinestra puntatore alla finestra.
-	@result			nessuno.
-*/
-static void XTAPI ImpostaPagineMastro() throw();
-
-/*! 
-	@function			ImpostaPrimaPagina
-	@abstract		preparazione documento
-	@discussion		Imposta gli item per modificare la prima pagina
-
-					22 Aprile 2005 - Fabrizio Taretto.
-
-	@param			ptrfinestra puntatore alla finestra.
-	@result			nessuno.
-*/
-static void XTAPI ImpostaPrimaPagina() throw();
-
-/*! 
-	@function			AggiornaPagine
-	@abstract		preparazione documento
-	@discussion		Aggiorna il popup per dire quante pagine inserire nella prepara documento
-
-					22 Aprile 2005 - Fabrizio Taretto.
-
-	@param			nessuno
-	@result			nessuno.
-*/
-static void XTAPI AggiornaPagine() throw();
-
-/*! 
-	@function			AggiornaPagineMastro
-	@abstract		preparazione documento
-	@discussion		Aggiorna il popup per associare alle pagine del documento crrete le pagine mastro
-
-					22 Aprile 2005 - Fabrizio Taretto.
-
-	@param			param2 item da aggiornare
-	@result			nessuno.
-*/
-static void XTAPI AggiornaPagineMastro() throw();
-
-/*! 
-	@function			CercaBoxIngombro
-	@abstract		preparazione documento
-	@discussion		Cerca sul documento corrente i box di ingombro.
-
-					21 Aprile 2005 - Fabrizio Taretto.
-
-	@param			nessuno.
-	@result			nessuno.
-*/
-static void XTAPI CercaBoxIngombro() throw();
-
+//// per il popup per scegliere il numero delle pagine da creare
+//static MenuHandle gHndlMenuPopUpPagine = NULL;
+//
+//// per il popup per associare un mastro alle pagine
+//static MenuHandle gHndlMenuPopUpPagineMastro = NULL;
+//
+//// per il popup per scegliere il numero delle colonne da creare
+//static MenuHandle gHndlMenuPopUpColonne = NULL;
+//
+//// per il popup per scegliere il numero dei moduli da creare
+//static MenuHandle gHndlMenuPopUpModuli = NULL;
+//
+//// per il popup per associare un mastro alle pagine
+//static MenuHandle gHndlMenuPopUpNomiMastro = NULL;
+//
+//// per il popup per scegliere il numero delle colonne della prima pagina
+//static MenuHandle gHndlMenuPopUpColonnaPrimaPagina = NULL;
+//
+//// per il popup per scegliere il numero dei moduli della prima pagina
+//static MenuHandle gHndlMenuPopUpModuliPrimaPagina = NULL;
 
 // FUNCTIONS
 // FUNCTIONS
 // FUNCTIONS
-
-/* ------------------------------------------------------------------------ *
-
-	ImpostaPreparaDocumento
-
-* ------------------------------------------------------------------------ */
-static void XTAPI ImpostaPreparaDocumento() throw()
-{
-	// indice per scorrere le voci del menu
-	int16 lColonneDoc;
-	int16 lIndiceVoci = 0;
-	// per calcolare il numero di pagine da inserire
-	int16 lNumeroPagine = 0;
-	// per calcolare le pagine di ingombro
-	uint32 lPagine = 0;
-	// per calcolare le colonne di ingombro
-	uint32 lColonne = 0;
-	// per calcolare i moduli di ingombro
-	uint32 lModuli = 0;
-	// per corregere i moduli da preparare
-	Fixed lCorrezione = 0; 
-	
-	// calcolo le pagine, colonne e moduli
-	CalcolaPagineColonneEModuli(gLongIngombroTotale,
-								&lPagine,
-								&lColonne,
-								NULL,
-								&lModuli);
-								
-	// calcolo la correnzione dei moduli
-	lCorrezione = gXtPreferences.documentoPref.moduliColonna * gXtPreferences.documentoPref.altezzaModulo;
-	lCorrezione -= PrendiAltezzaColonna();
-	lCorrezione *= (lColonne + 1) * lPagine * PrendiNumeroColonne();
-
-	assert(0 != gXtPreferences.documentoPref.altezzaModulo);
-
-	lCorrezione /= gXtPreferences.documentoPref.altezzaModulo;
-
-	lColonneDoc =  PrendiNumeroColonne();
-
-	// calcolo pagine colonne e moduli
-	assert(lColonneDoc * gXtPreferences.documentoPref.moduliColonna);
-
-	lPagine = lModuli / (lColonneDoc * gXtPreferences.documentoPref.moduliColonna);
-	lModuli -= (lPagine * lColonneDoc * gXtPreferences.documentoPref.moduliColonna);
-
-	assert(0 != gXtPreferences.documentoPref.moduliColonna);
-
-	lColonne = lModuli / gXtPreferences.documentoPref.moduliColonna;
-	lModuli -= (lColonne * gXtPreferences.documentoPref.moduliColonna);
-	
-	// controllo quante pagine inserire nel menu
-	lNumeroPagine = (numpages() > lPagine ? numpages() : lPagine);							
-								
-	// aggiungo le voci al menu' delle pagine
-	std::vector<int32> listaPagine;
-	for (lIndiceVoci = 0; lIndiceVoci <= lNumeroPagine + 1; lIndiceVoci++) 
-	{
-		listaPagine.push_back(lIndiceVoci);
-	}								
-	for (int16 i=0; i < listaPagine.size(); i++)
-	{
-		// per conversione interi
-		std::ostringstream listValueStr;
-		listValueStr << listaPagine.at(i);
-		xrow row;
-		// disabilito il redraw
-		xd_lst_enableupdates(PAGINEPREPDOCPOPID, TRUE);
-		xd_lst_addrow(PAGINEPREPDOCPOPID, IR_BOTTOM ,&row);
-		xd_lst_setrowtext(PAGINEPREPDOCPOPID, row, (uchar*) listValueStr.str().c_str());	
-		xd_lst_enableupdates(PAGINEPREPDOCPOPID, FALSE);
-	}
-	// setto la selezione
-	if (lPagine != 0)
-		xd_lst_setselection(PAGINEPREPDOCPOPID, lPagine);
-	else
-		xd_lst_setselection(PAGINEPREPDOCPOPID, 0);
-	
-	// aggiungo le voci al menu delle colonne
-	std::vector<int32> listaColonne;
-	for (lIndiceVoci = 0; lIndiceVoci < PrendiNumeroColonne(); lIndiceVoci++) 
-	{
-		listaColonne.push_back(lIndiceVoci);
-	}								
-	for (int16 i=0; i < listaColonne.size(); i++)
-	{
-		// per conversione interi
-		std::ostringstream listValueStr;
-		listValueStr << listaColonne.at(i);
-		xrow row;
-		xd_lst_enableupdates(COLONNEPREPDOCPOPID, TRUE);
-		xd_lst_addrow(COLONNEPREPDOCPOPID, IR_BOTTOM ,&row);
-		xd_lst_setrowtext(COLONNEPREPDOCPOPID, row, (uchar*) listValueStr.str().c_str());	
-		xd_lst_enableupdates(COLONNEPREPDOCPOPID, false);
-	}
-	// setto la selezione
-	if (lColonne >= PrendiNumeroColonne()) 
-		xd_lst_setselection(COLONNEPREPDOCPOPID, 0);
-	else
-		xd_lst_setselection(COLONNEPREPDOCPOPID, lColonne);
-	
-	// aggiungo le voci al menu dei moduli
-	std::vector<int32> listaModuli;
-	for (lIndiceVoci = 0; lIndiceVoci < gXtPreferences.documentoPref.moduliColonna; lIndiceVoci++) 
-	{
-		listaModuli.push_back(lIndiceVoci);
-	}								
-	for (int16 i=0; i < listaModuli.size(); i++)
-	{
-		// per conversione interi
-		std::ostringstream listValueStr;
-		listValueStr << listaModuli.at(i);
-		xrow row;
-		xd_lst_enableupdates(MODULIPREPDOCPOPID, TRUE);
-		xd_lst_addrow(MODULIPREPDOCPOPID, IR_BOTTOM ,&row);
-		xd_lst_setrowtext(MODULIPREPDOCPOPID, row, (uchar*) listValueStr.str().c_str());	
-		xd_lst_enableupdates(MODULIPREPDOCPOPID, FALSE);
-	}
-	// setto la selezione
-	if (lModuli >= gXtPreferences.documentoPref.moduliColonna)
-		xd_lst_setselection(MODULIPREPDOCPOPID, 1);
-	else
-		xd_lst_setselection(MODULIPREPDOCPOPID, lModuli);
-	
-	// imposto il check per la cancellazione delle mastro
-	xd_btnchk_setstate(CANCELLAMASTROCHECKID, gCheckCancella);
-	
-} // ImpostaPreparaDocumento
 
 /* ------------------------------------------------------------------------ *
 
 	InserisciColonneDiIngombro
 
 * ------------------------------------------------------------------------ */
-static void XTAPI InserisciColonneDiIngombro() throw()
+void XTAPI InserisciColonneDiIngombro() throw()
 {
 	// indice per scorrere le colonne
 	int16 lColonna = 0;
@@ -418,7 +125,7 @@ static void XTAPI InserisciColonneDiIngombro() throw()
 	CancelloBoxIngombro
 
 * ------------------------------------------------------------------------ */
-static void XTAPI CancelloBoxIngombro() throw()
+void XTAPI CancelloBoxIngombro() throw()
 {
 	for (int16 sprd = 1; sprd <= numsprds();sprd++) 
 	{
@@ -443,7 +150,7 @@ static void XTAPI CancelloBoxIngombro() throw()
 	InserisciPagineColonneEModuli
 
 * ------------------------------------------------------------------------ */
-static void XTAPI InserisciPagineColonneEModuli(int32 pagine, int32 colonne, int32 moduli, Boolean cancella) throw()
+void XTAPI InserisciPagineColonneEModuli(int32 pagine, int32 colonne, int32 moduli, Boolean cancella) throw()
 {
 	// per sapere il risultato dell'inserimento delle pagine
 	Boolean lRisultato = FALSE;
@@ -562,7 +269,7 @@ static void XTAPI InserisciPagineColonneEModuli(int32 pagine, int32 colonne, int
 	AssociaPaginaMastro
 	
 * ------------------------------------------------------------------------ */
-static void XTAPI AssociaPaginaMastro(int16 pagina, int16 mastro, Boolean compensa) throw()
+void XTAPI AssociaPaginaMastro(int16 pagina, int16 mastro, Boolean compensa) throw()
 {
 	// per calcolare quanti moduli sone presenti sulla pagina
 	int16 lNumeroModuliPagina = 0;
@@ -642,7 +349,7 @@ static void XTAPI AssociaPaginaMastro(int16 pagina, int16 mastro, Boolean compen
 	ModificoIngombroPrimaPagina
 
 * ------------------------------------------------------------------------ */
-static void XTAPI ModificoIngombroPrimaPagina(int16 moduli) throw()
+void XTAPI ModificoIngombroPrimaPagina(int16 moduli) throw()
 {
 	// per scorrerele colonne
 	int16 lColonna = 0;
@@ -720,7 +427,7 @@ static void XTAPI ModificoIngombroPrimaPagina(int16 moduli) throw()
 	ModificaPrimaPagina
 
 * ------------------------------------------------------------------------ */
-static void XTAPI ModificaPrimaPagina(int16 colonna, int16 moduli) throw()
+void XTAPI ModificaPrimaPagina(int16 colonna, int16 moduli) throw()
 {
 	// per prendere le info sugli ingombri
 	infoingombri *lPtrInfoIngombri = NULL;
@@ -743,211 +450,13 @@ static void XTAPI ModificaPrimaPagina(int16 colonna, int16 moduli) throw()
 	InserisciColonneDiIngombro();
 } // ModificaPrimaPagina
 
-/* ------------------------------------------------------------------------ *
-
-	ImpostaPagineMastro
-
-* ------------------------------------------------------------------------ */
-static void XTAPI ImpostaPagineMastro() throw()
-{
-	// indice per scorrere le voci del menu
-	int16 lIndiceVoci = 0;
-	// per contare le pagine mastro
-	int16 lNumeroNomiMastro = 0;
-
-	// aggiungo una pagina al menu
-	xrow row;
-	xd_lst_enableupdates(PAGINEMASTROPOPID, TRUE);
-	xd_lst_addrow(PAGINEMASTROPOPID, IR_BOTTOM ,&row);
-	xd_lst_setrowtext(PAGINEMASTROPOPID, row, (uchar*) "1");
-	xd_lst_enableupdates(PAGINEMASTROPOPID, FALSE);
-	xd_lst_setselection(PAGINEMASTROPOPID, 0);
-
-	// aggiungo i nomi delle pagine mastro
-	lNumeroNomiMastro = nummastersprds();
-	std::vector<std::string> listaMastri;
-	for (lIndiceVoci = kPaginaMastroA; lIndiceVoci <= lNumeroNomiMastro; lIndiceVoci++) 
-	{
-		tmpstr[0] = '\0';
-		getmastername(lIndiceVoci, tmpstr);
-		std::string tmpString;
-		tmpString = (char*)tmpstr;
-		listaMastri.push_back(tmpString);
-	}
-	
-	for (int16 i=0; i < listaMastri.size(); i++)
-	{
-		xrow row;
-		xd_lst_enableupdates(MASTROPOPID, TRUE);
-		xd_lst_addrow(MASTROPOPID, IR_BOTTOM ,&row);
-		xd_lst_setrowtext(MASTROPOPID, row, (uchar*) listaMastri.at(i).c_str());	
-		xd_lst_enableupdates(MASTROPOPID, FALSE);
-	}
-
-	// seleziono la voce di menu
-	xd_lst_setselection(MASTROPOPID, 0);
-
-	// imposto il check della compensazione
-	xd_btnchk_setstate(COMPENSAZIONECHECKID, gCheckCompensa);
-
-	// disabilito il bottone di associa
-	if (listaMastri.size() <= 1)
-		xd_setcontrolstate(ASSOCIABTNID, XCS_DISABLED);
-	else
-		xd_setcontrolstate(ASSOCIABTNID, XCS_ENABLED);
-
-} // ImpostaPagineMastro
-
-/* ------------------------------------------------------------------------ *
-
-	ImpostaPrimaPagina
-
-* ------------------------------------------------------------------------ */
-static void XTAPI ImpostaPrimaPagina() throw()
-{
-	// indice per scorrere le voci del menu
-	int16 lIndiceVoci = 0;
-	
-	// aggiungo le voci al menu delle colonne della prima pagina
-	std::vector<int32> listaColonneIngombri;
-	for (lIndiceVoci = 1; lIndiceVoci <= PrendiNumeroColonne(); lIndiceVoci++) 
-	{
-		 listaColonneIngombri.push_back(lIndiceVoci);
-	}
-	
-	for (int16 i=0; i < listaColonneIngombri.size(); i++)
-	{
-		// per conversione interi
-		std::ostringstream listValueStr;
-		listValueStr << listaColonneIngombri.at(i);
-		xrow row;
-		xd_lst_enableupdates(COLONNEINGOMBRIPOPID, TRUE);
-		xd_lst_addrow(COLONNEINGOMBRIPOPID, IR_BOTTOM ,&row);
-		xd_lst_setrowtext(COLONNEINGOMBRIPOPID, row, (uchar*) listValueStr.str().c_str());	
-		xd_lst_enableupdates(COLONNEINGOMBRIPOPID, FALSE);
-	}
-
-	// seleziono la voce di menu
-	xd_lst_setselection(COLONNEINGOMBRIPOPID, 0);
-
-	// aggiungo le voci al menu dei moduli della prima pagina
-	std::vector<int32> listaModuliIngombri;
-	for (lIndiceVoci = 0; lIndiceVoci <= gXtPreferences.documentoPref.moduliColonna; lIndiceVoci++) 
-	{
-		listaModuliIngombri.push_back(lIndiceVoci);
-	}
-
-	for (int16 i=0; i < listaModuliIngombri.size(); i++)
-	{
-		// per conversione interi
-		std::ostringstream listValueStr;
-		listValueStr << listaModuliIngombri.at(i);
-		xrow row;
-		xd_lst_enableupdates(MODULIINGOMBRIPOPID, TRUE);
-		xd_lst_addrow(MODULIINGOMBRIPOPID, IR_BOTTOM ,&row);
-		xd_lst_setrowtext(MODULIINGOMBRIPOPID, row, (uchar*) listValueStr.str().c_str());	
-		xd_lst_enableupdates(MODULIINGOMBRIPOPID, FALSE);
-	}
-
-	// seleziono la voce di menu
-	xd_lst_setselection(MODULIINGOMBRIPOPID, 0);
-} // ImpostaPrimaPagina
-
-/* ------------------------------------------------------------------------ *
-
-	AggiornaPagine
-
-* ------------------------------------------------------------------------ */
-static void XTAPI AggiornaPagine() throw()
-{
-	// indice per scorrere le voci del menu
-	int32 lIndiceVoci = 0;
-	// conta il numero delle voci di menu del popup
-	int32 lNumeroVoci = 0;
-	// per prendere quante pagine ci sono attualmente
-	int32 lNumeroPagine = 0;
-	
-	// prendo il numero delle pagine attuali piu uno
-	lNumeroPagine = numpages();
-
-	// conto le voci di menu del popup
-	xd_lst_getrowcount(PAGINEPREPDOCPOPID, &lNumeroVoci);
-
-	if (lNumeroVoci > lNumeroPagine) 
-	{
-		// cancello le pagine in piu'
-		for (lIndiceVoci = lNumeroVoci; lNumeroVoci > lNumeroPagine; lNumeroVoci--) 
-		{
-			xd_lst_deleterow(PAGINEPREPDOCPOPID, lIndiceVoci);
-		}
-	} 
-	else if (lNumeroVoci < lNumeroPagine) 
-	{
-		// aggiungo le pagine in meno
-		for (lIndiceVoci = lNumeroVoci + 1; lIndiceVoci <= lNumeroPagine; lIndiceVoci++) 
-		{
-			// per conversione interi
-			std::ostringstream listValueStr;
-			listValueStr << lIndiceVoci;
-			xrow row;
-			xd_lst_enableupdates(PAGINEPREPDOCPOPID, TRUE);
-			xd_lst_addrow(PAGINEPREPDOCPOPID, IR_BOTTOM ,&row);
-			xd_lst_setrowtext(PAGINEPREPDOCPOPID, row, (uchar*) listValueStr.str().c_str());
-			xd_lst_enableupdates(PAGINEPREPDOCPOPID, FALSE);
-		}
-	}
-	
-	// seleziono la voce di menu
-	xd_lst_setselection(PAGINEPREPDOCPOPID, 0);
-} // AggiornaPagine
-
-/* ------------------------------------------------------------------------ *
-
-	AggiornaPagineMastro
-
-* ------------------------------------------------------------------------ */
-static void XTAPI AggiornaPagineMastro() throw()
-{
-	// indice per scorrere le voci del menu
-	int32 lIndiceVoci = 0;
-	// conta il numero delle voci di menu del popup
-	int32 lNumeroVoci = 0;
-	
-	// conto le voci di menu del popup
-	xd_lst_getrowcount(PAGINEMASTROPOPID, &lNumeroVoci);
-
-	if (lNumeroVoci > numpages()) 
-	{
-		// cancello le pagine in piu
-		for (lIndiceVoci = lNumeroVoci; lNumeroVoci > numpages(); lNumeroVoci--) 
-		{
-			xd_lst_deleterow(PAGINEMASTROPOPID, lIndiceVoci);
-		}
-	} 
-	else if (lNumeroVoci < numpages()) 
-	{
-		// aggiungo le pagine in meno
-		for (lIndiceVoci = lNumeroVoci + 1; lIndiceVoci <= numpages(); lIndiceVoci++) 
-		{
-			xrow row;
-			std::ostringstream listValueStr;
-			listValueStr << lIndiceVoci;
-			xd_lst_enableupdates(PAGINEMASTROPOPID, TRUE);
-			xd_lst_addrow(PAGINEMASTROPOPID, IR_BOTTOM ,&row);
-			xd_lst_setrowtext(PAGINEMASTROPOPID, row, (uchar*)listValueStr.str().c_str());
-			xd_lst_enableupdates(PAGINEMASTROPOPID, FALSE);
-		}
-	}
-	// seleziono la voce di menu
-	xd_lst_setselection(PAGINEMASTROPOPID, 0);
-} // AggiornaPagineMastro
 
 /* ------------------------------------------------------------------------ *
 
 	CercaBoxIngombro
 
 * ------------------------------------------------------------------------ */
-static void XTAPI CercaBoxIngombro() throw()
+void XTAPI CercaBoxIngombro() throw()
 {
 	// indice per scorrere le colonne
 	int16 lColonna = 0;
@@ -1000,270 +509,6 @@ static void XTAPI CercaBoxIngombro() throw()
 
 /* ------------------------------------------------------------------------ *
 
-	PreparaDocWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI PreparaDocWap(xdwapparamptr params) throw()
-{
-	// variabili d'utilita'
-	static int16 inhere = 0;
-	uchar tmpStr[kDimensioneStringhe] = "";
-	
-	static xrect windowLocation = {-1,-1,-1,-1};
-
-	xdlgsetupptr dlgSetUp;
-	DialogPtr dlgPtr;
-	xtget_frontmost(&dlgPtr);
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{			
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			dlgSetUp->dlgresid = PREPARADOCDIALOGID;
-			
-			break;
-		}
-		case XDM_DECLARATIONS:
-		{
-			// POP-UP
-			
-			// prepara documento - pagine	
-		 	xd_lstpop_declare(PAGINEPREPDOCPOPID, INVALDLGITEMID, XLSTF_SMALLFONTSIZE, NULL);									
-			// prepara documento - colonne					
-			xd_lstpop_declare(COLONNEPREPDOCPOPID, INVALDLGITEMID, XLSTF_SMALLFONTSIZE, NULL);					
-			// prepara documento - moduli					
-			xd_lstpop_declare(MODULIPREPDOCPOPID, INVALDLGITEMID, XLSTF_SMALLFONTSIZE, NULL);					
-			// mastro - pagine					
-			xd_lstpop_declare(PAGINEMASTROPOPID, INVALDLGITEMID, XLSTF_SMALLFONTSIZE, NULL);					
-			// mastro																		
-			xd_lstpop_declare(MASTROPOPID, INVALDLGITEMID, XLSTF_SMALLFONTSIZE, NULL);					
-			// colonne ingombro										
-			xd_lstpop_declare(COLONNEINGOMBRIPOPID, INVALDLGITEMID, XLSTF_SMALLFONTSIZE, NULL);					
-			// moduli ingombro					
-			xd_lstpop_declare(MODULIINGOMBRIPOPID, INVALDLGITEMID, XLSTF_SMALLFONTSIZE, NULL);					
-								
-			// CHECK - BOX
-			// abilita cancella mastro
-			xd_btnchk_declare(CANCELLAMASTROCHECKID, 0);
-			// abilita compensazione
-			xd_btnchk_declare(COMPENSAZIONECHECKID, 0);
-			
-			// PUSH BTN
-			// prepara
-			xd_btnpsh_declare(PREPARABTNID, FALSE, CHSIM_NONE);
-			// associa
-			xd_btnpsh_declare(ASSOCIABTNID, FALSE, CHSIM_NONE);
-			// applica
-			xd_btnpsh_declare(APPLICABTNID, FALSE, CHSIM_NONE);
-			
-			params->result = XDR_HANDLED;
-								
-			break;
-		}
-		case XDM_LOADCONTROLS:
-		{			
-			// imposto campi sezione prepara documento
-			ImpostaPreparaDocumento();
-			
-			// imposta campi pagine mastro
-			ImpostaPagineMastro();
-			
-			// imposta campi prima pagina
-			ImpostaPrimaPagina();
-
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		case XDM_GAINFOCUS:
-		{
-			switch (params->itemid)
-			{
-				case PAGINEPREPDOCPOPID:
-				{
-					AggiornaPagine();
-					break;
-				}
-				case PAGINEMASTROPOPID:
-				{
-					AggiornaPagineMastro();
-					break;
-				}
-				
-			}
-			break;
-		}
-		
-		case XDM_USERACTION:
-		{
-			switch (params->itemid)
-			{
-				case CANCELLAMASTROCHECKID:
-				{
-					xd_btnchk_getstate(CANCELLAMASTROCHECKID, &gCheckCancella);
-					break;
-				}
-				
-				case COMPENSAZIONECHECKID:
-				{
-					xd_btnchk_getstate(COMPENSAZIONECHECKID, &gCheckCompensa);
-					break;
-				}
-				
-				case PREPARABTNID:
-				{
-					// prendo valori correnti dei pop-up
-					xrow row;
-					// uchar textRow[kDimensioneStringhe] = "";
-					
-					// pagine
-					xd_lst_getselection(PAGINEPREPDOCPOPID, &row);
-					//xd_lst_getrowtext(PAGINEPREPDOCPOPID, row, 256, textRow);
-					
-					QXStringRef textRef = NULL;
-					XDULstGetRowText(PAGINEPREPDOCPOPID, row, &textRef);
-					
-					int32 pagine;
-					//StringToNum (textRow, &pagine);
-					XTUStringToNum(textRef, &pagine);
-					
-					QXStringDestroy(textRef);
-					textRef = NULL;
-
-					// colonne
-					xd_lst_getselection(COLONNEPREPDOCPOPID, &row);
-					//xd_lst_getrowtext(COLONNEPREPDOCPOPID, row, 256, textRow);
-
-					XDULstGetRowText(COLONNEPREPDOCPOPID, row, &textRef);
-					
-					int32 colonne;
-					//StringToNum (textRow, &colonne);
-					XTUStringToNum(textRef, &colonne);
-					
-					QXStringDestroy(textRef);
-					textRef = NULL;
-
-					// moduli
-					xd_lst_getselection(MODULIPREPDOCPOPID, &row);
-					//xd_lst_getrowtext(MODULIPREPDOCPOPID, row, 256, textRow);
-
-					XDULstGetRowText(MODULIPREPDOCPOPID, row, &textRef);
-					
-					int32 moduli;
-					//StringToNum (textRow, &moduli);
-					XTUStringToNum(textRef, &moduli);
-					
-					QXStringDestroy(textRef);
-					textRef = NULL;
-
-					InserisciPagineColonneEModuli(pagine, colonne, moduli, gCheckCancella);
-					
-					break;
-				}
-				
-				case ASSOCIABTNID:
-				{
-					// prendo valori correnti dei pop-up
-					xrow row;
-					// uchar textRow[kDimensioneStringhe] = "";
-					
-					// pagina
-					xd_lst_getselection(PAGINEMASTROPOPID, &row);
-					//xd_lst_getrowtext(PAGINEMASTROPOPID, row, 256, textRow);
-
-					QXStringRef textRef = NULL;
-					XDULstGetRowText(PAGINEMASTROPOPID, row, &textRef);
-					
-					int32 paginaMastro;
-					//StringToNum(textRow, &paginaMastro);
-					XTUStringToNum(textRef, &paginaMastro);
-					
-					QXStringDestroy(textRef);
-					textRef = NULL;
-					
-					// nome mastro
-					xd_lst_getselection(MASTROPOPID, &row);
-					int16 masterPageId = row + 1;
-					
-					AssociaPaginaMastro((int32)paginaMastro, masterPageId, gCheckCompensa);
-					break;
-				}
-				
-				case APPLICABTNID:
-				{
-					// prendo valori correnti dei pop-up
-					xrow row;
-					uchar textRow[kDimensioneStringhe] = "";
-					
-					// colonne
-					xd_lst_getselection(COLONNEINGOMBRIPOPID, &row);
-					//xd_lst_getrowtext(COLONNEINGOMBRIPOPID, row, 256, textRow);
-
-					QXStringRef textRef = NULL;
-					XDULstGetRowText(COLONNEINGOMBRIPOPID, row, &textRef);
-
-					int32 colonne;
-					//StringToNum (textRow, &colonne);
-					XTUStringToNum(textRef, &colonne);
-					
-					QXStringDestroy(textRef);
-					textRef = NULL;
-					
-					// moduli
-					xd_lst_getselection(MODULIINGOMBRIPOPID, &row);
-					//xd_lst_getrowtext(MODULIINGOMBRIPOPID, row, 256, textRow);
-
-					XDULstGetRowText(MODULIINGOMBRIPOPID, row, &textRef);
-
-					int32 moduli;
-					//StringToNum (textRow, &moduli);
-					XTUStringToNum(textRef, &moduli);
-					
-					QXStringDestroy(textRef);
-					textRef = NULL;
-
-					ModificaPrimaPagina(colonne, moduli);
-					break;
-				}
-				
-				default:
-				{
-					params->result = XDR_NOTHANDLED;
-					break;
-				}
-			}
-			
-			break;
-		}
-		
-		case XDM_DOVERB:
-		{			
-			break;
-		}
-		
-		case XDM_DEINIT:
-		{
-			// get the position of this dialog
-			xd_getwindowscreenrect(&windowLocation);
-						
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}		
-	}
-	
-	
-	return(noErr);
-} // PreparaDocWap
-
-/* ------------------------------------------------------------------------ *
-
 	PreparaDocumento
 
 * ------------------------------------------------------------------------ */
@@ -1298,9 +543,9 @@ void XTAPI PreparaDocumento() throw()
 
 	CercaBoxIngombro();
 
-//	dodlgboxparam( hinst, hwndmainframe, (FARPROC)PreparaDocumentoWAP, DIALOG_20150, NULL );
+	//dodlgboxparam( hinst, hwndmainframe, (FARPROC)PreparaDocumentoWAP, DIALOG_20150, NULL );
 	//xd_createdialog(_XT_PREPARADOCWAP, 0, NULL);
-	XDCreateDialogWithCBCode(_XT_PREPARADOCWAP, 0, NULL);
+	XDCreateDialogWithCBCode(_XT_PREPARADOCWAP, (void *)(new PreparaDocWap()), NULL);
 }
 
 /*---------------------------------------------------------------------------*/

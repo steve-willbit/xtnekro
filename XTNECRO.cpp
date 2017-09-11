@@ -66,30 +66,6 @@
 
 #include "XTNecro.h"
 
-// DEFINES
-// DEFINES
-// DEFINES
-
-// identificatore dell’Xtension: MOHz
-#define kIdXtension NORMALIZE32('MHOn')
-
-// a unique name for saving the palette position
-// on Win they appear in the windows registry
-// on Mac they are the name of the resources
-#define INFOPALETTEPOS "InfoPalette" 
-
-// the windows registry key where to save the xtension preferences
-#define XTPREFNAME "XTNekro.prf" // "Software\\Sinedita\\QuarkXPress\\XTNecro.xnt\\2.0.0"
-
-// these strings are used to save the prefereces:
-// on WINOS are the name of the windows registry key
-// on MACOS are the name saved in the resource
-#define XTPREFERENCES "Preferences"
-
-// the resource type where to save the xtension preferences
-#define XTPREF 'PREF'
-#define XTPREFERENCESID 20000
-
 // STATICS
 // STATICS
 // STATICS
@@ -100,10 +76,6 @@ static bool8 gOpenPalettesCalled = FALSE;
 // GLOBALS
 // GLOBALS
 // GLOBALS
-
-#if WINOS
-HINSTANCE gXTensionHinst = NULL;
-#endif //WINOS
 
 // FSSpec cartella XTension
 FSSpec gFSSpecXtension= {0, 0, ""};
@@ -126,33 +98,52 @@ uchar gNomeCartellaXpress[MAXPATHNAME] = "";
 // volume di partenza di QuarkXpress
 int16 gNumeroVolumeXpress = 0;
 
+// FUNCTIONS
+// FUNCTIONS
+// FUNCTIONS
+
+/* ------------------------------------------------------------------------ *
+
+	ImpostaNomeCartellaXtension
+
+* ------------------------------------------------------------------------ */
+void XTAPI ImpostaNomeCartellaXtension() throw()
+{
+	Str255 moduleName = "";
+	// costruisco il nome completa della cartella XTension
+	GetModuleFileName(hinst, (char*) moduleName, sizeof(moduleName));
+	
+	STRCPY(gFSSpecXtension.name, moduleName);
+	for (int32 i = STRLEN(gFSSpecXtension.name); i >= 0; --i)
+	{
+		if (gFSSpecXtension.name[i - 1] == '\\')
+		{	
+			// il primo back slash e sulla cartella XTension
+			gFSSpecXtension.name[i - 1] = 0;
+			break;
+		}
+	}
+	
+	// assegno nome cartella XT alla relativa globale 
+	STRCPY(gNomeCartellaXpress, gFSSpecXtension.name);
+		
+} // ImpostaNomeCartellaXtension
+	
+/* ------------------------------------------------------------------------ *
+
+	ImpostaNomeCartellaWindows
+
+* ------------------------------------------------------------------------ */
+void XTAPI ImpostaNomeCartellaWindows() throw()
+{
+	GetWindowsDirectory((LPSTR) gNomeCartellaWindows, MAXPATHNAME);
+} // ImpostaNomeCartellaWindows
+
 #if 0
 
 // PROTOTYPES
 // PROTOTYPES
 // PROTOTYPES
-
-/*!
-	@function 		ImpostaNomeCartellaXtension
-	@abstract		cartella di xtension.
-	@discussion		Imposta la cartella XTension corrente.
-
-					28 Novembre 1996 - Stefano
-
-	@result			nessuno.
-*/
-static void XTAPI ImpostaNomeCartellaXtension() throw();
-
-/*!
-	@function 		ImpostaNomeCartellaWindows
-	@abstract		cartella di windows.
-	@discussion		Imposta la cartella di Windows.
-
-					17 Dicembre 1996 - Stefano
-
-	@result			nessuno.
-*/
-static void XTAPI ImpostaNomeCartellaWindows() throw();
 
 /*!
 	@function 		deactivate_callback
@@ -248,47 +239,6 @@ __declspec(dllexport)
 int32 XTActivateCallback(xtactivaterec *cbparam); 
 #endif // QXP60
 
-// FUNCTIONS
-// FUNCTIONS
-// FUNCTIONS
-
-/* ------------------------------------------------------------------------ *
-
-	ImpostaNomeCartellaXtension
-
-* ------------------------------------------------------------------------ */
-static void XTAPI ImpostaNomeCartellaXtension() throw()
-{
-	Str255 moduleName = "";
-	// costruisco il nome completa della cartella XTension
-	GetModuleFileName(gXTensionHinst, (char*) moduleName, sizeof(moduleName));
-	
-	STRCPY(gFSSpecXtension.name, moduleName);
-	for (int32 i = STRLEN(gFSSpecXtension.name); i >= 0; --i)
-	{
-		if (gFSSpecXtension.name[i - 1] == '\\')
-		{	
-			// il primo back slash e sulla cartella XTension
-			gFSSpecXtension.name[i - 1] = 0;
-			break;
-		}
-	}
-	
-	// assegno nome cartella XT alla relativa globale 
-	STRCPY(gNomeCartellaXpress, gFSSpecXtension.name);
-		
-} // ImpostaNomeCartellaXtension
-	
-/* ------------------------------------------------------------------------ *
-
-	ImpostaNomeCartellaWindows
-
-* ------------------------------------------------------------------------ */
-static void XTAPI ImpostaNomeCartellaWindows() throw()
-{
-	GetWindowsDirectory((LPSTR) gNomeCartellaWindows, MAXPATHNAME);
-} // ImpostaNomeCartellaWindows
-
 /* ------------------------------------------------------------------------ *
 
 	DllMain
@@ -356,40 +306,6 @@ int32 XTAPI idle_callback(xtidlerec* cbparam)
 
 	// DBP::FreezeUndo();
 	
-	gErroreXtension = kNessunErrore;
-
-	switch (PrendiOperazioneCorrente()) 
-	{
-		case kCoseDiQuattroD:
-			gErroreXtension = CoseDiQuattroD();
-			break;
-#if 0 // OLDESTVERSION
-		case kCoseDiAppWare:
-			gErroreXtension = CoseDiAppWare();
-			break;
-		case kCoseDiNotifica:
-			gErroreXtension = CoseDiNotifica();
-			break;
-#endif // OLDESTVERSION
-		case kCoseDiStampa:
-			CoseDiStampa();
-			break;
-		case kCoseDellUtente:
-			break;
-		case kIdle:
-			break;
-	}
-	
-
-	if (gErroreXtension != kNessunErrore) 
-	{
-		// errore nel gestione delle operazioni dell'xtension
-		MostraErrore(gErroreXtension);
-
-		// torno dall'utente
-		ImpostaCoseDellUtente();
-	}
-
 	// in base all'operazione corrente di Xpress scelgo se abilitare o
 	// disabilitare l'impaginazione 
 	if (PrendiOperazioneCorrente() == kCoseDiQuattroD)
@@ -423,16 +339,6 @@ int32 XTAPI idle_callback(xtidlerec* cbparam)
 int32 XTAPI setlanguage_callback(xtsetlanguagerec* cbparam)
 {
 	assert(NULL != cbparam);
-	
-	gXTensionLanguage = cbparam->currentlanguage;
-
-	// fino a quando mancano le risorse commento la parte relativa alla lingua inglese
-	if (verItaly != gXTensionLanguage /*&& verUS != gXTensionLanguage*/ )
-	{
-		// default if a language we can't deal with
-		// gXTensionLanguage = verUS;
-		gXTensionLanguage = verItaly;	
-	}
 	
 	if (gOpenPalettesCalled)
 	{
@@ -474,19 +380,6 @@ int32 XTAPI openpalettes_callback(xtvoidrec *cbparam)
 
 	return(result);	
 }
-
-/* ------------------------------------------------------------------------ *
-
-	xtaddxthooks_callback
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI xtaddxthooks_callback(xtaddxthooksrec* cbparam) throw()
-{
-	// request one custom cbcode for each of the xtension's waps
-	XTError err = xtallocatecbcodes(NUMBEROFWAPS, &gXtWapCbCode);
-	
-	return(noErr);
-} // xtaddxthooks_callback
 
 /* ------------------------------------------------------------------------ *
 
@@ -554,44 +447,7 @@ int32 XTAPI setup_callback(xtsetuprec* cbparam) throw()
 		
 		// registrazione paletta informazioni
 		xtregistercbcode(_XT_INFOPALETTEWAP,InfoPaletteWap, XTCBF_NORMAL, XT_NORMPRIORITY, NULL);
-		
-		// Imposta la cartella di Windows
-		ImpostaNomeCartellaWindows();		
-		
-		// prendo nome cartella Xtension
-		ImpostaNomeCartellaXtension();
-		
-		// get the palettes position
-	
-		DBP::LoadPalettePos
-		(
-		//	STRCONST(XTPREFNAME),
-			gInfoPaletteWLocHandle,
-			gInfoPaletteShowingFlag,
-		//	XTPREFERENCESID,							
-			STRCONST(INFOPALETTEPOS)
-		);
-		
-		// carico le preferenze dell'XT
-		DBP::LoadPreferences
-		(
-			(Ptr) &gXtPreferences,
-			sizeof(gXtPreferences),
-			STRCONST(XTPREFNAME),
-			XTPREF,
-			XTPREFERENCESID,
-			STRCONST(XTPREFERENCES)
-		);
-			
-		// inizializzazione delle stringhe
-		CreaTutteLeStringhe();
-
-		// inizializzazione degli errori dell'Xtension
-		InizializzaErrori();
-		
-		// stampa il messaggio di inizio sul file di rapporto e
-		// sulla paletta dell'Xtension
-		DaiMessaggio(kInizializzazione);
+					
 	}
 	else
 	{
@@ -641,28 +497,4 @@ int32 XTActivateCallback(xtactivaterec *cbparam)
 
 	XTNecro.cpp
 
-	22 marzo 2005 - Fabrizio
-
-	Copyright © Sinedita S.r.l 2005. All Rights Reserved.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.6  2005/06/10 13:46:47  taretto
-	modificato salvataggio preferenze su QXP60
-	
-	Revision 1.5  2005/05/11 16:26:04  taretto
-	versione 2.0.0.1
-	
-	Revision 1.4  2005/05/10 09:30:28  taretto
-	finestra di about
-	
-	Revision 1.3  2005/05/09 12:36:45  taretto
-	aggiunta protezione HW
-	
-	Revision 1.2  2005/05/04 12:34:52  taretto
-	comandi posiziona e ripristino ok
-	
-	Revision 1.1  2005/04/20 07:14:22  taretto
-	importazione files
-	
-	
 * ------------------------------------------------------------------------ */

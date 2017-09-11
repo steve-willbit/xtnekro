@@ -120,11 +120,18 @@ static void XTAPI ApriFileRapporto() throw()
 	// apertura del file	
 	while (1)
 	{
-		gRiferimentoFileRapporto = _lopen((char*) gFSSpecFileRapporto.name, OF_SHARE_EXCLUSIVE);  // <-- was FSOpen
-		if ( gRiferimentoFileRapporto == HFILE_ERROR ) 
+		OSErr osErr= HOpenDF(gFSSpecFileRapporto.vRefNum,
+			gFSSpecFileRapporto.parID,
+			gFSSpecFileRapporto.name,
+			fsRdWrPerm,
+			&gRiferimentoFileRapporto);  // <-- was FSOpen
+		if ( osErr == noErr ) 
 			break;
 		HCreate(gFSSpecXtension.vRefNum, gFSSpecXtension.parID, gFSSpecFileRapporto.name, kCreatoreFileRapporto, kTipoFileRapporto);
 	}
+
+	return;
+
 } // ApriFileRapporto
 
 /* ------------------------------------------------------------------------ *

@@ -179,17 +179,6 @@
 #define FOLDERLASTIMPEDTID			4
 #define SFOGLIAFOLDERLASTIMPBTNID	5
 
-/*!
-	@defined			ABOUTNECRODIALOGID
-	@abstract		resource id.
-	@discussion		This is the resource id of the Info dialog.
-*/
-#define ABOUTNECRODIALOGID (21040 + LANGUAGE)
-#define ABOUTNECROLOGOID 1
-#define VERSIONID 2
-#define ABOUTNECROLOGOBMP 20000
-
-
 // STRUCT
 // STRUCT
 // STRUCT

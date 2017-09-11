@@ -1230,7 +1230,20 @@ C_INLINE void XTAPI AdjustMaxObjectScroll(bool8 redraw)
 
 C_INLINE void XTAPI getmastername(int16 masterPageID, uchar *name)
 {
-	assert( FALSE && "getmastername" );
+	DocID curDocID = INVALDOC;
+	xtget_curdoc(&curDocID);
+
+	QXStringRef SpreadNameRef = NULL;   
+	APIERR apiErr = XTUGetMasterSpreadNameWithoutPrefix(XTGetDocRefFromDocID(curDocID), masterPageID, &SpreadNameRef);   
+
+	QXStringRef SpreadNamePrefixRef = NULL;
+	apiErr = XTUGetMasterSpreadNameWithPrefix(XTGetDocRefFromDocID(curDocID), masterPageID, &SpreadNamePrefixRef);  
+	
+	QXString2CStr(SpreadNameRef, (char*) name);
+
+	QXStringDestroy(SpreadNameRef);   
+    QXStringDestroy(SpreadNamePrefixRef); 
+
 	return;
 }
 

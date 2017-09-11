@@ -1427,8 +1427,8 @@ errorixtension XTAPI LeggiContenutoFSSpecFile(uchar *name, Handle *ptrhandle) th
 	int32 lLunghezzaFile = 0;
 
 	// apertura del file
-	lIdentificatoreFile = _lopen((char*)name, OF_SHARE_EXCLUSIVE);  // <-- was FSOpen
-	if (lIdentificatoreFile == HFILE_ERROR) 
+	gErrore = HOpenDF(0, 0, name, fsRdWrPerm, &lIdentificatoreFile); // <-- was FSOpen
+	if (gErrore != noErr) 
 	{
 		return(kErroreLetturaFile);
 	}
@@ -1490,8 +1490,8 @@ errorixtension XTAPI LeggiNormContenutoFSSpecFile(uchar *name, Handle *ptrhandle
 	int32 lLunghezzaFile = 0;
 	
 	// apertura del file
-	lIdentificatoreFile = ((char*)name, OF_SHARE_EXCLUSIVE);
-	if (lIdentificatoreFile == HFILE_ERROR)
+	gErrore = HOpenDF(0, 0, name, fsRdWrPerm, &lIdentificatoreFile); // <-- was FSOpen
+	if (gErrore != noErr) 
 	{
 		return(kErroreLetturaFile);
 	}

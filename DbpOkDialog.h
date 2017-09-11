@@ -6,49 +6,6 @@
 					
 					Copyright © Sinedita S.r.l 2002. All Rights Reserved.
 
-					$Log: not supported by cvs2svn $
-					Revision 1.17  2007/02/23 09:45:09  taretto
-					merge con porting QXP7
-					
-					Revision 1.16  2006/10/04 13:14:04  taretto
-					porting a QXP70
-					
-					Revision 1.15  2005/03/01 11:05:36  taretto
-					aggiunto comando chiudi al menu XTTB
-					
-					Revision 1.14  2004/11/22 17:07:15  marchese
-					definizione della macro assert
-					
-					Revision 1.13  2003/08/06 15:08:54  marchese
-					modifiche per compilare sotto MacOS X e gestire senza errori le MSL del C++
-					
-					Revision 1.12  2003/07/28 08:08:42  marchese
-					per compilare DAIPO sotto MacOS X
-					
-					Revision 1.11  2003/07/04 16:21:38  marchese
-					eliminato l'errore introdotto con il tentativo di compilazione sotto QXP60 e MACOS X
-					
-					Revision 1.10  2003/07/03 15:35:00  taretto
-					prova di compilazione MacOSX
-					
-					Revision 1.9  2003/05/07 07:16:23  marchese
-					spostati gli standard includes nei file .h
-					
-					Revision 1.8  2003/05/06 16:02:34  taretto
-					spostati include di sistema sul .h
-					
-					Revision 1.7  2002/11/20 14:33:48  marchese
-					aggiunti al progetto if file DbpOkDialog.cpp
-					
-					Revision 1.6  2002/11/18 10:39:59  taretto
-					correzione sulla keyword log
-					
-					Revision 1.5  2002/11/14 09:45:58  marchese
-					tolto un ritorno a capo nella gestione delle keyword Log
-					
-					Revision 1.4  2002/11/14 09:39:19  marchese
-					aggiunto la keyword Log
-	
 */
 
 

@@ -113,7 +113,6 @@ int32 XTAPI domenuitem_callback(xthandlecommandrec* cbparam);
 	@function		handlecommand_callback
 	@abstract 		callback per la chiamata di _XT_HANDLECOMMAND.
 	@discussion		XPress chiama questa funzione quando l'XTension deve eseguire un comando di menu.
-					Solo in QXP60.
 
 					22 marzo 2005 - Fabrizio.
 

@@ -1216,7 +1216,7 @@ errorixtension StampaFilePerAppWare(void)
 	/* apertura del file per AppWare */
 	gErrore = FSOpen(lNomeCartella,
 					 0,
-				  	 &gRiferimentoFilePerAppWare);
+				  	 &gRiferimentoFilePerAppWare); // use HOpenDF
 	if (gErrore != noErr) {
 		/* errore sulla chiusura della cartella del documento definitivo */
 		StampaDebug("FSOpen", gErrore);

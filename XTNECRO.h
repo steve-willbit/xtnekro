@@ -71,6 +71,26 @@
 #define BMP 0x00504D42L
 #define XTG 0x00475458L
 
+// identificatore dell’Xtension: MOHz
+#define kIdXtension NORMALIZE32('MHOn')
+
+// a unique name for saving the palette position
+// on Win they appear in the windows registry
+// on Mac they are the name of the resources
+#define INFOPALETTEPOS "InfoPalette" 
+
+// the windows registry key where to save the xtension preferences
+#define XTPREFNAME "XTNekro.prf" // "Software\\Sinedita\\QuarkXPress\\XTNecro.xnt\\2.0.0"
+
+// these strings are used to save the prefereces:
+// on WINOS are the name of the windows registry key
+// on MACOS are the name saved in the resource
+#define XTPREFERENCES "Preferences"
+
+// the resource type where to save the xtension preferences
+#define XTPREF 'PREF'
+#define XTPREFERENCESID 20000
+
 // GLOBALS
 // GLOBALS
 // GLOBALS
@@ -122,7 +142,14 @@ typedef double DoubleFixed;
 	@abstract		number of waps of this XTension.
 	@discussion		Defines the number of the XTension WAPS.
 */
-#define NUMBEROFWAPS 15
+#define NUMBEROFWAPS 16
+
+/*!
+	@defined			_XT_DISPLAYVALUEWAP
+	@abstract		WAP.
+	@discussion		Il cbcode per la finestra delle preferenze
+*/
+#define _XT_DISPLAYVALUEWAP (MainXT::GetInstance().GetCustomCBCode())
 
 /*!
 	@defined			_XT_PREFERENZEWAP
@@ -228,5 +255,27 @@ typedef double DoubleFixed;
 	@discussion		Il cbcode per la palette
 */
 #define _XT_ABOUTWAP (MainXT::GetInstance().GetCustomCBCode() + 15)
+
+/*!
+	@function 		ImpostaNomeCartellaXtension
+	@abstract		cartella di xtension.
+	@discussion		Imposta la cartella XTension corrente.
+
+					28 Novembre 1996 - Stefano
+
+	@result			nessuno.
+*/
+void XTAPI ImpostaNomeCartellaXtension() throw();
+
+/*!
+	@function 		ImpostaNomeCartellaWindows
+	@abstract		cartella di windows.
+	@discussion		Imposta la cartella di Windows.
+
+					17 Dicembre 1996 - Stefano
+
+	@result			nessuno.
+*/
+void XTAPI ImpostaNomeCartellaWindows() throw();
 
 #endif // XTNecro_h

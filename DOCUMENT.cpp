@@ -97,15 +97,15 @@ errorixtension XTAPI ApriDocumento(uchar *nomedocumento) throw()
   	FSSpec specTemplateLocation;
   	OSErr fsMakeErr = FSMakeFSSpec(0, 0, nomedocumento, &specTemplateLocation);
     	
-    	XTError checkOpen = XTOpenDocFSp(&specTemplateLocation, SUPPRESSWARNINGS | SKIPMISSINGFONT | SKIPASKUSEPREFS | USEDOCPREFS);
-    	if (checkOpen != noErr)
-    	{
-    		// errore sulla apertura del documento da aprire
+	XTError checkOpen = XTOpenDocFSp(&specTemplateLocation, SUPPRESSWARNINGS | SKIPMISSINGFONT | SKIPASKUSEPREFS | USEDOCPREFS);
+	if (checkOpen != noErr)
+	{
+		// errore sulla apertura del documento da aprire
 		ConcatenaAllaStringaErrore(nomedocumento);
 		return(kErroreAperturaDocumento);
-    	}
-    	
-    	gErroreXtension = PrendiDocInfo();
+	}
+
+	gErroreXtension = PrendiDocInfo();
 	if (gErroreXtension != kNessunErrore) 
 	{
 		// errore nel prelevare le info del documento
@@ -169,7 +169,7 @@ static errorixtension XTAPI Salva(uchar *nomedocumento, int32 idcartella, int16 
 	STRCPY((*gHndlPathDocumento)->longpath, gNomeDocumento);
 	(*gHndlPathDocumento)->volnum = spec.vRefNum;
 	(*gHndlPathDocumento)->dirnum = spec.parID;
-//	gErrore = xtsave(gHndlPathDocumento, FALSE, FALSE); <-- already commented in QXP60
+//	gErrore = xtsave(gHndlPathDocumento, FALSE, FALSE);
 	
 	if ((makeFSSpecErr == noErr) || (makeFSSpecErr == fnfErr))
 	{

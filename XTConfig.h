@@ -20,23 +20,8 @@
 // DEFINES
 
 // only for cleaning
-#undef _DEBUG
-#undef NDEBUG
 #undef _DEMO
 #undef NDEMO
-
-/*!
-	@defined		_DEBUG
-	@abstract		versione di debug.
-	@discussion		Per abilitare anche la compilazione del codice della versione di debug.
-*/
-#define _DEBUG
-
-/*!
-	@defined		NDEMO
-	@abstract		versione non demo.
-	@discussion		Per disabilitare la compilazione della versione demo.
-*/
 #define NDEMO
 
 #endif // !defined(xtconfig_h)

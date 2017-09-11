@@ -90,49 +90,35 @@ errorixtension XTAPI PrendiDocInfo() throw()
 		
 		// (ri)prendo le info
 		DocRef DRef = XTGetDocRefFromDocID(gCurDoc);
-    		XTGetDocPageLength(DRef, &gAltezzaPagina);
-    		XTGetDocPageWidth(DRef, &gLarghezzaPagina);
+		XTGetDocPageLength(DRef, &gAltezzaPagina);
+		XTGetDocPageWidth(DRef, &gLarghezzaPagina);
 		XTGetDoubleSided(DRef, &gDoubleSided);
 		
-/*		<-- la struttura docsysrec non e' piu' supportata
-		if (gPtrDocInfoRec != NULL) 
-		{
-			DisposPtr((Ptr) gPtrDocInfoRec);
-			gPtrDocInfoRec = NULL;
-		}
-*/		
 		if (gPtrInfoPagina != NULL) 
 		{
-			// DisposePtr((Ptr) gPtrInfoPagina);
+			DisposePtr((Ptr) gPtrInfoPagina);
 			gPtrInfoPagina = NULL;
 		}
 
-/*		<-- la struttura docsysrec non e' piu' supportata		
-		// creo il puntatore per le info del documento
-		gPtrDocInfoRec = (docsysrec *) NewPtrClear(sizeof(docsysrec));
-		if (gPtrDocInfoRec == NULL) 
-		{
-			// errore nell'allocazione della memoria
-			return(kErroreMemoria);
-		}
-		
-		// prendo le info del documento
-		getdocinfo(gPtrDocInfoRec);
-		
 		// creo il puntatore per le info della pagina 
-		gPtrInfoPagina = (newpageinfo *) NewPtrClear(sizeof(newpageinfo));
+		gPtrInfoPagina = (XTUNewPageInfo *) NewPtrClear(sizeof(XTUNewPageInfo));
 		if (gPtrInfoPagina == NULL) {
 			// errore nell'allocazione della memoria 
 			return(kErroreMemoria);
 		}
-*/		
+
 		// prendo spread box id
 		XTGetSpreadBox(DRef, kPrimoSpread, &lIdBoxSpread);
 		
 		// prendo puntatore al box
 		lPtrBoxSpread = getxtbox(NULL, lIdBoxSpread, FALSE);  
 		lHndlDatiPagina = lPtrBoxSpread->g.pagestuff;
-		(*gPtrInfoPagina) = (**lHndlDatiPagina).pgs[0];		
+		(*gPtrInfoPagina).top = (**lHndlDatiPagina).pgs[0].top;		
+		(*gPtrInfoPagina).left = (**lHndlDatiPagina).pgs[0].left;		
+		(*gPtrInfoPagina).bottom = (**lHndlDatiPagina).pgs[0].bottom;		
+		(*gPtrInfoPagina).right = (**lHndlDatiPagina).pgs[0].right;		
+		(*gPtrInfoPagina).colcount = (**lHndlDatiPagina).pgs[0].colcount;		
+		(*gPtrInfoPagina).gutter = (**lHndlDatiPagina).pgs[0].gutter;		
 		
 		// dispose del puntatore all spread box
 		disposextbox(lPtrBoxSpread,TRUE);  

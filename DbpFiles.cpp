@@ -3,143 +3,6 @@
 	DbpFiles.cpp
 	
 	Copyright © Sinedita S.r.l 2003. All Rights Reserved.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.45  2007/05/23 09:43:42  taretto
-	modificata DBP::CopyFiles
-	
-	Revision 1.44  2007/05/21 16:19:54  taretto
-	copyfile funzionante
-	
-	Revision 1.43  2007/05/18 15:32:39  taretto
-	compilazione QXP6/7
-	
-	Revision 1.42  2006/10/11 13:01:11  taretto
-	 corretto salvataggio preferenze su QXP60
-	
-	Revision 1.41  2006/10/06 14:06:25  taretto
-	aggiunte funzioni varie
-	
-	Revision 1.40  2004/10/06 15:40:43  marchese
-	corretto un conflitto su un commento
-	
-	Revision 1.39  2004/05/13 07:09:24  taretto
-	eliminata la direttiva di precompilazione #error
-	
-	Revision 1.38  2004/03/23 15:12:32  marchese
-	inserito il cast (const uchar*) per evitare una ricorsione infinita
-	
-	Revision 1.37  2004/03/23 08:56:30  marchese
-	tolti dei #if WINOS inutili
-	
-	Revision 1.36  2004/03/23 08:01:36  taretto
-	prima compilazione sclass su win con codice unico
-	
-	Revision 1.35  2004/03/22 16:43:57  taretto
-	porting sclass macos
-	
-	Revision 1.34  2003/10/23 10:12:31  marchese
-	spostati degli #if QXP40 e QXP50
-	
-	Revision 1.33  2003/10/13 10:29:53  marchese
-	tolto qualche spazio di troppo
-	
-	Revision 1.32  2003/07/24 15:57:10  marchese
-	aggiunte le assert per controllare la lunghezza dei file
-	
-	Revision 1.31  2003/07/18 07:40:52  marchese
-	aggiunto codice WINOS nelle funzioone FindFirstFolder() e FindFirstFile()
-	
-	Revision 1.30  2003/07/15 08:22:46  marchese
-	prova di riscrittura delle funzione FindFirst* usando il codice nativo WINOS
-	
-	Revision 1.29  2003/07/11 12:35:40  taretto
-	compilazione XTRPDAds
-	
-	Revision 1.28  2003/07/01 16:05:25  marchese
-	nella funzione FindFirstFile() ho aggiunto un parametro per specificare l'indice del file da leggere
-	
-	Revision 1.27  2003/07/01 12:14:44  marchese
-	aggiunto un assert nella funzione FindFirstFile() per il controllo della lunghezza del campo con l'estensione
-	
-	Revision 1.26  2003/07/01 08:14:33  marchese
-	aggiunta la macro STRCONST al posto del cast (uchar*)
-	
-	Revision 1.25  2003/06/20 09:53:08  taretto
-	correnti conflitti
-	
-	Revision 1.24  2003/06/20 09:41:21  taretto
-	aggiunte funzioni per ricavare il path completo
-	
-	Revision 1.23  2003/06/20 08:53:52  marchese
-	cambiato il ritorno delle funzioni GetFullPathName, da void a bool8
-	
-	Revision 1.22  2003/06/19 11:25:58  marchese
-	aggiunto il prototipo della funzione GetFullPathName()
-	
-	Revision 1.21  2003/06/19 09:39:38  marchese
-	- cambiato il nome alle funzione di ricerca dei file e dei folder
-	- adesso la FindFirstFolder() ritorna la prima cartella valida trovata
-	
-	Revision 1.20  2003/06/19 08:25:37  taretto
-	aggiunta fuinzione per verificare la presenza di un file
-	
-	Revision 1.19  2003/06/17 16:35:43  marchese
-	la FindFirst() e la FindFisrtSubFolder() ricevono parametri di tipo std::string
-	
-	Revision 1.18  2003/06/17 14:32:49  marchese
-	aggiunto un return(TRUE)
-	
-	Revision 1.17  2003/06/17 14:28:24  marchese
-	uniformato il risultato di ritorno delle funzioni sui file: sempre TRUE/FALSE
-	
-	Revision 1.16  2003/06/17 14:13:04  marchese
-	creato il prototipo della funzione IsFile()
-	
-	Revision 1.15  2003/06/16 16:49:02  marchese
-	copia di alcune funzioni con parametri std::string
-	
-	Revision 1.14  2003/06/06 10:16:37  marchese
-	modificata l'implementazione delle funzione CreateHtmlFile
-	
-	Revision 1.13  2003/06/06 09:45:16  taretto
-	aggiunta funzione per creazione file html
-	
-	Revision 1.12  2003/06/06 07:53:15  marchese
-	aggiunte le assert nella funzione CreateHtmlFile
-	
-	Revision 1.11  2003/06/06 07:47:37  marchese
-	aggiunta la dichiarazione della funzione CreateHtmlFile
-	
-	Revision 1.10  2003/06/04 13:10:33  taretto
-	modificata funzione FindFirstFolder
-	
-	Revision 1.9  2003/05/07 07:16:22  marchese
-	spostati gli standard includes nei file .h
-	
-	Revision 1.8  2003/04/18 12:04:15  taretto
-	tolto commento inutile
-	
-	Revision 1.7  2003/04/17 14:39:25  taretto
-	cambiati alcuni commenti
-	
-	Revision 1.6  2003/04/17 12:56:49  taretto
-	apportate alcune modifiche, aggiunte assert
-	
-	Revision 1.5  2003/04/16 12:11:45  taretto
-	archiviazione provvisoria
-	
-	Revision 1.4  2003/04/08 08:08:34  taretto
-	da verificare la funzione copy
-	
-	Revision 1.3  2003/04/04 09:11:53  taretto
-	da aggiungere assert
-	
-	Revision 1.2  2003/03/31 10:03:38  marchese
-	piccole correzioni sui file
-	
-	Revision 1.1  2003/03/31 09:48:03  taretto
-	HdrsLibs per le operazioni sui file
 	
 * ------------------------------------------------------------------------ */
 
@@ -180,7 +43,7 @@ bool8 XTAPI DBP::IsFile(const uchar* iFilePath) throw()
 	
 	if (!makeFSSpec)
 	{
-		OSErr openError = HOpenDF(f.vRefNum, f.parID, f.name, fsRdWrPerm,&lFileReference);
+		OSErr openError = HOpenDF(f.vRefNum, f.parID, f.name, fsRdWrPerm, &lFileReference);
 		
 		if (openError==noErr || openError==opWrErr || openError==permErr)
 			ret = TRUE;
@@ -196,7 +59,6 @@ bool8 XTAPI DBP::IsFile(const uchar* iFilePath) throw()
 	
 } // DBP::IsFile
 
-#if QXP40 || QXP50
 /* ------------------------------------------------------------------------ *
 
 	DBP::IsFile
@@ -209,9 +71,7 @@ bool8 XTAPI DBP::IsFile(const std::string& iFilePath) throw()
 
 	return(DBP::IsFile((const uchar*) iFilePath.c_str()));
 } // DBP::IsFile
-#endif // QXP40 || QXP50
 
-#if QXP40 || QXP50	
 /* ------------------------------------------------------------------------ *
 
 	DBP::IsDir
@@ -263,7 +123,7 @@ bool8 XTAPI DBP::IsDir(const uchar* const iFolder) throw()
 #if WINOS
 	// cerco di aprire la cartella
 	int16 refNum;
-	OSErr error = FSOpenPerm(iFolder, 0, &refNum, 1);
+	OSErr error = HOpenDF(0, 0, iFolder, fsRdWrPerm, &refNum);
 	if (error == bdNamErr)
 	{
 		isDir = TRUE;
@@ -276,9 +136,7 @@ bool8 XTAPI DBP::IsDir(const uchar* const iFolder) throw()
 	
 	return(isDir);
 } // DBP::IsDir
-#endif // QXP40 || QXP50 
 
-#if QXP40 || QXP50	
 /* ------------------------------------------------------------------------ *
 
 	DBP::IsDir
@@ -291,7 +149,6 @@ bool8 XTAPI DBP::IsDir(const std::string& iFolder) throw()
 
 	return(DBP::IsDir((const uchar*) iFolder.c_str()));
 } // DBP::IsDir
-#endif // QXP40 || QXP50
 
 /* ------------------------------------------------------------------------ *
 
@@ -623,7 +480,7 @@ void XTAPI DBP::FindFirstFile(const std::string& iInputFolder, const std::string
 } // DBP::FindFirstFile
 #endif // WINOS		
 
-#if MACOS && (QXP60 || QCD35)	
+#if MACOS	
 /* ------------------------------------------------------------------------ *
 
 	DBP::FindFirstFile
@@ -730,7 +587,7 @@ std::vector<std::string> XTAPI DBP::FindFiles(const uchar* iInputFolder, const u
 	
 	return(fileFoundVector);	
 } // FindFiles
-#endif // MACOS && (QXP60 || QCD35)		
+#endif // MACOS		
 
 /* ------------------------------------------------------------------------ *
 
@@ -1052,7 +909,7 @@ OSErr XTAPI DBP::CreateOneFolderOnFs(const uchar* iPathFolderIntoCreate, const u
 	// per tornare errore
 	OSErr err = noErr;
 
-#if MACOS && QXP60
+#if MACOS
 	// copio pathname folder
 	uchar tmpFolder[MAXPATHNAME] = "";
 	STRCPY(tmpFolder, iPathFolderIntoCreate);
@@ -1070,7 +927,7 @@ OSErr XTAPI DBP::CreateOneFolderOnFs(const uchar* iPathFolderIntoCreate, const u
 		STRCPY(oNewFolderPath, tmpFolder);	
 		oFolderSpec = tmpSpec;
 	}
-#endif // MACOS && QXP60
+#endif // MACOS
 	
 	return(err);
 } // DBP::CreateOneFolderOnFs
@@ -1084,7 +941,7 @@ void XTAPI DBP::ExtractFolderPath(uchar* ioFileFullPath) throw()
 {
 	assert(ioFileFullPath != NULL);
 
-#if MACOS && QXP60	
+#if MACOS	
 	// ricavo nome (anche) parziale dei jpg da eliminare
 	uchar nameFile[256] = "" ;
 	STRCPY(nameFile, ioFileFullPath);
@@ -1093,7 +950,7 @@ void XTAPI DBP::ExtractFolderPath(uchar* ioFileFullPath) throw()
 	
 	// ricavo folder in cui cercare i jpeg
 	STRNCPY(ioFileFullPath, ioFileFullPath, (STRLEN(ioFileFullPath) - STRLEN(nameFile)));
-#endif // MACOS && QXP60
+#endif // MACOS
 	
 } // DBP::ExtractFolderPath
 
@@ -1134,19 +991,14 @@ XTError XTAPI DBP::ExtractFileNameInLocalString(uchar* ioFile) throw()
 	
 	XTError xtErr = ERR_SUCCESS;
 	
-#if QXP60 || QXP70		
-	ExtractFileName(ioFile);
-#endif // QXP60 || QXP70
-#if QXP80
 	QXStringRef fileNameRef = NULL; 
 	QXStringCreateFromLocalString(ioFile, 0, STRLEN(ioFile), &fileNameRef);
 	xtErr = XTUExtractFileName((QXMutableStringRef)fileNameRef);
 	
 	// converto stringref in local string
-	DBP::QXStringRef2LocalStr(fileNameRef, ioFile);
+	QXString2CStr(fileNameRef, (char*) ioFile);
 		
 	QXStringDestroy(fileNameRef); 
-#endif // QXP80			
 	
 	return(xtErr);
 	
@@ -1157,145 +1009,5 @@ XTError XTAPI DBP::ExtractFileNameInLocalString(uchar* ioFile) throw()
 	DbpFiles.cpp
 	
 	Copyright (c) Sinedita S.r.l 2003. All Rights Reserved.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.4  2009/02/17 10:55:10  taretto
-	porting a QXP80
-	
-	Revision 1.3  2008/09/04 16:04:42  taretto
-	aggiunte funzioni
-	
-	Revision 1.2  2008/07/08 07:57:09  marchese
-	versione 1.2.0.7 - DataShop
-	
-	Revision 1.1  2007/09/18 14:09:01  marchese
-	creazione della cartella qxp650_dbp
-	
-	Revision 1.42  2006/10/11 13:01:11  taretto
-	 corretto salvataggio preferenze su QXP60
-	
-	Revision 1.41  2006/10/06 14:06:25  taretto
-	aggiunte funzioni varie
-	
-	Revision 1.40  2004/10/06 15:40:43  marchese
-	corretto un conflitto su un commento
-	
-	Revision 1.39  2004/05/13 07:09:24  taretto
-	eliminata la direttiva di precompilazione #error
-	
-	Revision 1.38  2004/03/23 15:12:32  marchese
-	inserito il cast (const uchar*) per evitare una ricorsione infinita
-	
-	Revision 1.37  2004/03/23 08:56:30  marchese
-	tolti dei #if WINOS inutili
-	
-	Revision 1.36  2004/03/23 08:01:36  taretto
-	prima compilazione sclass su win con codice unico
-	
-	Revision 1.35  2004/03/22 16:43:57  taretto
-	porting sclass macos
-	
-	Revision 1.34  2003/10/23 10:12:31  marchese
-	spostati degli #if QXP40 e QXP50
-	
-	Revision 1.33  2003/10/13 10:29:53  marchese
-	tolto qualche spazio di troppo
-	
-	Revision 1.32  2003/07/24 15:57:10  marchese
-	aggiunte le assert per controllare la lunghezza dei file
-	
-	Revision 1.31  2003/07/18 07:40:52  marchese
-	aggiunto codice WINOS nelle funzioone FindFirstFolder() e FindFirstFile()
-	
-	Revision 1.30  2003/07/15 08:22:46  marchese
-	prova di riscrittura delle funzione FindFirst* usando il codice nativo WINOS
-	
-	Revision 1.29  2003/07/11 12:35:40  taretto
-	compilazione XTRPDAds
-	
-	Revision 1.28  2003/07/01 16:05:25  marchese
-	nella funzione FindFirstFile() ho aggiunto un parametro per specificare l'indice del file da leggere
-	
-	Revision 1.27  2003/07/01 12:14:44  marchese
-	aggiunto un assert nella funzione FindFirstFile() per il controllo della lunghezza del campo con l'estensione
-	
-	Revision 1.26  2003/07/01 08:14:33  marchese
-	aggiunta la macro STRCONST al posto del cast (uchar*)
-	
-	Revision 1.25  2003/06/20 09:53:08  taretto
-	correnti conflitti
-	
-	Revision 1.24  2003/06/20 09:41:21  taretto
-	aggiunte funzioni per ricavare il path completo
-	
-	Revision 1.23  2003/06/20 08:53:52  marchese
-	cambiato il ritorno delle funzioni GetFullPathName, da void a bool8
-	
-	Revision 1.22  2003/06/19 11:25:58  marchese
-	aggiunto il prototipo della funzione GetFullPathName()
-	
-	Revision 1.21  2003/06/19 09:39:38  marchese
-	- cambiato il nome alle funzione di ricerca dei file e dei folder
-	- adesso la FindFirstFolder() ritorna la prima cartella valida trovata
-	
-	Revision 1.20  2003/06/19 08:25:37  taretto
-	aggiunta fuinzione per verificare la presenza di un file
-	
-	Revision 1.19  2003/06/17 16:35:43  marchese
-	la FindFirst() e la FindFisrtSubFolder() ricevono parametri di tipo std::string
-	
-	Revision 1.18  2003/06/17 14:32:49  marchese
-	aggiunto un return(TRUE)
-	
-	Revision 1.17  2003/06/17 14:28:24  marchese
-	uniformato il risultato di ritorno delle funzioni sui file: sempre TRUE/FALSE
-	
-	Revision 1.16  2003/06/17 14:13:04  marchese
-	creato il prototipo della funzione IsFile()
-	
-	Revision 1.15  2003/06/16 16:49:02  marchese
-	copia di alcune funzioni con parametri std::string
-	
-	Revision 1.14  2003/06/06 10:16:37  marchese
-	modificata l'implementazione delle funzione CreateHtmlFile
-	
-	Revision 1.13  2003/06/06 09:45:16  taretto
-	aggiunta funzione per creazione file html
-	
-	Revision 1.12  2003/06/06 07:53:15  marchese
-	aggiunte le assert nella funzione CreateHtmlFile
-	
-	Revision 1.11  2003/06/06 07:47:37  marchese
-	aggiunta la dichiarazione della funzione CreateHtmlFile
-	
-	Revision 1.10  2003/06/04 13:10:33  taretto
-	modificata funzione FindFirstFolder
-	
-	Revision 1.9  2003/05/07 07:16:22  marchese
-	spostati gli standard includes nei file .h
-	
-	Revision 1.8  2003/04/18 12:04:15  taretto
-	tolto commento inutile
-	
-	Revision 1.7  2003/04/17 14:39:25  taretto
-	cambiati alcuni commenti
-	
-	Revision 1.6  2003/04/17 12:56:49  taretto
-	apportate alcune modifiche, aggiunte assert
-	
-	Revision 1.5  2003/04/16 12:11:45  taretto
-	archiviazione provvisoria
-	
-	Revision 1.4  2003/04/08 08:08:34  taretto
-	da verificare la funzione copy
-	
-	Revision 1.3  2003/04/04 09:11:53  taretto
-	da aggiungere assert
-	
-	Revision 1.2  2003/03/31 10:03:38  marchese
-	piccole correzioni sui file
-	
-	Revision 1.1  2003/03/31 09:48:03  taretto
-	HdrsLibs per le operazioni sui file
 	
 * ------------------------------------------------------------------------ */

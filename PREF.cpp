@@ -62,40 +62,57 @@ static int32 gLastRowSelected = 0;
 XtPreferences gXtPreferences =
 {
 	POSAUTORADIOBTNID, // tipo impaginazione
-	0, // valore iniziale spazio tra necrologi
+	mFixed(5), // valore iniziale spazio tra necrologi
 	TRUE, // abilita spazio tra necrologi
-	0, // incremento max spazio tra necrologi
-	0, // decremento max spazio tra necrologi
+	mFixed(2), // incremento max spazio tra necrologi
+	mFixed(1), // decremento max spazio tra necrologi
 	TRUE, // abilita spazio tra paragrafi
-	0, // incremento max spazio tra paragrafi
-	0, // decremento max spazio tra paragrafi
+	mFixed(1), // incremento max spazio tra paragrafi
+	mFixed(1), // decremento max spazio tra paragrafi
 	TRUE, // abilita interlinea
-	0, // incremento max interlinea
-	0, // decremento max interlinea
+	 mFixed(1) + (65536 / 2), // incremento max interlinea
+	 mFixed(1), // decremento max interlinea
 	TRUE, // usa anniversari
 	TRUE, // usa ringraziamenti
 	TRUE, // abilita importazione immagini
-	0, // altezza immagini
-	0, // larghezza immagini
-	"nessuna cartella selezionata", // folder immagini
+	mFixed(105), // altezza immagini
+	mFixed(90), // larghezza immagini
+#ifdef _DEBUG
+	"C:\\SE\\NECRO\\IMG", // folder immagini
+#else
+	"\\\\ARCHSRV\\OUT_NECRO", // folder immagini
+#endif // _DEBUG
 	"IMM", // estensione elenco immagini
 	"EPS", // estensione immagini
 	STAMPAAGGREGATIRADIOBTNID, // tipo stampa bozza
 	FALSE, // stampa bozza automatica
-	"nessun documento selezionato", // documento bozza
-	"nessuna cartella selezionata", // cartella bozze
-	"nessun documento selezionato", // documento ingombro
-	"nessuna cartella selezionata", // cartella ingombri
-	"nessun documento selezionato", // documento finale
-	"nessuna cartella selezionata", // cartella finale
+#ifdef _DEBUG
+	"C:\\SE\\NECRO\\BOZ.QXP", // documento bozza
+	"C:\\SE\\NECRO\\BOZ", // cartella bozze
+	"C:\\SE\\NECRO\\ING.QXP", // documento ingombro
+	"C:\\SE\\NECRO\\ING", // cartella ingombri
+	"C:\\SE\\NECRO\\FIN.QXP", // documento finale
+	"C:\\SE\\NECRO\\FIN", // cartella finale
+#else
+	"\\\\DATASERVER\\SE\\NECRO\\GABBIE\\BOZZAA4_9X.QXP", // documento bozza
+	"\\\\DATASERVER\\SE\\NECRO\\BOZZE", // cartella bozze
+	"\\\\DATASERVER\\SE\\NECRO\\GABBIE\\INGOMBRO6C_9X.QXP", // documento ingombro
+	"\\\\DATASERVER\\SE\\NECRO\\INGOMBRI", // cartella ingombri
+	"\\\\DATASERVER\\SE\\NECRO\\GABBIE\\FINALE6C_9X.QXP", // documento finale
+	"\\\\DATASERVER\\SE\\NECRO\\DEFINITIVI", // cartella finale
+#endif // _DEBUG
 	PRIMAPAGINARADIOBTNID, // prepara documento	
 	ALTOVERSOBASSORADIOBTNID,	// ordinamento impaginazione
-	0, // altezza modulo
-	0, // distanza moduli
-	0, // moduli colonna
-	0, // colonne pagina
-	0, // altezza testata
-	"nessuna cartella selezionata", // cartella dati
+	mFixed(117), // altezza modulo
+	mFixed(9), // distanza moduli
+	12, // moduli colonna
+	8, // colonne pagina
+	mFixed(23) + (65536 * 711 / 1000), // altezza testata
+#ifdef _DEBUG
+	"C:\\SE\\NECRO\\DAT", // cartella dati
+#else
+	"\\\\DATASERVER\\SE\\NECRO\\DATI", // cartella dati
+#endif // _DEBUG
 	"BOZ", //  estensione da impaginare 1
 	TRUE, // impagina estensione 1
 	"ING", //  estensione da impaginare 2
@@ -103,8 +120,13 @@ XtPreferences gXtPreferences =
 	"NEC", //  estensione da impaginare 3 
 	TRUE, // impagina estensione 3
 	VERTICALERADIOBTNID, // ottimizzazione verticale
-	"nessuna cartella selezionata", // folder temporanei
-	"nessuna cartella selezionata" // folder last imp
+#ifdef _DEBUG
+	"C:\\SE\\NECRO\\TEMP", // folder temporanei
+	"C:\\SE\\NECRO\\LASTIMP" // folder last imp
+#else
+	"\\\\DATASERVER\\SE\\NECRO\\TEMP", // folder temporanei
+	"\\\\DATASERVER\\SE\\NECRO\\ULTIMA" // folder last imp
+#endif // _DEBUG
 };
 
 // EX preferenza interna (kLongIngombroTotale) per ora la uso come globale
@@ -1987,72 +2009,6 @@ int32 XTAPI PreferenzeWap(xdwapparamptr params) throw()
 	
 } // PreferenzeWap
 
-/* ------------------------------------------------------------------------ *
-
-	AboutNecroWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI AboutNecroWap(xdwapparamptr params) throw()
-{
-	xdlgsetupptr dlgSetUp;
-	static xmetalist necroLogo = NULL;
-	
-	
-	params->result = XDR_HANDLED;
-	
-	switch (params->opcode)
-	{	
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			dlgSetUp->dlgresid = ABOUTNECRODIALOGID;
-			
-			break;
-		}
-		case XDM_DECLARATIONS:
-		{
-#if WINOS			
-			xd_txt_declare(ABOUTNECROLOGOID, XTXTF_CENTERJUSTIFY | XTXTF_METALIST);
-#endif // WINOS		
-			xd_txt_declare(VERSIONID, XTXTF_SMALLFONT);
-			
-			break;
-		}
-		case XDM_LOADCONTROLS:
-		{
-#if WINOS
-			xml_createlist(&necroLogo);
-			xml_insertpict(necroLogo, INSMETA_ATBEGINNING, XMLF_NOHILITE, ABOUTNECROLOGOBMP,NULL);
-			xd_txt_setmetalist(ABOUTNECROLOGOID, necroLogo); 
-
-			xrect windowRect = {0, 0, 0, 0};
-			xd_getclientscreenrect(&windowRect);
-
-			xrect itemRect = {0, 0, 0, 0}; 
-			xd_getcontrolclientrect(ABOUTNECROLOGOID, &itemRect);
-			windowRect.bottom = windowRect.top + itemRect.bottom + 3;
-			windowRect.right = windowRect.left + itemRect.right + 3;
-			xd_setclientscreenrect(&windowRect);
-#endif // WINOS			
-
-			break;		
-		}
-		case XDM_BUTTONDOWN:
-		{
-			xd_close(CLOSE_CANCEL, 0, NULL);
-			break;
-		}
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}		
-	}
-	
-	return(noErr);
-	
-} // AboutSmartClassWap
-
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -2384,8 +2340,6 @@ static void ScriviNecroIni(void)
 
 } /* ScriviNecroIni */
 
-static void CopiaPreferenze(void);
-static void CopiaPreferenze(void)
 /* ------------------------------------------------------------------------ *
 
 	CopiaPreferenze
@@ -2402,6 +2356,8 @@ static void CopiaPreferenze(void)
 	nessuno
 
 * ------------------------------------------------------------------------ */
+static void CopiaPreferenze(void);
+static void CopiaPreferenze(void)
 {
 	/* preferenze interne */
 	kVersione = kUltimaVersione;

@@ -56,17 +56,11 @@ void XTAPI DBP::OkDialog(const std::string& iString, const int16 iType) throw()
 	C2PSTR((char*) msg);
 	GrafPtr lGrafPtr = NULL;
 	GetPort(&lGrafPtr);
-#if QXP60 || QXP70	
-	ParamText("\p", msg, "\p", "\p");	
-	res = myalert(iType, OKALERTID, NULL);
-#endif // QXP60 || QXP70
-#if QXP80 
 	QXStringRef stringRef = NULL; 
 	QXStringCreateFromLocalString(msg, 0, STRLEN(msg), &stringRef);
 	XTParamText(NULL, stringRef, NULL, NULL);
 	QXStringDestroy(stringRef); 
 	XTAlert(iType, OKALERTID, NULL, NULL);
-#endif // QXP80	
 	SetPort(lGrafPtr);
 #endif // MACOS
 
@@ -98,17 +92,11 @@ void XTAPI DBP::OkDialog(const char* iString, const int16 iType) throw()
 	C2PSTR((char*) msg);
 	GrafPtr lGrafPtr = NULL;
 	GetPort(&lGrafPtr);
-#if QXP60 || QXP70
-	ParamText("\p", msg, "\p", "\p");	
-	res = myalert(iType, OKALERTID, NULL);
-#endif // QXP60 || QXP70
-#if QXP80 
 	QXStringRef stringRef = NULL; 
 	QXStringCreateFromLocalString(msg, 0, STRLEN(msg), &stringRef);
 	XTParamText(NULL, stringRef, NULL, NULL);
 	QXStringDestroy(stringRef); 
 	XTAlert(iType, OKALERTID, NULL, NULL);
-#endif // QXP80	
 	SetPort(lGrafPtr);
 #endif // MACOS
 	
@@ -139,17 +127,11 @@ void XTAPI DBP::OkDialog(const uchar* iString, const int16 iType) throw()
 	STRNCPY(msg, iString, 255);	
 	GrafPtr lGrafPtr = NULL;
 	GetPort(&lGrafPtr);
-#if QXP60 || QXP70	
-	ParamText("\p", msg, "\p", "\p");	
-	res = myalert(iType, OKALERTID, NULL);
-#endif // QXP60 || QXP70
-#if QXP80 
 	QXStringRef stringRef = NULL; 
 	QXStringCreateFromLocalString(msg, 0, STRLEN(msg), &stringRef);
 	XTParamText(NULL, stringRef, NULL, NULL);
 	QXStringDestroy(stringRef); 
 	XTAlert(iType, OKALERTID, NULL, NULL);
-#endif // QXP80		
 	SetPort(lGrafPtr);
 #endif // MACOS
 	
@@ -180,17 +162,11 @@ void XTAPI DBP::LargerOkDialog(const uchar* iString, const int16 iType) throw()
 	STRNCPY(msg, iString, 255);	
 	GrafPtr lGrafPtr = NULL;
 	GetPort(&lGrafPtr);
-#if QXP60 || QXP70
-	ParamText("\p", msg, "\p", "\p");	
-	res = myalert(iType, LARGEROKALERTID, NULL);
-#endif // QXP60 || QXP70
-#if QXP80 
 	QXStringRef stringRef = NULL; 
 	QXStringCreateFromLocalString(msg, 0, STRLEN(msg), &stringRef);
 	XTParamText(NULL, stringRef, NULL, NULL);
 	QXStringDestroy(stringRef); 
 	XTAlert(iType,LARGEROKALERTID, NULL, NULL);
-#endif // QXP80		
 	SetPort(lGrafPtr);
 #endif // MACOS
 	
@@ -222,17 +198,11 @@ int16 XTAPI DBP::OkCancelDialog(const std::string& iString, const int16 iType) t
 	C2PSTR((char*) msg);
 	GrafPtr lGrafPtr = NULL;
 	GetPort(&lGrafPtr);
-#if QXP60 || QXP70	
-	ParamText("\p", msg, "\p", "\p");	
-	res = myalert(iType, OKCANCELALERTID, NULL);
-#endif // QXP60 || QXP70
-#if QXP80 
 	QXStringRef stringRef = NULL; 
 	QXStringCreateFromLocalString(msg, 0, STRLEN(msg), &stringRef);
 	XTParamText(NULL, stringRef, NULL, NULL);
 	QXStringDestroy(stringRef); 
 	res = XTAlert(iType, OKCANCELALERTID, NULL, NULL);
-#endif // QXP80		
 	SetPort(lGrafPtr);
 #endif // MACOS
 
@@ -267,17 +237,11 @@ int16 XTAPI DBP::OkCancelDialog(const char* iString, const int16 iType) throw()
 	GrafPtr lGrafPtr = NULL;
 	GetPort(&lGrafPtr);
 	ParamText("\p", msg, "\p", "\p");
-#if QXP60 || QXP70	
-	ParamText("\p", msg, "\p", "\p");	
-	res = myalert(iType, OKCANCELALERTID, NULL);
-#endif // QXP60 || QXP70
-#if QXP80 
 	QXStringRef stringRef = NULL; 
 	QXStringCreateFromLocalString(msg, 0, STRLEN(msg), &stringRef);
 	XTParamText(NULL, stringRef, NULL, NULL);
 	QXStringDestroy(stringRef); 
 	res = XTAlert(iType, OKCANCELALERTID, NULL, NULL);
-#endif // QXP80	
 	SetPort(lGrafPtr);
 #endif // MACOS
 	
@@ -310,17 +274,11 @@ int16 XTAPI DBP::OkCancelDialog(const uchar* iString, const int16 iType) throw()
 	STRNCPY(msg, iString, 255);	
 	GrafPtr lGrafPtr = NULL;
 	GetPort(&lGrafPtr);
-#if QXP60 || QXP70
-	ParamText("\p", msg, "\p", "\p");	
-	res = myalert(iType, OKCANCELALERTID, NULL);
-#endif // QXP60 || QXP70
-#if QXP80 
 	QXStringRef stringRef = NULL; 
 	QXStringCreateFromLocalString(msg, 0, STRLEN(msg), &stringRef);
 	XTParamText(NULL, stringRef, NULL, NULL);
 	QXStringDestroy(stringRef); 
 	res = XTAlert(iType, OKCANCELALERTID, NULL, NULL);
-#endif // QXP80	
 	SetPort(lGrafPtr);
 #endif // MACOS
 	
@@ -353,17 +311,11 @@ int16 XTAPI DBP::OkNoCancelDialog(const uchar* iString, const int16 iType) throw
 	STRNCPY(msg, iString, 255);	
 	GrafPtr lGrafPtr = NULL;
 	GetPort(&lGrafPtr);
-#if QXP60 || QXP70
-	ParamText("\p", msg, "\p", "\p");	
-	res = myalert(iType, OKCANCELALERTID, NULL);
-#endif // QXP60 || QXP70
-#if QXP80 
 	QXStringRef stringRef = NULL; 
 	QXStringCreateFromLocalString(msg, 0, STRLEN(msg), &stringRef);
 	XTParamText(NULL, stringRef, NULL, NULL);
 	QXStringDestroy(stringRef); 
 	res = XTAlert(iType, OKCANCELALERTID, NULL, NULL);
-#endif // QXP80			
 	SetPort(lGrafPtr);
 #endif // MACOS
 

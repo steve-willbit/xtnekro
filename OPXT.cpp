@@ -188,7 +188,6 @@ errorixtension XTAPI CoseDiQuattroD() throw()
 		return(kErroreDiSistema);
 	}
 
-
 	// delete a file with the same renamed data file
 	CancellaFile(lNuovoNome);
 
@@ -280,6 +279,7 @@ errorixtension XTAPI CoseDiQuattroD() throw()
 	}
 	if (lBool == FALSE) 
 	{
+#ifdef NDEBUG
 		// non sono riuscito a spostare il file, allora lo cancello
 		gErroreXtension = CancellaFile(name);
 		if (gErroreXtension != kNessunErrore) 
@@ -287,6 +287,7 @@ errorixtension XTAPI CoseDiQuattroD() throw()
 			// si e' verificato un errore nel cancellare il file da impaginare
 			return(gErroreXtension);
 		}
+#endif  // NDEBUG
 	}
 
 #if 0 // OLDESTVERSION
@@ -383,11 +384,20 @@ void XTAPI CoseDiStampa() throw()
 * ------------------------------------------------------------------------ */
 void XTAPI CambiaOperazioneCorrente() throw()
 {
-	if (gOperazioneXtension == kCoseDiQuattroD ||
-		gOperazioneXtension == kCoseDiAppWare) gOperazioneXtension = kCoseDellUtente;
-	else gOperazioneXtension = kCoseDiQuattroD;
+
+	if ( gOperazioneXtension == kCoseDiQuattroD ||
+		gOperazioneXtension == kCoseDiAppWare ) {
+			gOperazioneXtension = kCoseDellUtente;
+	}
+	else {
+		gOperazioneXtension = kCoseDiQuattroD;
+	}
+	
 	gSecondiProssimoLancio = 0;
 	gFlagAbilita=FALSE;
+
+	return;
+
 } // CambiaOperazioneCorrente
 
 /* ------------------------------------------------------------------------ *

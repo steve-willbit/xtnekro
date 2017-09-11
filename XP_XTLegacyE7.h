@@ -4795,9 +4795,9 @@ cleanup:
 C_INLINE void XTAPI ExtractFileName(uchar *inOutName)
 {
 	QXMutableStringRef ioName = NULL;
-	QXMutableStringCreateEmpty(&ioName);
+	QXMutableStringCreateFromCString((char*) inOutName, 0, (int32) CSTRLEN(inOutName), &ioName);
 	XTUExtractFileName(ioName);
-	if (ioName) {
+	if ( ioName ) {
 		QXString2CStr((QXStringRef&) ioName, (char*) inOutName);
 		QXMutableStringDestroy(ioName);
 	}

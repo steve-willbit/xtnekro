@@ -64,62 +64,21 @@ extern uint16 gAboutMenuId;
 // globale che contiene lo stato del menu abilita
 extern bool8 gFlagAbilita;
 
-#if 0
-
 // PROTOTYPES
 // PROTOTYPES
 // PROTOTYPES
 
 /*!
-	@function			addmenuitems_callback
-	@abstract 		callback per la chiamata di _XT_ADDMENUITEMS.
-	@discussion		XPress chiama questa funzione quando l'XTension deve aggiungere i
-					suoi comandi di menu.
+	@function			IsAbilitareMenu
+	@abstract 		test
+	@discussion		Per sapere se si deve abilitare o meno un menu'
+					
+					6 Aprile 2005 - Taretto Fabrizio.
 
-					22 marzo 2005 - Fabrizio.
-
-	@param 			cbparam puntatore alla struttura xtaddmenuitemsrec (cfr. la documentazione del XDK).
-	@result  			ritorna noErr.
+	@param			comandomenu contiene l'identificatore alla voce da menu da controllare
+	@result  			nessuno
 */
-int32 XTAPI addmenuitems_callback(xtaddmenuitemsrec* cbparam);
-
-/*!
-	@function			updatemenuitems_callback
-	@abstract 		callback for _XT_UPDATEMENUITEMS call.
-	@discussion		XPress calls this callback functions when the XTension has to enable or disable the menu items.
-
-					22 marzo 2005 - Fabrizio.
-
-	@param 			cbparam pointer to the xtupdatemenuitemsrec record (see XDK documentation).
-	@result  			returns noErr.
-*/
-int32 XTAPI updatemenuitems_callback(xtupdatemenuitemsrec* cbparam);
-
-/*!
-	@function		domenuitem_callback
-	@abstract 		callback per la chiamata di _XT_DOMENUITEM.
-	@discussion		XPress chiama questa funzione quando l'XTension deve eseguire un
-					comando di menu.
-
-					22 marzo 2005 - Fabrizio.
-
-	@param 			cbparam puntatore alla struttura xtdomenuitemrec (cfr. la documentazione del XDK).
-	@result  		ritorna noErr.
-*/
-
-int32 XTAPI domenuitem_callback(xthandlecommandrec* cbparam);
-
-/*!
-	@function		handlecommand_callback
-	@abstract 		callback per la chiamata di _XT_HANDLECOMMAND.
-	@discussion		XPress chiama questa funzione quando l'XTension deve eseguire un comando di menu.
-
-					22 marzo 2005 - Fabrizio.
-
-	@param 			cbparam puntatore alla struttura xthandlecommandrec  (cfr. la documentazione del XDK).
-	@result  		ritorna noErr.
-*/
-int32 XTAPI handlecommand_callback(xthandlecommandrec *cbparam);
+bool8 XTAPI IsAbilitareMenu(int32 comandomenu) throw();
 
 /*!
 	@function			AggiornaMenu
@@ -132,8 +91,6 @@ int32 XTAPI handlecommand_callback(xthandlecommandrec *cbparam);
 	@result  			nessuno
 */
 void XTAPI AggiornaMenu() throw();
-
-#endif // 0
 
 /*!
 	@function			AbilitaMenu

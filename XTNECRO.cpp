@@ -154,20 +154,6 @@ void XTAPI ImpostaNomeCartellaWindows() throw()
 int32 XTAPI deactivate_callback(xtvoidrec* cbparam);
 
 /*!
-	@function		idle_callback
-	@abstract 		callback per la chiamata di _XT_IDLE.
-	@discussion		XPress calls this callback every cycle of the main event. It
-					is only used on Mac. Xpress strongly discourage registration
-					for _XT_IDLE on Windows.
-
-					22 marzo 2005 - Fabrizio.
-	
-	@param 			cbparam xtidlerec (see XDK documentation).
-	@result  		returns noErr.
-*/
-int32 XTAPI idle_callback(xtidlerec* cbparam);
-
-/*!
 	@function 		setlanguage_callback
 	@abstract		callback for _XT_SETLANGUAGE call.
 	@discussion		XPress calls this callback function each time the user changes the XPress language .
@@ -289,46 +275,6 @@ int32 XTAPI deactivate_callback(xtvoidrec* cbparam)
 
 /* ------------------------------------------------------------------------ *
 
-	idle_callback
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI idle_callback(xtidlerec* cbparam)
-{
-	// per ora uso l'idle callback poi sposto tutto su usertimer
-
-	// L'Xtension verifica ciclicamente se nella cartella dei file da
-	// impaginare c'e' un file. Se il file e' presente passa all'esecuzione
-	// del comando scritto nella prima riga del file.
-
-	// DBP::FreezeUndo();
-	
-	// in base all'operazione corrente di Xpress scelgo se abilitare o
-	// disabilitare l'impaginazione 
-	if (PrendiOperazioneCorrente() == kCoseDiQuattroD)
-	{
-		// devo permettere di disabilitare l'impaginazione
-		Str255 tempStr = "";
-		DBP::GetResourceString(tempStr, MENUSTRID,  DISABILITAMENUID);
-		DBP::SetMenuCommandText(gNecroMenu, gAbilitaDisabilitaMenuId, tempStr);
-	}
-	else if (PrendiOperazioneCorrente() == kCoseDellUtente)
-	{
-		// devo permettere di abilitare l'impaginazione
-		Str255 tempStr = "";
-		DBP::GetResourceString(tempStr, MENUSTRID,  ABILITAMENUID);
-		DBP::SetMenuCommandText(gNecroMenu, gAbilitaDisabilitaMenuId, tempStr);
-	}
-
-	AggiornaMenu();
-	
-	// DBP::UnFreezeUndo();
-
-	return(noErr);	 
-			
-} // idle_callback
-
-/* ------------------------------------------------------------------------ *
-
 	setlanguage_callback
 	
 * ------------------------------------------------------------------------ */
@@ -401,9 +347,6 @@ int32 XTAPI setup_callback(xtsetuprec* cbparam) throw()
 		// palettes
 		xtregistercbcode(_XT_OPENPALETTES, openpalettes_callback, XTCBF_NORMAL, XT_NORMPRIORITY, NULL);
 
-		// idle
-		xtregistercbcode(_XT_IDLE, idle_callback, XTCBF_NORMAL | XTCBF_NOTACTIVE , XT_NORMPRIORITY, NULL);
-		
 		// registrazione delle WAP
 		xtregistercbcode(_XT_IMPAGINAZIONEWAP, ImpaginazioneWap, XTCBF_NORMAL, XT_NORMPRIORITY, NULL);
 		xtregistercbcode(_XT_GIUSTIFICAZIONEWAP, GiustificazioneWap, XTCBF_NORMAL, XT_NORMPRIORITY, NULL);

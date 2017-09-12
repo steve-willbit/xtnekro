@@ -95,19 +95,11 @@
 // GLOBALS
 // GLOBALS
 
-// volume di partenza di QuarkXpress
+extern bool8 gOpenPalettesCalled;
 extern int16 gNumeroVolumeXpress;
-
-// per prendere il nome della cartella di Xpress
 extern uchar gNomeCartellaXpress[];
-
-// FSSpec cartella XTension
 extern FSSpec gFSSpecXtension;
-
-// stringa di uso generale
 extern uchar gStringaC[MAXPATHNAME];
-
-// contiene errore dell'XT
 extern errorixtension gErroreXtension;
 
 // TYPEDEF

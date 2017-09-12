@@ -40,13 +40,8 @@
 #include "ResStr.h"
 #include "XTNecro.h"
 
+#include "InfoPaletteWap.h"
 #include "Paletta.h"
-
-// DEFINES
-// DEFINES
-// DEFINES
-
-#define PALETTEMARGIN 6
 
 // GLOBALS
 // GLOBALS
@@ -55,12 +50,11 @@
 bool8 gInfoPaletteShowingFlag = FALSE;
 wlochandle gInfoPaletteWLocHandle = NULL;
 xdlgid gInfoPaletteId = NULL;
+std::vector<std::string> gListaPalette;
 
 // STATICS
 // STATICS
 // STATICS
-
-static	GrafPtr gMessagePaletteGrafPtr;
 
 //per ricordare ultima percentuale ottenuta
 static int16 gUltimaPercentuale = 0;
@@ -73,10 +67,6 @@ static int16 gPercentuale = 0;
 
 // numero di intervalli della barra di avanzamento
 static const xdtime kMsDelay = 100;
-
-// lista per contenere le stringhe da visualizzare 
-// all'interno della palette informazioni
-static std::vector<std::string> gListaPalette;
 
 // FUNCTIONS
 // FUNCTIONS
@@ -102,13 +92,13 @@ void XTAPI Visualizza(const uchar* iString) throw()
 		GrafPtr tmpGrafPtr;
 		GetPort(&tmpGrafPtr);
 		int16 savedResFile = CurResFile();
-		SetPort(gMessagePaletteGrafPtr);		
+		SetPort(InfoPaletteWap::GetInstance().GetMessagePaletteGrafPtr());		
 		
 		APIERR Err = xd_sendmessage
 		(
 			gInfoPaletteId,
 			XDM_CONTROL,
-			LISTAINFOID, 
+			InfoPaletteWap::GetInstance().GetListaInfoId(), 
 			NULL,
 			NULL,
 			NULL
@@ -141,7 +131,7 @@ void XTAPI MostraNascondiPaletteInfo() throw()
 	else
 	{
 		//xd_createpalette(_XT_INFOPALETTEWAP, (uint32) gInfoPaletteWLocHandle, &gInfoPaletteId);
-		XDCreatePaletteWithCBCode(_XT_INFOPALETTEWAP, (void*) gInfoPaletteWLocHandle, &gInfoPaletteId);
+		XDCreatePaletteWithCBCode(_XT_INFOPALETTEWAP, (void*) new InfoPaletteWap(), &gInfoPaletteId);
 	}
 
 } // MostraNascondiPaletteInfo
@@ -167,208 +157,9 @@ void XTAPI OpenInfoPalette() throw()
 	}
 
 	//xd_createpalette(_XT_INFOPALETTEWAP, (uint32) gInfoPaletteWLocHandle, &gInfoPaletteId);
-	XDCreatePaletteWithCBCode(_XT_INFOPALETTEWAP, (void*) gInfoPaletteWLocHandle, &gInfoPaletteId);
+	XDCreatePaletteWithCBCode(_XT_INFOPALETTEWAP, (void*) new InfoPaletteWap(), &gInfoPaletteId);
 	
 } // OpenPaginationPalette
-
-/* ------------------------------------------------------------------------ *
-
-	InfoPaletteWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI InfoPaletteWap(xdwapparamptr params) throw()
-{
-	static bool8 loadControls = FALSE;
-
-	static wlochandle windowLocation = NULL;
-	xdlgsetupptr dlgSetUp;
-	params->result = XDR_HANDLED;
-	
-	switch (params->opcode)
-	{
-		case XDM_DIALOGSETUP:
-		{
-			params->result = XDR_HANDLED;
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			dlgSetUp->dlgresid = INFOPALETTEID;
-			
-			// We are passing this structure to ourselves when
-			// we call xd_create...() passing something in the second parameter.
-			assert(NULL != params->param2);
-			windowLocation = (wlochandle) params->param2;
-
-			break;
-		}
-		
-		case XDM_INIT:
-		{							
-			gInfoPaletteShowingFlag = TRUE;
-			params->result = XDR_HANDLED;
-			break;
-		}				
-		
-		case XDM_DECLARATIONS:
-		{	
-			// dichiaro lista
-			xd_lstlbx_declare(LISTAINFOID, XLSTF_SMALLFONTSIZE, NULL);
-			// dichiaro edit text per vedere in modo esteso i messaggi della lista
-			xd_edt_declare(EXTENDEDMESSAGETEXTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			// dichiaro lo static
-			xd_txt_declare(STATICTXTONBARID,XTXTF_SMALLFONT);
-	
-			params->result = XDR_HANDLED;
-			break;
-		}		
-		
-		case XDM_LOADCONTROLS:
-		{
-			GetPort(&gMessagePaletteGrafPtr);
-		
-			loadControls = TRUE;
-		
-			// dialog will appear in its last position
-			xrect r = {0, 0, 0, 0};
-			r.top = (*windowLocation)->wloc.v;
-			r.left = (*windowLocation)->wloc.h;
-
-			// size dialog using lowerrightmost field
-			xrect itemRect = {0, 0, 0, 0}; 
-			xd_getcontrolclientrect(EXTENDEDMESSAGETEXTID, &itemRect);
-			r.bottom = r.top + itemRect.bottom + PALETTEMARGIN;
-			r.right = r.left + itemRect.right + PALETTEMARGIN;
-			xd_setclientscreenrect(&r);
-			
-			// ricarico tutto il contenuto della lista 
-			uchar tmpListStr[512] = "";
-			for (std::vector<std::string>::const_iterator i = gListaPalette.begin(); i !=  gListaPalette.end(); ++i)
-			{							
-				// disabilito il redraw
-				xd_lst_enableupdates(LISTAINFOID, FALSE);
-				
-				// assegno ad una variabile l'elemento corrispondente alla posizione della lista che devo riempire
-				CSTRCPY(tmpListStr, (*i).c_str());
-				xrow xRow;
-				xd_lst_addrow(LISTAINFOID, IR_BOTTOM, &xRow);
-				xd_lst_setrowtext(LISTAINFOID, xRow, tmpListStr);
-				xd_lst_setselection(LISTAINFOID, xRow);
-				xd_lstlbx_scrolltorow(LISTAINFOID, xRow);
-				xd_lst_enableupdates(LISTAINFOID, TRUE);
-								
-			}
-			
-			if (gListaPalette.size())			
-				xd_edt_set(EXTENDEDMESSAGETEXTID, tmpListStr, NULL);
-
-			loadControls = FALSE;
-			params->result = XDR_HANDLED;
-			break;
-		}		
-
-		case XDM_USERACTION:
-		{
-			switch (params->itemid)
-			{
-				case LISTAINFOID:
-				{
-					
-					xrow row;
-					uchar tmpRowStr[512] = "";
-					xd_lst_getselection(LISTAINFOID, &row);
-					xd_lst_getrowstring(LISTAINFOID, row, (uchar*) tmpRowStr);
-					
-					// imposto il campo dove viene visualizzata la cartella selezionata dei riempitivi
-					xd_edt_set(EXTENDEDMESSAGETEXTID, tmpRowStr, NULL);
-															
-					params->result = XDR_NOTHANDLED;
-					break;
-				}
-				
-				default:
-				{
-					params->result = XDR_NOTHANDLED;
-					break;
-				}	
-			}		
-			
-			break;
-		}
-
-		case XDM_CONTROL:
-		{    
-			switch (params->itemid) 
-			{ 
-				case LISTAINFOID:
-				{
-					if (!loadControls)
-					{
-						loadControls = TRUE;
-																		
-						// assegno ad una variabile l'elemento corrispondente alla posizione della lista che devo riempire
-						uchar tmpListStr[512] = "";
-						CSTRCPY(tmpListStr, gListaPalette.back().c_str());
-						
-						// aggiungo la linea sulla list box
-						xrow xRow;
-						xd_lst_addrow(LISTAINFOID, IR_BOTTOM, &xRow);
-						xd_lst_setrowtext(LISTAINFOID, xRow, tmpListStr);
-						xd_lst_setselection(LISTAINFOID,xRow);
-						
-						// controllo di nn superare il numero massimo di righe visualizzabili
-						if (gListaPalette.size() >= kMaxNumberOfRow)
-						{
-							xd_lst_deleterow(LISTAINFOID, 0);
-							gListaPalette.erase(gListaPalette.begin());
-						}
-						
-						// prendo testo della selezione
-						uchar tmpRowStr[512] = "";
-						xd_lst_getrowstring(LISTAINFOID, xRow, (uchar*) tmpRowStr);
-						
-						// imposto il campo dove viene visualizzata la cartella selezionata dei riempitivi
-						xd_edt_set(EXTENDEDMESSAGETEXTID, tmpRowStr, NULL);
-						xd_lstlbx_scrolltorow(LISTAINFOID, xRow);
-						xd_update();
-						
-						loadControls = FALSE;
-					}
-					break;
-				}
-			}	
-			break;
-		}	
-					
-		case XDM_DEINIT:
-		{
-			// save palette position
-			xrect r = {0, 0, 0, 0};
-			xd_getclientscreenrect(&r);
-			(*windowLocation)->wloc.h = (int16) r.left;
-			(*windowLocation)->wloc.v =  (int16) r.top;
-			
-			// if XPress is shutting down AND we are deinitting
-			// the dialog, then the dialog must have been showing at
-			// shutting down of XPress.
-			gInfoPaletteShowingFlag = FALSE;
-			xtget_xtshutdown((uchar*) &gInfoPaletteShowingFlag);
-			gInfoPaletteShowingFlag = !!gInfoPaletteShowingFlag; 
-			
-			// set to NULL the dialog id of the palette
-			gInfoPaletteId = NULL;
-			
-			params->result = XDR_HANDLED;
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}		
-	}
-	
-	return(noErr);
-	
-} // PaginationPaletteWap
 
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

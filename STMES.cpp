@@ -110,13 +110,22 @@ static void XTAPI CancellaFileRapporto() throw();
 * ------------------------------------------------------------------------ */
 static void XTAPI ApriFileRapporto() throw()
 {	
+	char tempFolder[MAXPATHNAME] = "";
+
+	GetTempPath(MAXPATHNAME, tempFolder);
+
 	// creo l'FSSpec del file di rapporto
-	gFSSpecFileRapporto.vRefNum = gFSSpecXtension.vRefNum;
-	gFSSpecFileRapporto.parID = gFSSpecXtension.parID;
-	STRCPY(gFSSpecFileRapporto.name,  gFSSpecXtension.name);	
-	STRCAT(gFSSpecFileRapporto.name, "\\");
-	STRCAT(gFSSpecFileRapporto.name, gStrNomeFileRapporto);
+	//gFSSpecFileRapporto.vRefNum = gFSSpecXtension.vRefNum;
+	//gFSSpecFileRapporto.parID = gFSSpecXtension.parID;
+	//STRCPY(gFSSpecFileRapporto.name,  gFSSpecXtension.name);	
+	//STRCAT(gFSSpecFileRapporto.name, "\\");
+	//STRCAT(gFSSpecFileRapporto.name, gStrNomeFileRapporto);
 	
+	gFSSpecFileRapporto.vRefNum = 0;
+	gFSSpecFileRapporto.parID = 0;
+	STRCPY(gFSSpecFileRapporto.name,  tempFolder);	
+	STRCAT(gFSSpecFileRapporto.name, gStrNomeFileRapporto);
+
 	// apertura del file	
 	while (1)
 	{

@@ -69,7 +69,7 @@ static int16 gWDCartella = 0;
 // PROTOTYPES
 
 /*! 
-	@function			Salva
+	@function		Salva
 	@abstract		gestione documento XPress
 	@discussion		Salva il documento corrente con il nome passato e nella cartella specificata
 					come parametro

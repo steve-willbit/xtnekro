@@ -17,27 +17,9 @@
 #include "DbpResource.h"
 #endif // dbpinclude_h
 
-#include<vector>
-
-// DIFINES
-// DIFINES
-// DIFINES
-
-#define INFOPALETTEID (21030)
-#define LISTAINFOID 1
-#define EXTENDEDMESSAGETEXTID 2
-#define STATICTXTONBARID 3
-
-// CONSTS
-// CONSTS
-// CONSTS
-
-// numero massimo di righe contenute sulle listbox
-#define kMaxNumberOfRow 500
-
-// EXTERN
-// EXTERN
-// EXTERN
+// GLOBALS
+// GLOBALS
+// GLOBALS
 
 extern bool8 gInfoPaletteShowingFlag;
 extern wlochandle gInfoPaletteWLocHandle;
@@ -84,18 +66,6 @@ void XTAPI MostraNascondiPaletteInfo() throw();
 	@result			nessuno.
 */
 void XTAPI OpenInfoPalette() throw();
-
-/*! 
-	@function			InfoPaletteWap
-	@abstract		gestione dalla paletta informazioni.
-	@discussion		Visualizza le informazioni di impaginazione sulla paletta.
-
-					20 Novembre 2003 - Fabrizio Taretto.
-
-	@param			cbparam pointer to the xdwapparamrec record (see XDK Documentation).
-	@result			always noErr.
-*/
-int32 XTAPI InfoPaletteWap(xdwapparamptr params) throw();
 
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

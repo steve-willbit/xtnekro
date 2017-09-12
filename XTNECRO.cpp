@@ -66,16 +66,12 @@
 
 #include "XTNecro.h"
 
-// STATICS
-// STATICS
-// STATICS
+// GLOBALS
+// GLOBALS
+// GLOBALS
 
 // set to true when openpalettes_callback is called
-static bool8 gOpenPalettesCalled = FALSE;
-
-// GLOBALS
-// GLOBALS
-// GLOBALS
+bool8 gOpenPalettesCalled = FALSE;
 
 // FSSpec cartella XTension
 FSSpec gFSSpecXtension= {0, 0, ""};
@@ -359,27 +355,6 @@ int32 XTAPI setlanguage_callback(xtsetlanguagerec* cbparam)
 	return (noErr);
 	
 } // setlanguage_callback
-
-/* ------------------------------------------------------------------------ *
-
-	openpalettes_callback
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI openpalettes_callback(xtvoidrec *cbparam)
-{
-	XTError result = noErr;
-
-	// info box palette
-	if (gInfoPaletteShowingFlag)
-	{
-		result = xd_createpalette(_XT_INFOPALETTEWAP, (uint32) gInfoPaletteWLocHandle, &gInfoPaletteId);
-	}
-
-	// this is a simple to remberer if the openpalettes callback is already called
-	gOpenPalettesCalled = TRUE;
-
-	return(result);	
-}
 
 /* ------------------------------------------------------------------------ *
 

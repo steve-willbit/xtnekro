@@ -151,7 +151,7 @@ errorixtension XTAPI RipristinaDocumento() throw()
 	ImpostaCodiceImpaginazione(PrendiCodiceDocumento());
 
 	// costruisco il nome del documento
-	sprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), ".QXP");
+	sprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), "_9X.QXP");
 
 	// salvataggio documento appena aperto
 	gErroreXtension = SalvaDocumento(gXtPreferences.finalePref.folderPathFinale, lNomeDocumento);

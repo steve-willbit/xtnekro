@@ -305,7 +305,7 @@ static errorixtension XTAPI ImpaginaBozza(uchar** ptrdocumento) throw()
 	ImpostaScalaDocumento(&lPercentuale);
 
 	// costruisco il nome del documento
-	sprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), ".QXP");
+	sprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), "_9X.QXP");
 
 	// salvataggio documento bozza appena impaginato */
 	gErroreXtension = SalvaDocumento(/*PercorsoCompleto(*/gXtPreferences.bozzaPref.folderPathBozze/*)*/, lNomeDocumento);
@@ -547,7 +547,7 @@ static errorixtension XTAPI ImpaginaDefinitivoManuale(uchar** ptrdocumento) thro
 	ImpostaScalaDocumento(&lPercentuale);
 
 	// costruisco il nome del documento
-	sprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), ".QXP");
+	sprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), "_9X.QXP");
 
 	// salvataggio documento appena impaginato
 	gErroreXtension = SalvaDocumento(/*PercorsoCompleto(*/gXtPreferences.finalePref.folderPathFinale/*)*/, lNomeDocumento);
@@ -653,7 +653,7 @@ static errorixtension XTAPI ImpaginaDefinitivoSequenza(uchar**ptrdocumento) thro
 	ImpostaScalaDocumento(&lPercentuale);
 		
 	// costruisco il nome del documento
-	wsprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), ".QXP");
+	wsprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), "_9X.QXP");
 
 	// salvataggio documento appena impaginato
 	gErroreXtension = SalvaDocumento(/*PercorsoCompleto(*/gXtPreferences.finalePref.folderPathFinale/*)*/,
@@ -816,7 +816,7 @@ static errorixtension XTAPI ImpaginaDefinitivoAutomatico(uchar** ptrdocumento) t
 	}
 
 	// costruisco il nome del documento
-	sprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), ".QXP");
+	sprintf((char*)lNomeDocumento,"%s%s", PrendiDataXNomeFile(), "_9X.QXP");
 
 	// salvataggio documento appena impaginato
 	gErroreXtension = SalvaDocumento(/*PercorsoCompleto(*/gXtPreferences.finalePref.folderPathFinale/*)*/,

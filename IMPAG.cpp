@@ -72,6 +72,8 @@
 #include "Tempo.h"
 #include "XTNecro.h"
 
+#include "ImpaginazioneWap.h"
+
 #include "Impag.h"
 
 // CONSTS
@@ -922,15 +924,15 @@ errorixtension XTAPI Impagina(Handle handle) throw()
 			DaiMessaggio(kMessaggioDefinitiva);
 			switch (gXtPreferences.impaginazionePref.tipoImpaginazione) 
 			{
-				case MANUALERADIOBTNID:
-					gErroreXtension = ImpaginaDefinitivoManuale(&gPtrDocumento);
-					break;
-				case SEQFILEDATIRADIOBTNID:
-					gErroreXtension = ImpaginaDefinitivoSequenza(&gPtrDocumento);
-					break;
-				case POSAUTORADIOBTNID:
-					gErroreXtension = ImpaginaDefinitivoAutomatico(&gPtrDocumento);
-					break;
+			case ImpaginazioneWap::MANUALERADIOBTNID:
+				gErroreXtension = ImpaginaDefinitivoManuale(&gPtrDocumento);
+				break;
+			case ImpaginazioneWap::SEQFILEDATIRADIOBTNID:
+				gErroreXtension = ImpaginaDefinitivoSequenza(&gPtrDocumento);
+				break;
+			case ImpaginazioneWap::POSAUTORADIOBTNID:
+				gErroreXtension = ImpaginaDefinitivoAutomatico(&gPtrDocumento);
+				break;
 			}
 			DocID curdoc;
 			xtget_curdoc(&curdoc);

@@ -37,7 +37,6 @@
 	@abstract		resource id.
 	@discussion		risorsa della dialog di preferenze.
 */
-#define PREFERENZEDIALOGID 					(20000 + LANGUAGE)
 #define BOTTONEANNULLA 						2
 #define LISTAPREFERENZEID 					3
 #define TABCONTROLPREFERENZE 				4	

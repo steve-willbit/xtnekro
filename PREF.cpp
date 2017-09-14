@@ -1864,7 +1864,7 @@ int32 XTAPI PreferenzeWap(xdwapparamptr params) throw()
 		case XDM_DIALOGSETUP:
 		{
 			dlgSetUp = (xdlgsetupptr) params->param1;
-			dlgSetUp->dlgresid = PREFERENZEDIALOGID;
+			dlgSetUp->dlgresid = 10101010;
 			
 			break;
 		}

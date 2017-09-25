@@ -272,9 +272,6 @@ errorixtension XTAPI CalcolaSpazioOttimale() throw()
 	}
 
 	// calcolo il rapporto tra spazio disponibile e ingombro
-	// uchar tmpstr[kDimensionesStringhe] = "";
-	// wsprintf(tmpstr, "Errore di divisione per zero.\nSorgente: %s, Linea: %d.",__FILE__, __LINE__);
-	// XtAssert(tmpstr, (0 != gSpazioDisponibileTotale));
 	assert(0 != gSpazioDisponibileTotale);
 
 	lRapporto = ((double) lIngombroTotale / (double) gSpazioDisponibileTotale);
@@ -545,8 +542,6 @@ void XTAPI  CalcolaPagineColonneEModuli(uint32 spazio, uint32 *ptrpagine,uint32 
 
 	if (ptrmoduli != NULL)
 	{
-		// wsprintf(tmpstr, "Errore di divisione per zero.\nSorgente: %s, Linea: %d.",__FILE__, __LINE__);
-		// XtAssert(tmpstr, (0 != mLong(kFixedAltezzaModulo + kFixedDistanzaModuli)));
 		assert(0 != mLong(gXtPreferences.documentoPref.altezzaModulo + gXtPreferences.documentoPref.distanzaModuli));
 		(*ptrmoduli) = spazio / mLong(gXtPreferences.documentoPref.altezzaModulo + gXtPreferences.documentoPref.distanzaModuli);
 	}
@@ -558,24 +553,18 @@ void XTAPI  CalcolaPagineColonneEModuli(uint32 spazio, uint32 *ptrpagine,uint32 
 	lPuntiPerPagina = lPuntiPerColonna * PrendiNumeroColonne();
 
 	// calcolo il numero di pagine
-	// wsprintf(tmpstr, "Errore di divisione per zero.\nSorgente: %s, Linea: %d.",__FILE__, __LINE__);
-	// XtAssert(tmpstr, (0 != mLong(lPuntiPerPagina)));
 	assert(0 != mLong(lPuntiPerPagina));
 	lPagine = spazio / mLong(lPuntiPerPagina); 	
 
 	// calcolo le colonne
 	lPuntiColonne = spazio - (lPagine * mLong(lPuntiPerPagina));
 		
-	// wsprintf(tmpstr, "Errore di divisione per zero.\nSorgente: %s, Linea: %d.",__FILE__, __LINE__);
-	// XtAssert(tmpstr, (0 != mLong(lPuntiPerPagina)));
 	assert(0 != mLong(lPuntiPerPagina));
 
 	lColonne = lPuntiColonne / mLong(lPuntiPerColonna);		 
 	lFrazioneColonna = lPuntiColonne % mLong(lPuntiPerColonna);
 	lFrazioneColonna *= 100L;
 
-	// wsprintf(tmpstr, "Errore di divisione per zero.\nSorgente: %s, Linea: %d.",__FILE__, __LINE__);
-	// XtAssert(tmpstr, (0 != mLong(lPuntiPerColonna)));
 	assert(0 != mLong(lPuntiPerColonna));
 
 	lFrazioneColonna /= mLong(lPuntiPerColonna);
@@ -598,6 +587,11 @@ void XTAPI  CalcolaPagineColonneEModuli(uint32 spazio, uint32 *ptrpagine,uint32 
 		(*ptrcolonne) = lColonne;
 	if (ptrfrazionecolonna != NULL)
 		(*ptrfrazionecolonna) = lFrazioneColonna;
+	if ( ptrpagine != NULL && ptrcolonne != NULL && ptrmoduli != NULL ) {
+		if ( 0 == (*ptrpagine) && 0 == (*ptrcolonne) && 0 == (*ptrmoduli) ) {
+			(*ptrmoduli) = 1;
+		}
+	}
 } // CalcolaPagineColonneEModuli
 
 /* ------------------------------------------------------------------------ *

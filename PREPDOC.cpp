@@ -38,6 +38,8 @@
 #include "SpaceCol.h"
 #include "XTNecro.h"
 
+#include "FinaleWap.h"
+
 #include "PreparaDocWap.h"
 #include "PrepDoc.h"
 
@@ -198,7 +200,7 @@ void XTAPI InserisciPagineColonneEModuli(int32 pagine, int32 colonne, int32 modu
 	CancelloBoxIngombro();
 
 	// vado sulla pagina dove creo gli ingombri
-	if (gXtPreferences.finalePref.preparaDocumento == PRIMAPAGINARADIOBTNID)
+	if (gXtPreferences.finalePref.preparaDocumento == FinaleWap::PRIMAPAGINARADIOBTNID)
 	{
 		gotopage(kPrimaPagina);
 	}
@@ -227,7 +229,7 @@ void XTAPI InserisciPagineColonneEModuli(int32 pagine, int32 colonne, int32 modu
 		for (lColonna = 0; lColonna < PrendiNumeroColonne(); lColonna++) 
 		{
 			// controllo se inserisco in coda o in testa
-			if (gXtPreferences.finalePref.preparaDocumento == PRIMAPAGINARADIOBTNID)
+			if (gXtPreferences.finalePref.preparaDocumento == FinaleWap::PRIMAPAGINARADIOBTNID)
 			{
 				// imposto il puntatore
 				lPtrInfoIngombri = gPtrInfoIngombri + lColonna;
@@ -530,7 +532,7 @@ void XTAPI PreparaDocumento() throw()
 	}
 
 	// controllo se preparare in coda o in testa
-	if (gXtPreferences.finalePref.preparaDocumento == PRIMAPAGINARADIOBTNID)
+	if (gXtPreferences.finalePref.preparaDocumento == FinaleWap::PRIMAPAGINARADIOBTNID)
 	{
 		// vado sulla prima pagina
 		gotopage(kPrimaPagina);

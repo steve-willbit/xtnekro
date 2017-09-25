@@ -64,6 +64,39 @@ extern uint16 gAboutMenuId;
 // globale che contiene lo stato del menu abilita
 extern bool8 gFlagAbilita;
 
+// INLINES
+// INLINES
+// INLINES
+
+inline int DebugMessageBox(LPCSTR p0, LPCSTR p1, LPCSTR p2, LPCSTR p3) {
+#ifdef _DEBUG
+	HWND hWnd = NULL;
+	xtget_hwndmainframe(&hWnd);
+
+	std::string s;
+	if ( NULL != p0 ) {
+		s.append(p0);
+	}
+	if ( NULL != p1 ) {
+		s.append(p1);
+	}
+	if ( NULL != p2 ) {
+		s.append(p2);
+	}
+	if ( NULL != p3 ) {
+		s.append(p3);
+	}
+
+	return MessageBox(hWnd, (LPCSTR) s.c_str(), (LPCSTR) "XTNEKRO", MB_OK);
+#endif // _DEBUG
+#ifdef NDEBUG
+	return(0);
+#endif // NDEBUG
+}
+inline int DebugMessageBox(LPCSTR p0) { return DebugMessageBox(NULL, p0, NULL, NULL); }
+inline int DebugMessageBox(LPCSTR p0, LPCSTR p1) { return DebugMessageBox(p0, p1, NULL, NULL); }
+inline int DebugMessageBox(LPCSTR p0, LPCSTR p1, LPCSTR p2) { return DebugMessageBox(p0, p1, p2, NULL); }
+
 // PROTOTYPES
 // PROTOTYPES
 // PROTOTYPES
@@ -115,6 +148,31 @@ void XTAPI AbilitaMenu(int32 comandomenu) throw();
 	@result  			nessuno
 */
 void XTAPI  DisabilitaMenu(int32  comandomenu) throw();
+
+/*!
+	@function			PreparaDocumentoEseguiMenu
+*/
+void XTAPI PreparaDocumentoEseguiMenu() throw();
+
+/*!
+	@function			CalcolaPosizionamentoEseguiMenu
+*/
+void XTAPI CalcolaPosizionamentoEseguiMenu() throw();
+
+/*!
+	@function			PosizionaEseguiMenu
+*/
+void XTAPI PosizionaEseguiMenu() throw();
+
+/*!
+	@function			PaletteInfoEseguiMenu
+*/
+void XTAPI PaletteInfoEseguiMenu() throw();
+
+/*!
+	@function			PreferenzeEseguiMenu
+*/
+void XTAPI PreferenzeEseguiMenu() throw();
 
 #endif // menu_h
 

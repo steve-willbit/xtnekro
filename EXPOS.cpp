@@ -212,7 +212,6 @@ static errorixtension XTAPI EseguiPosizionamentoNecrologi() throw()
 	// chiusura della colonna corrente 
 	tipochiusura lTipoChiusura = kNessunaChiusura;
 	
-
 	// ciclo di posizionamento 
 	for (lPagina = 1; lPagina <= PrendiNumeroPagine(); lPagina++) 
 	{
@@ -602,8 +601,6 @@ static errorixtension XTAPI EseguiPosizionamentoNecrologi() throw()
 						{
 							// basta per recuperare la differenza
 							// allargare l'interlinea 
-							
-							wsprintf((char*)gStringaC, "Errore di divisione per zero.\nSorgente: %s, Linea: %d.",__FILE__, __LINE__);
 							assert(0 != (*lPtrSpazioColonna).numeroLinee);
 
 

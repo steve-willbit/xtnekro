@@ -56,4 +56,5 @@ void XTAPI InserisciTesto(uchar* testo, int32 lunghezza) throw()
 	// inserisco il testo
 	xeputchars(lLunghezzaTesto, lunghezza, (uchar *) testo);
 	xecalc(XEDOALL);
+
 } // InserisciTesto

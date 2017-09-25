@@ -64,6 +64,8 @@
 #include "SimbPax.h"
 #include "SpaceCol.h"
 
+#include "FinaleWap.h"
+
 #include "Box.h"
 
 // CONSTS
@@ -1669,7 +1671,7 @@ boxid XTAPI InserisciColonnaDiIngombro(int16 colonna, int16 moduli) throw()
 								 (colonna - 1) * PrendiLarghezzaColonna() +
 								 (colonna - 1) * PrendiDistanzaColonne();
 
-	if (gXtPreferences.finalePref.posizionamentoIngombri == ALTOVERSOBASSORADIOBTNID)
+	if (gXtPreferences.finalePref.posizionamentoIngombri == FinaleWap::ALTOVERSOBASSORADIOBTNID)
 	{
 		// calcolo le coordinate del box partendo dall'alto
 		lCoordinateBox.top = PrendiMargineAlto();
@@ -1695,7 +1697,7 @@ boxid XTAPI InserisciColonnaDiIngombro(int16 colonna, int16 moduli) throw()
 	lPtrBoxIngombro->p.box.frame.style = SOLIDLINE;
 
 	// controllo se preparare in coda o in testa
-	if (gXtPreferences.finalePref.preparaDocumento == PRIMAPAGINARADIOBTNID)
+	if (gXtPreferences.finalePref.preparaDocumento == FinaleWap::PRIMAPAGINARADIOBTNID)
 	{
 		// creo il box sulla prima pagina
 		xtseq2page(kPrimaPagina, FALSE, &lDatiPagina);

@@ -45,6 +45,8 @@
 #include "CalcPos.h"
 #include "XTNecro.h"
 
+#include "DisposizioneWap.h"
+
 #include "RiordDef.h"
 
 // STATICS GLOBALS
@@ -589,7 +591,7 @@ static int16 XTAPI OrdinaAltezzeDefunti(const void  *aa, const void  *bb) throw(
 
 	lAltezzaADoubleFixed -= a->altezzaDoubleFixed;
 
-	if (gXtPreferences.disposizionePref.tipoDisposizione == VERTICALERADIOBTNID)
+	if (gXtPreferences.disposizionePref.tipoDisposizione == DisposizioneWap::VERTICALERADIOBTNID)
 	{
 		// impaginazione tipo Bg
 		if (lAltezzaADoubleFixed < 0) 
@@ -835,7 +837,7 @@ static tipochiusura XTAPI EseguiNormaleDefunti(spaziocolonna *ptrspaziocolonna, 
 		}
 			
 		// inserisco l'elemento nella colonna
-		if (gXtPreferences.disposizionePref.tipoDisposizione == VERTICALERADIOBTNID)
+		if (gXtPreferences.disposizionePref.tipoDisposizione == DisposizioneWap::VERTICALERADIOBTNID)
 		{
 			// impaginazione tipo Bg
 			InserisciDefuntoInCoda(ptrspaziocolonna, (*lPtrElementoCorrente).ptrDefunto);
@@ -1239,7 +1241,7 @@ static tipochiusura XTAPI EseguiNormaleDefuntiFondo(spaziocolonna *ptrspaziocolo
 		}
 
 		// inserisco l'elemento nella colonna
-		if (gXtPreferences.disposizionePref.tipoDisposizione == VERTICALERADIOBTNID)
+		if (gXtPreferences.disposizionePref.tipoDisposizione == DisposizioneWap::VERTICALERADIOBTNID)
 		{
 			// impaginazione tipo Bg
 			InserisciDefuntoInCodaFondo(ptrspaziocolonna, (*lPtrElementoCorrente).ptrDefunto);

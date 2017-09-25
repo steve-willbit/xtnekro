@@ -46,6 +46,8 @@
 #include "StMes.h"
 #include "XTNecro.h"
 
+#include "DisposizioneWap.h"
+
 #include "InfoNec.h"
 
 // CONSTS
@@ -1247,7 +1249,7 @@ void XTAPI OrdinaInfoNecrologi() throw()
 			(int (*)(const void*, const void*)) OrdinaDecrescenteAnnunci);
 
 	// novita' versione 2
-	if (gXtPreferences.disposizionePref.tipoDisposizione == VERTICALERADIOBTNID)
+	if (gXtPreferences.disposizionePref.tipoDisposizione == DisposizioneWap::VERTICALERADIOBTNID)
 	{
 		// impaginazione tipo Bg
 		// ordino in modo crescente i ringraziamenti
@@ -1687,7 +1689,9 @@ DoubleFixed XTAPI PrendiAltezzaDefunto(defunto *ptrdefunto) throw()
 
 	// ritorno l'altezza del defunto
 	assert(0 < (*ptrdefunto).altezzaTotaleDoubleFixed);
-		return((*ptrdefunto).altezzaTotaleDoubleFixed);
+
+	return((*ptrdefunto).altezzaTotaleDoubleFixed);
+
 } // PrendiAltezzaDefunto
 
 /* ------------------------------------------------------------------------ *

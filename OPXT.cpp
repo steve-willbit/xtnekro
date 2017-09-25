@@ -335,17 +335,6 @@ void XTAPI ImpostaCoseDellUtente() throw()
 
 	ImpostaCoseDiQuattroD
 
-	10 Novembre 1995						Stefano
-
-	Descrizione:
-	Imposta come operazione dell'Xtension le cose di 4D
-
-	Parametri:
-	nessuno
-
-	Ritorno:
-	nessuno
-
 * ------------------------------------------------------------------------ */
 void XTAPI ImpostaCoseDiQuattroD() throw()
 {
@@ -409,6 +398,57 @@ void XTAPI ImpostaCoseDiStampa() throw()
 {
 	gOperazioneXtension = kCoseDiStampa;
 } // ImpostaCoseDiStampa
+
+/* ------------------------------------------------------------------------ *
+
+	ImposteCoseDiPreparaDocumento
+
+* ------------------------------------------------------------------------ */
+void XTAPI ImposteCoseDiPreparaDocumento() throw()
+{
+	gOperazioneXtension = kCoseDiPreparaDocumento;
+}
+
+/* ------------------------------------------------------------------------ *
+
+	ImposteCoseDiCalcolaPosizionameto
+
+* ------------------------------------------------------------------------ */
+void XTAPI ImposteCoseDiCalcolaPosizionameto() throw()
+{
+	gOperazioneXtension = kCoseDiCalcolaPosizionamento;
+}
+
+/* ------------------------------------------------------------------------ *
+
+	ImposteCoseDiPosiziona
+
+* ------------------------------------------------------------------------ */
+void XTAPI ImposteCoseDiPosiziona() throw()
+{
+	gOperazioneXtension = kCoseDiPosiziona;
+}
+
+/* ------------------------------------------------------------------------ *
+
+	ImposteCoseDiPaletteInfo
+
+* ------------------------------------------------------------------------ */
+void XTAPI ImposteCoseDiPaletteInfo() throw()
+{
+	gOperazioneXtension = kCoseDiPaletteInfo;
+}
+
+/* ------------------------------------------------------------------------ *
+
+	ImposteCoseDiPreferenze
+
+* ------------------------------------------------------------------------ */
+void XTAPI ImposteCoseDiPreferenze() throw()
+{
+	gOperazioneXtension = kCoseDiPreferenze;
+}
+
 
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/

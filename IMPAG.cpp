@@ -73,6 +73,7 @@
 #include "XTNecro.h"
 
 #include "ImpaginazioneWap.h"
+#include "BozzaWap.h"
 
 #include "Impag.h"
 
@@ -170,8 +171,6 @@ void XTAPI StampaIngombro() throw()
 	
 	if (gXtPreferences.giustificazionePref.abilitaSpazioTraNecrologi)
 	{
-		// wsprintf((char*)tmpstr, "Errore di divisione per zero.\nSorgente: %s, Linea: %d.",__FILE__, __LINE__);
-		// XtAssert(tmpstr, (0 != kFixedMinimoSpazioTraNecrologi));
 		assert(0 != kFixedMinimoSpazioTraNecrologi);
 
 		lRapporto = ((double) gXtPreferences.giustificazionePref.valoreIniziale / (double) kFixedMinimoSpazioTraNecrologi);
@@ -262,7 +261,7 @@ static errorixtension XTAPI ImpaginaBozza(uchar** ptrdocumento) throw()
 	}
 
 	
-	if (gXtPreferences.bozzaPref.tipoStampaBozza == STAMPASINGOLARADIOBTNID) 
+	if (gXtPreferences.bozzaPref.tipoStampaBozza == BozzaWap::STAMPASINGOLARADIOBTNID) 
 	{
 		// impaginazione dei necrologi uno per pagina
 		while (1) 

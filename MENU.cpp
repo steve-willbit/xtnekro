@@ -69,6 +69,8 @@
 #include "SimbPax.h"
 #include "XTNecro.h"
 
+#include "PreferenzeWap.h"
+
 #include "Menu.h"
 
 // CONSTS
@@ -135,45 +137,53 @@ bool8 XTAPI IsAbilitareMenu(int32 comandomenu) throw()
 {
 	bool8 lBool = FALSE;
 
-	// i comandi del menu dell'Xtension sono abilitati solo se non e' abilitata
-	// l'impaginazione automaica 
-	lBool = PrendiOperazioneCorrente() == kCoseDellUtente;
-	
-	// prendo doc corrente
-	DocID curdoc;
-	xtget_curdoc(&curdoc);
-	
-	// prendo mode corrente
-	TOOLMODE  mode = getmode();	
-	
-	// prendo box corrente
-	boxid curbox;
-	xtget_curbox(&curbox);
-	
-	// prendo box type
-	uint8 curboxtype, shapetype;
-	curboxtype = getboxtypes(NULL, &shapetype);
+	int16 ctrlDown = HIBYTE(GetKeyState(VK_CONTROL)) & 1;
+	int16 shiftDown = HIBYTE(GetKeyState (VK_SHIFT)) & 1;
+	int16 altDown = HIBYTE(GetKeyState (VK_MENU)) & 1;
 
-	// prendo numero doc correntemente aperti
-	int32 doccount;
-	xtget_doccount(&doccount);
-	
-	// variabile d'utilita' per contenere il bool che indica se sono sul mastro o meno
-	uint8 inmaster;
-	
-	// ref del doc corrente
-	DocRef DRef = XTGetDocRefFromDocID(curdoc);
-	
-	switch(comandomenu) 
-	{
+	if ( ctrlDown && shiftDown && altDown ) {
+		lBool = TRUE;
+	}
+	else {
+		// i comandi del menu dell'Xtension sono abilitati solo se non e' abilitata
+		// l'impaginazione automaica 
+		lBool = PrendiOperazioneCorrente() == kCoseDellUtente;
+
+		// prendo doc corrente
+		DocID curdoc;
+		xtget_curdoc(&curdoc);
+
+		// prendo mode corrente
+		TOOLMODE  mode = getmode();	
+
+		// prendo box corrente
+		boxid curbox;
+		xtget_curbox(&curbox);
+
+		// prendo box type
+		uint8 curboxtype, shapetype;
+		curboxtype = getboxtypes(NULL, &shapetype);
+
+		// prendo numero doc correntemente aperti
+		int32 doccount;
+		xtget_doccount(&doccount);
+
+		// variabile d'utilita' per contenere il bool che indica se sono sul mastro o meno
+		uint8 inmaster;
+
+		// ref del doc corrente
+		DocRef DRef = XTGetDocRefFromDocID(curdoc);
+
+		switch(comandomenu) 
+		{
 		case PREPARADOCUMENTOMENUID:
 			if( curdoc >= 0 )
 			{
 				// verificare se si sta visializzando la pag mastro
 				XTGetShowMaster(DRef, &inmaster);
-				
+
 				lBool = lBool && gPreparaDocumento == TRUE &&
-						  doccount == kUnDocumentoAperto && inmaster == FALSE;
+					doccount == kUnDocumentoAperto && inmaster == FALSE;
 			}
 			else lBool = FALSE;
 			break;
@@ -195,11 +205,11 @@ bool8 XTAPI IsAbilitareMenu(int32 comandomenu) throw()
 				// verificare se si sta visializzando la pag mastro
 				DocRef Dref = XTGetDocRefFromDocID(curdoc);
 				XTGetShowMaster(Dref, &inmaster);
-				
+
 				// numero di pag corrente
 				int16 curPg;
 				XTGetCurPage(DRef, &curPg);
-				
+
 				lBool = lBool && gCreaImmagineCampione == TRUE &&
 					doccount == kUnDocumentoAperto && inmaster == FALSE &&
 					curPg == kPrimaPagina;
@@ -215,17 +225,19 @@ bool8 XTAPI IsAbilitareMenu(int32 comandomenu) throw()
 			break;
 		case ASSOCIAIMGMENUID:
 			lBool = lBool && curdoc >= 0 && curboxtype != NOBOX &&
-					  mode == CONTENTSMODE && isapicture(curbox) && gAssociaImmagine == TRUE;
+				mode == CONTENTSMODE && isapicture(curbox) && gAssociaImmagine == TRUE;
 			break;
-			
+
 		case IMPOSTAPAXMENUID:
 			lBool = lBool && curdoc >= 0 && curboxtype != NOBOX &&
-					mode == CONTENTSMODE && isapicture(curbox) && gImpostaSimboloPax == TRUE;
+				mode == CONTENTSMODE && isapicture(curbox) && gImpostaSimboloPax == TRUE;
 			break;
-			
+
 		default:
 			break;
+		}
 	}
+
 	return(lBool);
 } // IsAbilitareMenu
 
@@ -317,3 +329,89 @@ void XTAPI DisabilitaMenu(int32 comandomenu) throw()
 	}
 } //  DisabilitaMenu
 
+/* ------------------------------------------------------------------------ *
+
+	PreparaDocumentoEseguiMenu
+
+* ------------------------------------------------------------------------ */
+void XTAPI PreparaDocumentoEseguiMenu()  throw()
+{
+	gErroreXtension = PrendiDocInfo();
+	if (gErroreXtension != kNessunErrore) 
+	{
+		// errore sulla lettura delle info sul documento definitivo
+		MostraErrore(gErroreXtension);
+	}
+	else
+	{
+		PreparaDocumento();
+	}
+} // PreparaDocumentoEseguiMenu
+
+/* ------------------------------------------------------------------------ *
+
+	CalcolaPosizionamentoEseguiMenu
+
+* ------------------------------------------------------------------------ */
+void XTAPI CalcolaPosizionamentoEseguiMenu() throw()
+{
+	gErroreXtension = CalcolaPosizionamento();
+	if (gErroreXtension != kNessunErrore) 
+	{
+		// errore nel calcolare il posizionamento dei necrologi
+		MostraErrore(gErroreXtension);
+
+		HWND hwnd = NULL;
+		xtget_hwndmainframe(&hwnd);
+
+		if (IDYES == MessageBox(hwnd, "Si è verificato un errore nel calcolo del posizionamento (controlla i messaggi nella finestra d'informazioni).\rVuoi provare comunque a posizionare i necrologi (Rispondendo sì, si abiliterà il comando Posiziona del menù Necro, dopo il posizionamento controlla l'area di lavoro a sinistra della prima pagina)?", "XTNecro.xxt", MB_ICONQUESTION | MB_YESNO ))
+		{
+			AbilitaMenu(POSIZIONAMENUID);
+		}
+
+		// abilito il menù per rispistinare il documento e i dati
+		AbilitaMenu(RIPRISTINADOCMENUID);
+		AbilitaMenu(RIPRISTINADATIULTIMAMENUID);
+	}
+} // CalcolaPosizionamentoEseguiMenu
+
+
+/* ------------------------------------------------------------------------ *
+
+	PosizionaEseguiMenu
+
+* ------------------------------------------------------------------------ */
+void XTAPI PosizionaEseguiMenu() throw()
+{
+	gErroreXtension = Posiziona();
+	if (gErroreXtension != kNessunErrore) 
+	{
+		// errore nel tentare di posizionare i necrologi
+		MostraErrore(gErroreXtension);
+
+		// abilito il menù per rispistinare il documento e i dati
+		AbilitaMenu(RIPRISTINADOCMENUID);
+		AbilitaMenu(RIPRISTINADATIULTIMAMENUID);
+	}
+} // PosizionaEseguiMenu
+
+/* ------------------------------------------------------------------------ *
+
+	PreferenzeEseguiMenu
+
+* ------------------------------------------------------------------------ */
+void XTAPI PreferenzeEseguiMenu()  throw()
+{
+	// xd_createdialog(_XT_PREFERENZEWAP, 0, NULL);
+	XDCreateDialogWithCBCode(_XT_PREFERENZEWAP, (void *)(new PreferenzeWap()), NULL);
+} // PreferenzeEseguiMenu
+
+/* ------------------------------------------------------------------------ *
+
+	PaletteInfoEseguiMenu
+
+* ------------------------------------------------------------------------ */
+void XTAPI PaletteInfoEseguiMenu() throw()
+{
+	MostraNascondiPaletteInfo();
+} // PaletteInfoEseguiMenu

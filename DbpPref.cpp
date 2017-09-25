@@ -382,7 +382,7 @@ void XTAPI DBP::LoadPreferences
 		ReleaseResource((Handle) xph);
 	}
 
-	 xtPrefsClose(pfID,kResourceFork);
+	xtPrefsClose(pfID,kResourceFork);
 
 	xtPrefsUseResFile(oldResFile);
 

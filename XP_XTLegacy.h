@@ -185,4 +185,40 @@ C_INLINE APIERR xd_tab_addtab(dlgitemid itemid,xtcbcode cbcode, int32 param,uint
 
 	return(apiErr);
 }
+
+#undef HStringToFixed
+C_INLINE Fixed HStringToFixed(const char *vStr)   
+{   
+   APIERR err = ERR_FAILURE;   
+   Fixed value = FIX(0);   
+   
+   if (vStr) {   
+      bool8 success = FALSE;   
+         
+      QXStringRef strRef = NULL;   
+      QXStringCreateFromCString(vStr, 0, (int32) CSTRLEN(vStr), &strRef);   
+      err = XTStringToFixed(strRef, &value, HDEFUNITS, 0, 0, &success);   
+   
+      QXStringDestroy(strRef);   
+   }   
+   return value;   
+}
+
+#undef VStringToFixed
+C_INLINE Fixed VStringToFixed(const char *vStr)   
+{   
+   APIERR err = ERR_FAILURE;   
+   Fixed value = FIX(0);   
+   
+   if (vStr) {   
+      bool8 success = FALSE;   
+         
+      QXStringRef strRef = NULL;   
+      QXStringCreateFromCString(vStr, 0, (int32) CSTRLEN(vStr), &strRef);   
+      err = XTStringToFixed(strRef, &value, VDEFUNITS, 0, 0, &success);   
+   
+      QXStringDestroy(strRef);   
+   }   
+   return value;   
+}
 #endif /* _XP_XTLEGACY_H_ */

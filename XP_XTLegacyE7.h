@@ -4045,20 +4045,107 @@ C_INLINE uint16 XTAPI h_getchar(xehandle xeH, int32 byteOffset)
 }
 
 /* Deprecated - use XEPutUniChars of XTHiddenTextInsert. */
+#undef AgraveMin
+C_INLINE UniChar AgraveMin() {UniChar ch = 224; return(ch);}
+
+#undef AacuteMin
+C_INLINE UniChar AacuteMin() {UniChar ch = 225;return(ch);}
+
+#undef EgraveMin
+C_INLINE UniChar EgraveMin() {UniChar ch = 232;return(ch);}
+
+#undef EacuteMin
+C_INLINE UniChar EacuteMin() {UniChar ch = 233;return(ch);}
+
+#undef IgraveMin
+C_INLINE UniChar IgraveMin(){UniChar ch = 236;return(ch);}
+
+#undef IacuteMin
+C_INLINE UniChar IacuteMin() {UniChar ch = 237;return(ch);}
+
+#undef OgraveMin
+C_INLINE UniChar OgraveMin() {UniChar ch = 242;return(ch);}
+
+#undef OacuteMin
+C_INLINE UniChar OacuteMin() {UniChar ch = 243;return(ch);}
+
+#undef UgraveMin
+C_INLINE UniChar UgraveMin() {UniChar ch = 249;return(ch);}
+
+#undef UacuteMin
+C_INLINE UniChar UacuteMin() {UniChar ch = 250;return(ch);}
+
+#undef UniEmDash
+C_INLINE UniChar UniEmDash() {UniChar ch = 8212;return(ch);}
+
+#undef UniCharDefault
+C_INLINE UniChar UniCharDefault() {UniChar ch = 191;return(ch);}
+
 #undef XEPutChars
 C_INLINE APIERR XTAPI XEPutChars(xehandle xeH, int32 uniCharOffset,
 		int32 byteCount, const uint8 *bytesP,
 		const globaltxtvars *textAttributesP)
 {
 	int32 i;
+	int32 j;
 	APIERR apiErr = ERR_SUCCESS;
 	UniChar *uniCharsP = (UniChar *)NewPtr(sizeof(UniChar) * byteCount);
 	
-	for (i = 0; i < byteCount; i++) {
-		uniCharsP[i] = bytesP[i];
+	for (i = 0, j = 0; i < byteCount; i++, j++) {
+		uint8 firstByte = bytesP[i];
+		uint8 secondByte = ( i + 1 < byteCount ? bytesP[i+1] : 0);
+		if ( 0xC3 == firstByte ) {
+			if ( 0xA0 == secondByte ) {
+				uniCharsP[j] = AgraveMin();
+			}
+			else if ( 0xA1 == secondByte ) {
+				uniCharsP[j] = AacuteMin();
+			}
+			else if ( 0xA8 == secondByte ) {
+				uniCharsP[j] = EgraveMin();
+			}
+			else if ( 0xA9 == secondByte ) {
+				uniCharsP[j] = EacuteMin();
+			}
+			else if ( 0xAC == secondByte ) {
+				uniCharsP[j] = IgraveMin();
+			}
+			else if ( 0xAD == secondByte ) {
+				uniCharsP[j] = IacuteMin();
+			}
+			else if ( 0xB2 == secondByte ) {
+				uniCharsP[j] = OgraveMin();
+			}
+			else if ( 0xB3 == secondByte ) {
+				uniCharsP[j] = OacuteMin();
+			}
+			else if ( 0xB9 == secondByte ) {
+				uniCharsP[j] = UgraveMin();
+			}
+			else if ( 0xBA == secondByte ) {
+				uniCharsP[j] = UacuteMin();
+			}
+			else {
+				uniCharsP[j] = UniCharDefault();
+			}
+			i++;
+		}
+		else if ( 0xE2 == firstByte ) {
+			if ( 0x80 == secondByte ) {
+				uniCharsP[j] = UniEmDash();
+				i++;
+			}
+			else {
+				uniCharsP[j] = UniCharDefault();
+			}
+			i++;
+		}
+		else {
+			uniCharsP[j] = bytesP[i];
+		}
 	}
 		
-	apiErr = XEPutUniChars(xeH, uniCharOffset, byteCount, uniCharsP, textAttributesP);
+	apiErr = XEPutUniChars(xeH, uniCharOffset, j, uniCharsP, textAttributesP);
 			
 	DisposePtr((Ptr)uniCharsP);
 	

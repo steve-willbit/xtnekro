@@ -187,7 +187,6 @@ static void XTAPI ScriviColonneDocumento() throw();
 * ------------------------------------------------------------------------ */
 static errorixtension XTAPI ApriDatiUltimaImpaginazione(uchar* nomefiledati, Boolean cancellare) throw()
 {
-	
 	// nome del file dati dell'ultima impaginazione
 	uchar lNomeFileUltimaImpaginazione[kDimensioneStringhe] ="";
 	/* per prendere l'identificatore della cartella dell'ultima impaginazione */
@@ -225,8 +224,6 @@ static errorixtension XTAPI ApriDatiUltimaImpaginazione(uchar* nomefiledati, Boo
 	strcat(lNomeFileUltimaImpaginazione, nomefiledati);
 #endif // OPERATION
 
-	XFileInfoRef fileInfoRef = INVALID_XFILEINFOREF;
-
 	wsprintf((char*) lNomeFileUltimaImpaginazione, "%s\\%s", /*PercorsoCompleto(*/gXtPreferences.cartellePref.cartellaLastImp/*)*/, nomefiledati);
 	if (cancellare == TRUE) 
 	{
@@ -237,15 +234,19 @@ static errorixtension XTAPI ApriDatiUltimaImpaginazione(uchar* nomefiledati, Boo
 			//				 0,
 			//				 kCreatoreDatiUltimaImpaginazione,
 			//				 kTipoDatiUltimaImpaginazione);
+			XFileInfoRef fileInfoRef = INVALID_XFILEINFOREF;
 			FileExist((char*) lNomeFileUltimaImpaginazione, &fileInfoRef);
 			gErrore = XTCreateFile(fileInfoRef, kCreatoreDatiUltimaImpaginazione);
-			if (gErrore == noErr) 
+			if (gErrore == noErr) {
+				if ( NULL != fileInfoRef ) {
+					XTDisposeXFileInfoRef(fileInfoRef);
+				}
 				break;
+			}
 			if (gErrore == dupFNErr) 
 			{
 				// cancello il file ancora esistente
-				gErrore = FSDelete(lNomeFileUltimaImpaginazione,
-									0);
+				gErrore = FSDelete(lNomeFileUltimaImpaginazione, 0);
 				if (gErrore != noErr) 
 				{
 					if ( NULL != fileInfoRef ) {
@@ -267,20 +268,13 @@ static errorixtension XTAPI ApriDatiUltimaImpaginazione(uchar* nomefiledati, Boo
 	}
 	
 	// apertura del file dei dati dell'ultima impaginazione
-	gErrore = XTOpenFileDataFork(fileInfoRef, fsWrPerm, &gIdFileUltimaImpaginazione);
+	gErrore = HOpenDF(0, 0, lNomeFileUltimaImpaginazione, fsRdWrPerm, &gIdFileUltimaImpaginazione); // <-- was FSOpen
 	if (gErrore != noErr) 
 	{
-		if ( NULL != fileInfoRef ) {
-			XTDisposeXFileInfoRef(fileInfoRef);
-		}
 		// errore nell'apertura del file dell'ultima impaginazione
 		return(kErroreDiSistema);
 	}
 	
-	if ( NULL != fileInfoRef ) {
-		XTDisposeXFileInfoRef(fileInfoRef);
-	}
-
 	return(kNessunErrore);
 
 } // ApriDatiUltimaImpaginazione

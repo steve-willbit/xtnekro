@@ -33,6 +33,11 @@ typedef enum {
 	kCoseDiAppWare,
 	kCoseDellUtente,
 	kCoseDiStampa,
+	kCoseDiPreparaDocumento,
+	kCoseDiCalcolaPosizionamento,
+	kCoseDiPosiziona,
+	kCoseDiPaletteInfo,
+	kCoseDiPreferenze,
 	kIdle
 } tipooperazione;
 
@@ -50,7 +55,7 @@ extern Handle gHndlFile;
 // PROTOTYPES
 
 /*!
-	@function			PrendiOperazioneCorrente
+	@function		PrendiOperazioneCorrente
 	@abstract 		operazione
 	@discussion		Ritorna l'operazione di Xpress attuale. Permette di sapere se Xpress
 					deve aspettarsi i file di impaginazione da 4D o da AppWare, oppure
@@ -136,6 +141,12 @@ void XTAPI CambiaOperazioneCorrente() throw();
 	@result  			nessuno
 */
 void XTAPI ImpostaCoseDiStampa() throw();
+
+void XTAPI ImposteCoseDiPreparaDocumento() throw();
+void XTAPI ImposteCoseDiCalcolaPosizionameto() throw();
+void XTAPI ImposteCoseDiPosiziona() throw();
+void XTAPI ImposteCoseDiPaletteInfo() throw();
+void XTAPI ImposteCoseDiPreferenze() throw();
 
 #endif /* OperazioniXtension_h */
 

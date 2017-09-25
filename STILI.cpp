@@ -154,6 +154,9 @@ static AssetUID CercaNomeStileForte(uchar* nomestile) throw()
 		DaiErrore(kErroreStileNonDefinito);
 		gErroreSulloStile = TRUE;
 	}
+	else {
+		lIndiceStilePara++;
+	}
 
 	return(lIndiceStilePara);
 
@@ -216,6 +219,9 @@ static AssetUID CercaNomeStileDebole(uchar* nomestile) throw()
 		DaiErrore(kErroreStileNonDefinito);
 		gErroreSulloStile = TRUE;
 	}
+	else {
+		lIndiceStileChar++;
+	}
 
 	return(lIndiceStileChar);
 
@@ -257,6 +263,7 @@ static void XTAPI ApplicaStileDeboleSuTesto(AssetUID indicestile) throw()
 	boxid curbox;
 	xtget_curbox(&curbox);
 	xegetinfo(curbox, &lHndlXE, &lInizioSelezione, &lFineSelezione, &lLunghezzaTesto);
+	xesetsel(lLunghezzaTesto, lLunghezzaTesto, FALSE);
 
 	XTSetCharStyleOnText((AssetUID) -1, FALSE, lHndlXE);
 	XTSetCharStyleOnText(indicestile, FALSE, lHndlXE);
@@ -280,7 +287,7 @@ void XTAPI ApplicaStileForte(uchar *nomestile) throw()
 	boxid curbox;
 	xtget_curbox(&curbox);
 	xegetinfo(curbox, &lHndlXE, &lInizioSelezione, &lFineSelezione, &lLunghezzaTesto);
-	// xesetsel(lLunghezzaTesto, lLunghezzaTesto, FALSE);
+	xesetsel(lLunghezzaTesto, lLunghezzaTesto, FALSE);
 
 	// cerca lo stile da applicare
 	lIndiceStile = CercaNomeStileForte(nomestile);

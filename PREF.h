@@ -28,120 +28,6 @@
 #include "DbpResource.h"
 #endif // dbpinclude_h
 
-// DEFINES
-// DEFINES
-// DEFINES
-
-/*!
-	@defined			RIEMPITIVIDIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze dei riempitivi.
-*/
-#define RIEMPITIVIDIALOGID					(20030 + LANGUAGE)
-#define USAANNIVERSARICHECKID				2
-#define USARINGRAZIAMENTICHECKID			3
-
-/*!
-	@defined			IMMAGINIDIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze di immagine.
-*/
-#define IMMAGINIDIALOGID						(20040 + LANGUAGE)
-#define IMPORTAZIONEIMGCHECKID				2
-#define ALTEZZAIMGEDTID						3
-#define LARGHEZZAIMGEDTID					4
-#define FOLDERIMGEDTID						5
-#define SFOGLIAIMGBTNID						6
-#define ESTENSIONEELENCOEDTID				7
-#define ESTENSIONEIMGEDTID					8
-
-/*!
-	@defined			BOZZADIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze di stampa bozza.
-*/
-#define BOZZADIALOGID						(20050 + LANGUAGE)
-#define ABILITASTAMPAAUTOCHECKID			2
-#define STAMPASINGOLARADIOBTNID			3
-#define STAMPAAGGREGATIRADIOBTNID			4
-#define DOCBOZZAEDTID						5
-#define SFOGLIADOCBOZZABTNID				6
-#define FOLDERBOZZEEDTID					7
-#define SFOGLIAFOLDERBOZZEBTNID				8
-
-/*!
-	@defined			INGOMBRODIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze di ingombro.
-*/
-#define INGOMBRODIALOGID					(20060 + LANGUAGE)
-#define DOCINGOMBROEDTID					2
-#define SFOGLIADOCINGOMBROBTNID			3
-#define FOLDERINGOMBRIEDTID					4
-#define SFOGLIAFOLDERINGOMBRIBTNID			5
-
-/*!
-	@defined			FINALEDIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze di doc finale.
-*/
-#define FINALEDIALOGID						(20070 + LANGUAGE)
-#define DOCFINALEEDTID						2
-#define SFOGLIADOCFINALEBTNID				3
-#define PRIMAPAGINARADIOBTNID				4
-#define ULTIMAPAGINARADIOBTNID				5
-#define ALTOVERSOBASSORADIOBTNID			6
-#define BASSOVERSOALTOTADIOBTNID			7
-#define FOLDERFINALEEDTID					8
-#define SFOGLIAFOLDERFINALEBTNID				9
-
-/*!
-	@defined			DOCUMENTODIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze di dimensione doc.
-*/
-#define DOCUMENTODIALOGID					(20080 + LANGUAGE)
-#define ALTEZZAMODULOEDTID					2
-#define DISTANZAMODULIEDTID					3
-#define MODULICOLANNAEDTID					4
-#define COLONNEPAGINAEDTID					5
-#define ALTEZZATESTATAEDTID					6
-
-/*!
-	@defined			DATIDIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze dati input.
-*/
-#define DATIDIALOGID							(20090 + LANGUAGE)
-#define CARTELLADATIEDTID					2
-#define SFOGLIACARTELLADATIBTNID			3
-#define ESTENSIONEDOC1EDTID					4
-#define ESTENSIONEDOC1CHECKID				5
-#define ESTENSIONEDOC2EDTID					6
-#define ESTENSIONEDOC2CHECKID				7
-#define ESTENSIONEDOC3EDTID					8
-#define ESTENSIONEDOC3CHECKID				9
-
-/*!
-	@defined			DISPOSIZIONEDIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze di disposizione annunci.
-*/
-#define DISPOSIZIONEDIALOGID				(21000 + LANGUAGE)
-#define VERTICALERADIOBTNID					2
-#define ORIZZONTALERADIOBTNID				3
-
-/*!
-	@defined			CARTELLEDIALOGID
-	@abstract		resource id.
-	@discussion		risorsa della dialog di preferenze di selezione cartelle.
-*/
-#define CARTELLEDIALOGID				(21020 + LANGUAGE)
-#define FOLDERTMPEDTID				2
-#define SFOGLIAFOLDERTMPBTNID		3
-#define FOLDERLASTIMPEDTID			4
-#define SFOGLIAFOLDERLASTIMPBTNID	5
-
 // STRUCT
 // STRUCT
 // STRUCT
@@ -154,7 +40,7 @@
 typedef struct
 {
 	dlgitemid tipoImpaginazione;	
-}ImpaginazionePref, *ImpaginazionePrefPtr, **ImpaginazionePrefHndl;
+} ImpaginazionePref, *ImpaginazionePrefPtr, **ImpaginazionePrefHndl;
 
 /*!
 	@typedef			GiustificazionePref
@@ -173,7 +59,7 @@ typedef struct
 	int16 abilitaInterlinea;
 	Fixed incrementoMaxInterlinea;
 	Fixed decrementoMaxInterlinea;
-}GiustificazionePref, *GiustificazionePrefPtr, **GiustificazionePrefHndl;
+} GiustificazionePref, *GiustificazionePrefPtr, **GiustificazionePrefHndl;
 
 /*!
 	@typedef			RiempitiviPref
@@ -349,112 +235,72 @@ extern double gLongIngombroTotale;
 // PROTOTYPES
 // PROTOTYPES
 
-/*! 
-	@function			RiempitiviWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
+/*!
+	@function			DeleteEndFilePathSeparator
+	@abstract 		elimina separatore finale
+	@discussion		elimina separatore finale della stringa passata in input se presente -da SmartClass-
+	
+					30 Marzo 2005 - Taretto Fabrizio.
 
-					25 Marzo 2005 - Fabrizio.
-
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
+	@param			ioString
+	@result  			nessuno
 */
-int32 XTAPI RiempitiviWap(xdwapparamptr params) throw();
-
-/*! 
-	@function			BozzaWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
-
-					25 Marzo 2005 - Fabrizio.
-
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
-*/
-int32 XTAPI ImmaginiWap(xdwapparamptr params) throw();
+void XTAPI DeleteEndFilePathSeparator(uchar* ioString) throw();
 
 /*! 
-	@function			BozzaWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
+	@function			GetFileGenerico
+	@abstract		apertura file
+	@discussion		apre una dialog per selezionare un file e ne restituisce il path completo in nomefile.
+					Attenzione: non viene aperto nessun file ma soltanto selezionato.
+					Ritorna il nome del file selezionato. -da SmartClass-	
 
-					25 Marzo 2005 - Fabrizio.
+					1 aprile 2005 - Fabrizio.
 
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
+	@param 			nomefile.
+	@param 			directorydipartenza.
+	@param 			nomeattualefile.
+	@param 			szTitle.
+	@param 			spiega_filtro.
+	@param 			filtro.
+	@result			Ritorna FALSE se il FSSpec passato e' andato tutto ok.
 */
-int32 XTAPI BozzaWap(xdwapparamptr params) throw();
+bool8 XTAPI GetFileGenerico(uchar* nomefile, uchar* directorydipartenza, uchar* nomeattualefile, uchar* szTitle,
+	uchar* spiega_filtro, uchar* filtro) throw();
 
-/*! 
-	@function			IngombroWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
+/*!
+	@function			SelezionaFileDialog
+	@abstract		FSSpec
+	@abstract		seleziona file
+	@discussion		apre una dialog per selezionare un file e ne restituisce il path completo in nomefile.
+					Attenzione: non viene aperto nessun file ma soltanto selezionato.
+					Ritorna il nome del file selezionato. -da SmartClass-	
 
-					25 Marzo 2005 - Fabrizio.
+					1 aprile 2005 - Fabrizio.
 
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
+	@param 			percorsoCompleto.
+	@result			Ritorna TRUE se il FSSpec passato è andato tutto ok.
 */
-int32 XTAPI IngombroWap(xdwapparamptr params) throw();
+bool8 XTAPI SelezionaFileDialog(uchar* iPercorsoCompleto) throw();
 
-/*! 
-	@function			FinaleWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
+/*!
+	@function			MyPickFolder
+	@abstract 		pickfolder
+	@discussion		Funzione per l'utilizzo corretto della chiamatapickfolder di XPress su MacOs e WinOS -da SmartClass-
+	
+					30 Marzo 2005 - Taretto Fabrizio.
 
-					25 Marzo 2005 - Fabrizio.
-
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
+	@param			iTitle titolo della finestra pickfolder.
+	@param			ioPath path di partenza in input, path di ritorno in output.
+	@result  			TRUE se e' andato tutto bene, FALSE in tutti i casi di errore
 */
-int32 XTAPI FinaleWap(xdwapparamptr params) throw();
+bool8 XTAPI MyPickFolder(uchar* iTitle, uchar* ioPath) throw();
 
-/*! 
-	@function			DocumentoWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
-
-					25 Marzo 2005 - Fabrizio.
-
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
+#ifdef _DEBUG
+/*!
+	@function IniziaPreferenzeDiDebug
 */
-int32 XTAPI DocumentoWap(xdwapparamptr params) throw();
+void XTAPI IniziaPreferenzeDiDebug() throw();
+#endif // _DEBUG
 
-/*! 
-	@function			DatiWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
-
-					25 Marzo 2005 - Fabrizio.
-
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
-*/
-int32 XTAPI DatiWap(xdwapparamptr params) throw();
-
-/*! 
-	@function			DisposizioneWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
-
-					25 Marzo 2005 - Fabrizio.
-
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
-*/
-int32 XTAPI DisposizioneWap(xdwapparamptr params) throw();
-
-/*! 
-	@function			CartelleWap
-	@abstract		finestra di dialogo di preferenze.
-	@discussion		Visualizza la finestra di dialogo per la gestione delle preferenze.
-
-					5 Aprile 2005 - Fabrizio.
-
-	@param			cbparam puntatore a xdwapparamrec record (see XDK Documentation).
-	@result			void.
-*/
-int32 XTAPI CartelleWap(xdwapparamptr params) throw();
 
 #endif // Pref_hs

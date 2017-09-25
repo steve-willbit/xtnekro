@@ -46,149 +46,22 @@
 #include "XTNecro.h"
 
 #include "Pref.h"
+#include "Menu.h"
+
 #include "ImpaginazioneWap.h"
+#include "BozzaWap.h"
+#include "FinaleWap.h"
+#include "DisposizioneWap.h"
 
 // GLOBALS
 // GLOBALS
 // GLOBALS
 
 // dichiaro variabile preferenze e la inizializzo con valori di default 
-XtPreferences gXtPreferences =
-{
-	ImpaginazioneWap::POSAUTORADIOBTNID, // tipo impaginazione
-	mFixed(5), // valore iniziale spazio tra necrologi
-	TRUE, // abilita spazio tra necrologi
-	mFixed(2), // incremento max spazio tra necrologi
-	mFixed(1), // decremento max spazio tra necrologi
-	TRUE, // abilita spazio tra paragrafi
-	mFixed(1), // incremento max spazio tra paragrafi
-	mFixed(1), // decremento max spazio tra paragrafi
-	TRUE, // abilita interlinea
-	 mFixed(1) + (65536 / 2), // incremento max interlinea
-	 mFixed(1), // decremento max interlinea
-	TRUE, // usa anniversari
-	TRUE, // usa ringraziamenti
-	TRUE, // abilita importazione immagini
-	mFixed(105), // altezza immagini
-	mFixed(90), // larghezza immagini
-#ifdef _DEBUG
-	"C:\\SE\\NECRO\\IMG", // folder immagini
-#else
-	"\\\\ARCHSRV\\OUT_NECRO", // folder immagini
-#endif // _DEBUG
-	"IMM", // estensione elenco immagini
-	"EPS", // estensione immagini
-	STAMPAAGGREGATIRADIOBTNID, // tipo stampa bozza
-	FALSE, // stampa bozza automatica
-#ifdef _DEBUG
-	"C:\\SE\\NECRO\\BOZ.QXP", // documento bozza
-	"C:\\SE\\NECRO\\BOZ", // cartella bozze
-	"C:\\SE\\NECRO\\ING.QXP", // documento ingombro
-	"C:\\SE\\NECRO\\ING", // cartella ingombri
-	"C:\\SE\\NECRO\\FIN.QXP", // documento finale
-	"C:\\SE\\NECRO\\FIN", // cartella finale
-#else
-	"\\\\DATASERVER\\SE\\NECRO\\GABBIE\\BOZZAA4_9X.QXP", // documento bozza
-	"\\\\DATASERVER\\SE\\NECRO\\BOZZE", // cartella bozze
-	"\\\\DATASERVER\\SE\\NECRO\\GABBIE\\INGOMBRO6C_9X.QXP", // documento ingombro
-	"\\\\DATASERVER\\SE\\NECRO\\INGOMBRI", // cartella ingombri
-	"\\\\DATASERVER\\SE\\NECRO\\GABBIE\\FINALE6C_9X.QXP", // documento finale
-	"\\\\DATASERVER\\SE\\NECRO\\DEFINITIVI", // cartella finale
-#endif // _DEBUG
-	PRIMAPAGINARADIOBTNID, // prepara documento	
-	ALTOVERSOBASSORADIOBTNID,	// ordinamento impaginazione
-	mFixed(117), // altezza modulo
-	mFixed(9), // distanza moduli
-	12, // moduli colonna
-	8, // colonne pagina
-	mFixed(23) + (65536 * 711 / 1000), // altezza testata
-#ifdef _DEBUG
-	"C:\\SE\\NECRO\\DAT", // cartella dati
-#else
-	"\\\\DATASERVER\\SE\\NECRO\\DATI", // cartella dati
-#endif // _DEBUG
-	"BOZ", //  estensione da impaginare 1
-	TRUE, // impagina estensione 1
-	"ING", //  estensione da impaginare 2
-	TRUE, // impagina estensione 2
-	"NEC", //  estensione da impaginare 3 
-	TRUE, // impagina estensione 3
-	VERTICALERADIOBTNID, // ottimizzazione verticale
-#ifdef _DEBUG
-	"C:\\SE\\NECRO\\TEMP", // folder temporanei
-	"C:\\SE\\NECRO\\LASTIMP" // folder last imp
-#else
-	"\\\\DATASERVER\\SE\\NECRO\\TEMP", // folder temporanei
-	"\\\\DATASERVER\\SE\\NECRO\\ULTIMA" // folder last imp
-#endif // _DEBUG
-};
+XtPreferences gXtPreferences;
 
 // EX preferenza interna (kLongIngombroTotale) per ora la uso come globale
 extern double gLongIngombroTotale = 0;
-
-// PROTOTYPES
-// PROTOTYPES
-// PROTOTYPES
-
-/*!
-	@function			DeleteEndFilePathSeparator
-	@abstract 		elimina separatore finale
-	@discussion		elimina separatore finale della stringa passata in input se presente -da SmartClass-
-	
-					30 Marzo 2005 - Taretto Fabrizio.
-
-	@param			ioString
-	@result  			nessuno
-*/
-static void XTAPI DeleteEndFilePathSeparator(uchar* ioString) throw();
-
-/*! 
-	@function			GetFileGenerico
-	@abstract		apertura file
-	@discussion		apre una dialog per selezionare un file e ne restituisce il path completo in nomefile.
-					Attenzione: non viene aperto nessun file ma soltanto selezionato.
-					Ritorna il nome del file selezionato. -da SmartClass-	
-
-					1 aprile 2005 - Fabrizio.
-
-	@param 			nomefile.
-	@param 			directorydipartenza.
-	@param 			nomeattualefile.
-	@param 			szTitle.
-	@param 			spiega_filtro.
-	@param 			filtro.
-	@result			Ritorna FALSE se il FSSpec passato e' andato tutto ok.
-*/
-static bool8 XTAPI GetFileGenerico(uchar* nomefile, uchar* directorydipartenza, uchar* nomeattualefile, uchar* szTitle,
-								uchar* spiega_filtro, uchar* filtro) throw();
-
-/*!
-	@function			SelezionaFileDialog
-	@abstract		FSSpec
-	@abstract		seleziona file
-	@discussion		apre una dialog per selezionare un file e ne restituisce il path completo in nomefile.
-					Attenzione: non viene aperto nessun file ma soltanto selezionato.
-					Ritorna il nome del file selezionato. -da SmartClass-	
-
-					1 aprile 2005 - Fabrizio.
-
-	@param 			percorsoCompleto.
-	@result			Ritorna TRUE se il FSSpec passato è andato tutto ok.
-*/
-static bool8 XTAPI SelezionaFileDialog(uchar* iPercorsoCompleto) throw();
-
-/*!
-	@function			MyPickFolder
-	@abstract 		pickfolder
-	@discussion		Funzione per l'utilizzo corretto della chiamatapickfolder di XPress su MacOs e WinOS -da SmartClass-
-	
-					30 Marzo 2005 - Taretto Fabrizio.
-
-	@param			iTitle titolo della finestra pickfolder.
-	@param			ioPath path di partenza in input, path di ritorno in output.
-	@result  			TRUE se e' andato tutto bene, FALSE in tutti i casi di errore
-*/
-static bool8 XTAPI MyPickFolder(uchar* iTitle, uchar* ioPath) throw();
 
 // FUNCTIONS
 // FUNCTIONS
@@ -199,7 +72,7 @@ static bool8 XTAPI MyPickFolder(uchar* iTitle, uchar* ioPath) throw();
 	DeleteEndFilePathSeparator
 
 * ------------------------------------------------------------------------ */
-static void XTAPI DeleteEndFilePathSeparator(uchar* ioString) throw()
+void XTAPI DeleteEndFilePathSeparator(uchar* ioString) throw()
 {
 	assert(ioString != NULL);
 	
@@ -221,8 +94,8 @@ static void XTAPI DeleteEndFilePathSeparator(uchar* ioString) throw()
 	GetFileGenerico
 
 * ------------------------------------------------------------------------ */
-static bool8 XTAPI GetFileGenerico(uchar* nomefile, uchar* directorydipartenza, uchar* nomeattualefile, 
-					  uchar* szTitle, uchar* spiega_filtro, uchar* filtro) throw()
+bool8 XTAPI GetFileGenerico(uchar* nomefile, uchar* directorydipartenza, uchar* nomeattualefile, 
+	uchar* szTitle, uchar* spiega_filtro, uchar* filtro) throw()
 {
 	bool8 result=FALSE;
 
@@ -308,18 +181,18 @@ static bool8 XTAPI GetFileGenerico(uchar* nomefile, uchar* directorydipartenza, 
     typeList[ 1 ] = 0L;
     
     QXStringRef titleRef = NULL;
-    QXStringCreateFromCString("Nekro Document", 0,
-                                  (int32) CSTRLEN("Nekro Document"), &titleRef);
+    QXStringCreateFromCString((char*) szTitle, 0,
+                                  (int32) CSTRLEN((char*)szTitle), &titleRef);
     
     QXStringRef tempStrRef = NULL;
-    QXStringCreateFromCString("Nekro Document", 0,
-                                  (int32) CSTRLEN("Nekro Document"), &tempStrRef);
+    QXStringCreateFromCString("QXP", 0,
+                                  (int32) CSTRLEN("QXP"), &tempStrRef);
     
     QXStringExtractIntoUniChars(tempStrRef, 0, kNoPos, &(ptrList->tname[0]), 0);
     ptrList->tdata[ 0 ].ftype = PROJTYPE;
     ptrList->tdatacount = 1;
     
-    err = XTUGetFileUsingXD(fileInfo, startLocationFileInfo, titleRef, titleRef, NULL, NULL, typeList);
+    err = XTUGetFileUsingXD(fileInfo, startLocationFileInfo, titleRef, NULL, NULL, NULL, typeList);
     
     DisposePtr((::Ptr) ptrList );
     DisposePtr((::Ptr) typeList);
@@ -368,12 +241,12 @@ static bool8 XTAPI GetFileGenerico(uchar* nomefile, uchar* directorydipartenza, 
 	SelezionaFileDialog
 
 * ------------------------------------------------------------------------ */
-static bool8 XTAPI SelezionaFileDialog(uchar* iPercorsoCompleto) throw()
+bool8 XTAPI SelezionaFileDialog(uchar* iPercorsoCompleto) throw()
 {
 	
 	uchar 		lnomefile[MAXPATHNAME] = "",
 				lStringaPerControlli[MAXPATHNAME] = "",
-				nomeFile[12] = "",
+				nomeFile[MAXPATHNAME] = "",
 				nomewd[MAXPATHNAME] = "";
 	int16		llunghezzaStringa = 0,
 				linizio = 0,
@@ -431,7 +304,7 @@ static bool8 XTAPI SelezionaFileDialog(uchar* iPercorsoCompleto) throw()
 									,(uchar*)"*.qxp*");
 	
 	// se tutto ok prendo il pathname del file selezionato
-	if(lrisultato == noErr)
+	if (lrisultato)
 	{
 		// copio il percorso altrimenti non faccio nulla
 		STRCPY(iPercorsoCompleto, lnomefile);
@@ -453,11 +326,7 @@ static bool8 XTAPI SelezionaFileDialog(uchar* iPercorsoCompleto) throw()
 	MyPickFolder
 
 * ------------------------------------------------------------------------ */
-static bool8 XTAPI MyPickFolder
-(
-	uchar* iTitle, 
-	uchar* ioPath
-) throw()
+bool8 XTAPI MyPickFolder(uchar* iTitle, uchar* ioPath) throw()
 {
 	int16 vol; 
 	int32 dirId; 
@@ -516,1051 +385,95 @@ static bool8 XTAPI MyPickFolder
 
 } // MyPickFolder
 
+#ifdef _DEBUG
 /* ------------------------------------------------------------------------ *
 
-	RiempitiviWap
-	
+	IniziaPreferenzeDiDebug
+
 * ------------------------------------------------------------------------ */
-int32 XTAPI RiempitiviWap(xdwapparamptr params) throw()
+void XTAPI IniziaPreferenzeDiDebug() throw()
 {
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = RIEMPITIVIDIALOGID;
-			
-			break;
-		}
-		
-		case XDM_DECLARATIONS:
-		{
-			// dichiaro check box
-			xd_btnchk_declare(USAANNIVERSARICHECKID, 0);
-			xd_btnchk_declare(USARINGRAZIAMENTICHECKID, 0);
-			
-			break;
-		}
-		
-		case XDM_TABSHOWING:
-		{
-			// stato check box
-			xd_btnchk_setstate(USAANNIVERSARICHECKID, (*xtPrefPtr).riempitiviPref.usaAnniversari);
-			xd_btnchk_setstate(USARINGRAZIAMENTICHECKID, (*xtPrefPtr).riempitiviPref.usaRingraziamenti);
-			
-			params->result = XDR_NOTHANDLED;
-			
-			break;
-		}
-		
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_VERIFYCONTROLS:
-		{	
-			// prendo valore check box
-			xd_btnchk_getstate(USAANNIVERSARICHECKID, &(*xtPrefPtr).riempitiviPref.usaAnniversari);
-			xd_btnchk_getstate(USARINGRAZIAMENTICHECKID, &(*xtPrefPtr).riempitiviPref.usaRingraziamenti);
-			
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}
-	}
-	
-	return(noErr);
-} // RiempitiviWap
+	gXtPreferences.impaginazionePref.tipoImpaginazione = ImpaginazioneWap::POSAUTORADIOBTNID; // tipo impaginazione
 
-/* ------------------------------------------------------------------------ *
+	gXtPreferences.giustificazionePref.valoreIniziale = VStringToFixed("3.528mm"); // valore iniziale spazio tra necrologi
+	gXtPreferences.giustificazionePref.abilitaSpazioTraNecrologi = TRUE; // abilita spazio tra necrologi
+	gXtPreferences.giustificazionePref.incrementoMaxSpazioNecrologi = VStringToFixed("0.706mm"); // incremento max spazio tra necrologi
+	gXtPreferences.giustificazionePref.decrementoMaxSpazioNecrologi	= VStringToFixed("0.353mm"); // decremento max spazio tra necrologi
+	gXtPreferences.giustificazionePref.abilitaSpazioTraParagrafi = TRUE; // abilita spazio tra paragrafi
+	gXtPreferences.giustificazionePref.incrementoMaxSpazioParagrafi = VStringToFixed("0.529mm"); // incremento max spazio tra paragrafi
+	gXtPreferences.giustificazionePref.decrementoMaxSpazioParagrafi	= VStringToFixed("0.706mm"); // decremento max spazio tra paragrafi
+	gXtPreferences.giustificazionePref.abilitaInterlinea = TRUE; // abilita interlinea
+	gXtPreferences.giustificazionePref.incrementoMaxInterlinea = VStringToFixed("0.529mm"); // incremento max interlinea
+	gXtPreferences.giustificazionePref.decrementoMaxInterlinea = VStringToFixed("0.176mm"); // decremento max interlinea
+	
+	gXtPreferences.riempitiviPref.usaAnniversari = TRUE; // usa anniversari
+	gXtPreferences.riempitiviPref.usaRingraziamenti = TRUE; // usa ringraziamenti
+	
+	gXtPreferences.immaginiPref.abilitaImportImag = TRUE; // abilita importazione immagini
+	gXtPreferences.immaginiPref.altezzaImg = VStringToFixed("41.6mm"); // altezza immagini
+	gXtPreferences.immaginiPref.larghezzaImg = VStringToFixed("29.9mm"); // larghezza immagini
+#ifdef _DEBUG
+	CSTRCPY(gXtPreferences.immaginiPref.folderImg, "C:\\SE\\NECRO\\IMG"); // folder immagini
+#else
+	CSTRCPY(gXtPreferences.immaginiPref.folderImg, "\\\\ARCHSRV\\OUT_NECRO"); // folder immagini
+#endif // _DEBUG
+	CSTRCPY(gXtPreferences.immaginiPref.estensioneElenco, "IMM"); // estensione elenco immagini
+	CSTRCPY(gXtPreferences.immaginiPref.estensioneImg, "EPS"); // estensione immagini
+	
+	gXtPreferences.bozzaPref.tipoStampaBozza = BozzaWap::STAMPAAGGREGATIRADIOBTNID; // tipo stampa bozza
+	gXtPreferences.bozzaPref.stampaAutomatica = FALSE; // stampa bozza automatica
+#ifdef _DEBUG
+	CSTRCPY(gXtPreferences.bozzaPref.docPathBozza, "C:\\SE\\NECRO\\BOZ.QXP"); // documento bozza
+	CSTRCPY(gXtPreferences.bozzaPref.folderPathBozze, "C:\\SE\\NECRO\\BOZ"); // cartella bozze
+#else
+	CSTRCPY(gXtPreferences.bozzaPref.docPathBozza, "\\\\DATASERVER\\SE\\NECRO\\GABBIE\\BOZZAA4_9X.QXP"); // documento bozza
+	CSTRCPY(gXtPreferences.bozzaPref.folderPathBozze, "\\\\DATASERVER\\SE\\NECRO\\BOZZE"); // cartella bozze
+#endif // _DEBUG
 
-	ImmaginiWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI ImmaginiWap(xdwapparamptr params) throw()
-{
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = IMMAGINIDIALOGID;
-			
-			break;
-		}
-		
-		case XDM_DECLARATIONS:
-		{
-			// dichiaro check box
-			xd_btnchk_declare(IMPORTAZIONEIMGCHECKID, 0);
-			
-			// dichiaro edit text per contenere dimensione immagine
-			xd_edt_declare(ALTEZZAIMGEDTID, XEDTF_STANDARD, ALLOK, VDEFUNITS, FIX(0), FIX(999999), VALUERANGE);
-			xd_edt_declare(LARGHEZZAIMGEDTID, XEDTF_STANDARD, ALLOK, VDEFUNITS, FIX(0), FIX(999999), VALUERANGE);
-			
-			// edit text per contenere path cartella immagine
-			xd_edt_declare(FOLDERIMGEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone sfoglia
-			xd_btnpsh_declare(SFOGLIAIMGBTNID, FALSE, CHSIM_NONE);
-			
-			// edit text
-			xd_edt_declare(ESTENSIONEELENCOEDTID, XEDTF_STANDARD, ALLOK, STRINGS, NULL, NULL, NULL);
-			xd_edt_declare(ESTENSIONEIMGEDTID, XEDTF_STANDARD, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			break;
-		}
-		
-		case XDM_TABSHOWING:
-		{
-			// setto l'edit text con il fullpath del doc bozza
-			xd_edt_set(FOLDERIMGEDTID, (*xtPrefPtr).immaginiPref.folderImg, NULL );
-			
-			// stato check box
-			xd_btnchk_setstate(IMPORTAZIONEIMGCHECKID, (*xtPrefPtr).immaginiPref.abilitaImportImag);
-			
-			// edit per contenere dimensioni immagini
-			xd_edt_set(ALTEZZAIMGEDTID, NULL, (*xtPrefPtr).immaginiPref.altezzaImg);
-			xd_edt_set(LARGHEZZAIMGEDTID, NULL, (*xtPrefPtr).immaginiPref.larghezzaImg);
-			
-			// edit per estensioni
-			xd_edt_set(ESTENSIONEELENCOEDTID, (*xtPrefPtr).immaginiPref.estensioneElenco, NULL);
-			xd_edt_set(ESTENSIONEIMGEDTID, (*xtPrefPtr).immaginiPref.estensioneImg, NULL);
-			
-			params->result = XDR_NOTHANDLED;
-			
-			break;
-		}
-		
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_USERACTION:
-		{
-			switch (params->itemid)
-			{
-				case SFOGLIAIMGBTNID:
-				{
-					// variabile per gestione pickfolder
-					uchar thePath[MAXPATHNAME];
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					uchar cartellaImgSelezionata[MAXPATHNAME] = "";
-					xd_edt_get(FOLDERIMGEDTID, cartellaImgSelezionata, NULL, NULL);	
-					
-					// gestisco la dialog di seleziona directory
-					if (STRLEN(cartellaImgSelezionata) > 0)	
-						STRCPY(thePath, cartellaImgSelezionata);
-					else
-						STRCPY(thePath, (*xtPrefPtr).immaginiPref.folderImg);
-						
-					// apro finestra per selezione cartella		
-					bool8 pickFolderOk = MyPickFolder((uchar*)"Seleziona Cartella Immagini:",  thePath);
-					
-					if (pickFolderOk == TRUE)
-					{
-						// setto l'edit textcon il nome della cartella edizione appena selezionata
-						STRCAT(thePath, kDirSeparatorChar);
-						xd_edt_set(FOLDERIMGEDTID, thePath, 0); 	
-						
-						STRCPY((*xtPrefPtr).immaginiPref.folderImg, thePath);
-					}
-					else
-					{
-						break;
-					}			
-				}
-			}
-		}
-		
-		case XDM_VERIFYCONTROLS:
-		{	
-			// prendo valore edt box
-			xd_edt_get(ESTENSIONEELENCOEDTID, (*xtPrefPtr).immaginiPref.estensioneElenco, NULL, NULL);
-			xd_edt_get(ESTENSIONEIMGEDTID, (*xtPrefPtr).immaginiPref.estensioneImg, NULL, NULL);
-			
-			// prendo valore check box
-			xd_btnchk_getstate(IMPORTAZIONEIMGCHECKID, &(*xtPrefPtr).immaginiPref.abilitaImportImag);
-			
-			// variabile d'utilità per le stringhe
-			uchar tmpStr[MAXPATHNAME] = "";	
-			
-			// prendo nuove misure
-			xd_edt_get(ALTEZZAIMGEDTID, tmpStr, &(*xtPrefPtr).immaginiPref.altezzaImg, NULL);
-			xd_edt_get(LARGHEZZAIMGEDTID, tmpStr, &(*xtPrefPtr).immaginiPref.larghezzaImg, NULL);
-			
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}
-	}
-	
-	return(noErr);
-} // ImmaginiWap
+#ifdef _DEBUG
+	CSTRCPY(gXtPreferences.ingombroPref.docPathIngombro, "C:\\SE\\NECRO\\ING.QXP"); // documento ingombro
+	CSTRCPY(gXtPreferences.ingombroPref.folderPathIngombri, "C:\\SE\\NECRO\\ING"); // cartella ingombri
+#else
+	CSTRCPY(gXtPreferences.ingombroPref.docPathIngombro, "\\\\DATASERVER\\SE\\NECRO\\GABBIE\\INGOMBRO6C_9X.QXP"); // documento ingombro
+	CSTRCPY(gXtPreferences.ingombroPref.folderPathIngombri, "\\\\DATASERVER\\SE\\NECRO\\INGOMBRI"); // cartella ingombri
+#endif // _DEBUG
 
-/* ------------------------------------------------------------------------ *
+#ifdef _DEBUG
+	CSTRCPY(gXtPreferences.finalePref.docPathFinale, "C:\\SE\\NECRO\\FIN.QXP"); // documento finale
+	CSTRCPY(gXtPreferences.finalePref.folderPathFinale, "C:\\SE\\NECRO\\FIN"); // cartella finale
+#else
+	CSTRCPY(gXtPreferences.finalePref.docPathFinale, "\\\\DATASERVER\\SE\\NECRO\\GABBIE\\FINALE6C_9X.QXP"); // documento finale
+	CSTRCPY(gXtPreferences.finalePref.folderPathFinale, "\\\\DATASERVER\\SE\\NECRO\\DEFINITIVI"); // cartella finale
+#endif // _DEBUG
+	gXtPreferences.finalePref.preparaDocumento = FinaleWap::ULTIMAPAGINARADIOBTNID; // prepara documento	
+	gXtPreferences.finalePref.posizionamentoIngombri = FinaleWap::BASSOVERSOALTOTADIOBTNID;	// posizionamentoingombri
+	
+	gXtPreferences.documentoPref.altezzaModulo = VStringToFixed("22.966mm"); // altezza modulo
+	gXtPreferences.documentoPref.distanzaModuli = VStringToFixed("3.281mm"); // distanza moduli
+	gXtPreferences.documentoPref.moduliColonna = 16; // moduli colonna
+	gXtPreferences.documentoPref.colonnePagina = 6; // colonne pagina
+	gXtPreferences.documentoPref.altezzaTestata = VStringToFixed("13.123mm"); // altezza testata
 
-	BozzaWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI BozzaWap(xdwapparamptr params) throw()
-{
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = BOZZADIALOGID;
-			
-			break;
-		}
-		
-		case XDM_DECLARATIONS:
-		{
-			// dichiaro check box
-			xd_btnchk_declare(ABILITASTAMPAAUTOCHECKID, 0);
-			
-			// dichiaro gruppo radio bottoni
-			xd_btnrad_declare(STAMPASINGOLARADIOBTNID, STAMPAAGGREGATIRADIOBTNID, 0);
-			
-			// edit text per path doc bozza
-			xd_edt_declare(DOCBOZZAEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIADOCBOZZABTNID, FALSE, CHSIM_NONE);
-			
-			// edit per path folder bozze
-			xd_edt_declare(FOLDERBOZZEEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIAFOLDERBOZZEBTNID, FALSE, CHSIM_NONE);
-			
-			break;
-		}
-		
-		case XDM_TABSHOWING:
-		{
-			// setto l'edit text con il fullpath del doc bozza
-			xd_edt_set(DOCBOZZAEDTID, (*xtPrefPtr).bozzaPref.docPathBozza, NULL );
-			xd_edt_set(FOLDERBOZZEEDTID, (*xtPrefPtr).bozzaPref.folderPathBozze, NULL );
-			
-			// setto stato radio bottoni
-			xd_btnrad_setstate((*xtPrefPtr).bozzaPref.tipoStampaBozza);
-			
-			// stato check box
-			xd_btnchk_setstate(ABILITASTAMPAAUTOCHECKID, (*xtPrefPtr).bozzaPref.stampaAutomatica);
-			
-			params->result = XDR_NOTHANDLED;
-			
-			break;
-		}
-		
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_USERACTION:
-		{
-			switch (params->itemid)
-			{
-				case SFOGLIADOCBOZZABTNID:
-				{
-					int32 error = noErr;
-					uchar filePathTmp[MAXPATHNAME] = "";
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					xd_edt_get(DOCBOZZAEDTID, filePathTmp, NULL, NULL);									
-					error = SelezionaFileDialog(filePathTmp);
-					
-					// testo nuovo valore edit text
-					xd_edt_set(DOCBOZZAEDTID, filePathTmp, 0);
-					STRCPY((*xtPrefPtr).bozzaPref.docPathBozza, filePathTmp);
-					
-					break;	
-				}
-				
-				case SFOGLIAFOLDERBOZZEBTNID:
-				{
-					// variabile per gestione pickfolder
-					uchar thePath[MAXPATHNAME];
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					uchar cartellaBozzeSelezionata[MAXPATHNAME] = "";
-					xd_edt_get(FOLDERBOZZEEDTID, cartellaBozzeSelezionata, NULL, NULL);	
-					
-					// gestisco la dialog di seleziona directory
-					if (STRLEN(cartellaBozzeSelezionata) > 0)	
-						STRCPY(thePath, cartellaBozzeSelezionata);
-					else
-						STRCPY(thePath, (*xtPrefPtr).bozzaPref.folderPathBozze);
-						
-					// apro finestra per selezione cartella		
-					bool8 pickFolderOk = MyPickFolder((uchar*)"Seleziona Cartella Bozze:",  thePath);
-					
-					if (pickFolderOk == TRUE)
-					{
-						// setto l'edit textcon il nome della cartella edizione appena selezionata
-						STRCAT(thePath, kDirSeparatorChar);
-						xd_edt_set(FOLDERBOZZEEDTID, thePath, 0); 	
-						
-						STRCPY((*xtPrefPtr).bozzaPref.folderPathBozze, thePath);
-					}
-					else
-					{
-						break;
-					}
-					
-					break;	
-				}
-			}
-		}
-		
-		case XDM_VERIFYCONTROLS:
-		{
-			// prendo stato dei radio bottoni 
-			xd_btnrad_getstate(STAMPASINGOLARADIOBTNID, &((*xtPrefPtr).bozzaPref.tipoStampaBozza));
-			
-			// prendo stato check box
-			xd_btnchk_getstate(ABILITASTAMPAAUTOCHECKID, &(*xtPrefPtr).bozzaPref.stampaAutomatica);
-			
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}
-	}
-	
-	return(noErr);
-} // BozzaWap
+#ifdef _DEBUG
+	CSTRCPY(gXtPreferences.datiPref.folderDati, "C:\\SE\\NECRO\\DAT"); // cartella dati
+#else
+	CSTRCPY(gXtPreferences.datiPref.folderDati, "\\\\DATASERVER\\SE\\NECRO\\DATI"); // cartella dati
+#endif // _DEBUG
+	CSTRCPY(gXtPreferences.datiPref.estensione1, "BOZ"); //  estensione da impaginare 1
+	gXtPreferences.datiPref.impaginaDocEstensione1 = TRUE; // impagina estensione 1
+	CSTRCPY(gXtPreferences.datiPref.estensione2, "ING"); //  estensione da impaginare 2
+	gXtPreferences.datiPref.impaginaDocEstensione2 = TRUE; // impagina estensione 2
+	CSTRCPY(gXtPreferences.datiPref.estensione3, "NEC"); //  estensione da impaginare 3 
+	gXtPreferences.datiPref.impaginaDocEstensione3 = TRUE; // impagina estensione 3
 
-/* ------------------------------------------------------------------------ *
+	gXtPreferences.disposizionePref.tipoDisposizione = DisposizioneWap::VERTICALERADIOBTNID; // ottimizzazione verticale
 
-	IngombroWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI IngombroWap(xdwapparamptr params) throw()
-{
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = INGOMBRODIALOGID;
-			
-			break;
-		}
-		
-		case XDM_DECLARATIONS:
-		{
-			// edit text per path doc ingombro
-			xd_edt_declare(DOCINGOMBROEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIADOCINGOMBROBTNID, FALSE, CHSIM_NONE);
-			
-			// edit text per path doc ingombro
-			xd_edt_declare(FOLDERINGOMBRIEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIAFOLDERINGOMBRIBTNID, FALSE, CHSIM_NONE);
-				
-			break;
-		}
-		
-		case XDM_TABSHOWING:
-		{
-			// setto l'edit text con il fullpath del folder ingombri
-			xd_edt_set(DOCINGOMBROEDTID, (*xtPrefPtr).ingombroPref.docPathIngombro, NULL );
-			
-			// setto l'edit text con il fullpath della cartella ingombri
-			xd_edt_set(FOLDERINGOMBRIEDTID, (*xtPrefPtr).ingombroPref.folderPathIngombri, NULL );
-			
-			params->result = XDR_NOTHANDLED;
-			
-			break;
-		}
-		
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_USERACTION:
-		{
-			switch (params->itemid)
-			{
-				case SFOGLIADOCINGOMBROBTNID:
-				{
-					int32 error = noErr;
-					uchar filePathTmp[MAXPATHNAME] = "";
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					xd_edt_get(DOCINGOMBROEDTID, filePathTmp, NULL, NULL);									
-					error = SelezionaFileDialog(filePathTmp);
-					
-					// testo nuovo valore edit text
-					xd_edt_set(DOCINGOMBROEDTID, filePathTmp, 0);
-					STRCPY((*xtPrefPtr).ingombroPref.docPathIngombro, filePathTmp);
-				
-					break;
-				}
-				
-				case SFOGLIAFOLDERINGOMBRIBTNID:
-				{
-					// variabile per gestione pickfolder
-					uchar thePath[MAXPATHNAME];
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					uchar cartellaIngombriSelezionata[MAXPATHNAME] = "";
-					xd_edt_get(FOLDERINGOMBRIEDTID, cartellaIngombriSelezionata, NULL, NULL);	
-					
-					// gestisco la dialog di seleziona directory
-					if (STRLEN(cartellaIngombriSelezionata) > 0)	
-						STRCPY(thePath, cartellaIngombriSelezionata);
-					else
-						STRCPY(thePath, (*xtPrefPtr).ingombroPref.folderPathIngombri);
-						
-					// apro finestra per selezione cartella		
-					bool8 pickFolderOk = MyPickFolder((uchar*)"Seleziona Cartella Ingombri:",  thePath);
-					
-					if (pickFolderOk == TRUE)
-					{
-						// setto l'edit textcon il nome della cartella edizione appena selezionata
-						STRCAT(thePath, kDirSeparatorChar);
-						xd_edt_set(FOLDERINGOMBRIEDTID, thePath, 0); 	
-						
-						STRCPY((*xtPrefPtr).ingombroPref.folderPathIngombri, thePath);
-					}
-					else
-					{
-						break;
-					}
-					
-					break;	
-				}
-			}
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}
-	}
-	
-	return(noErr);
-} // IngombroWap
-
-/* ------------------------------------------------------------------------ *
-
-	FinaleWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI FinaleWap(xdwapparamptr params) throw()
-{
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = FINALEDIALOGID;
-			
-			break;
-		}
-		
-		case XDM_DECLARATIONS:
-		{
-			// edit text per path doc finale
-			xd_edt_declare(DOCFINALEEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIADOCFINALEBTNID, FALSE, CHSIM_NONE);
-			
-			// 2 gruppi di radio bottoni 
-			xd_btnrad_declare(PRIMAPAGINARADIOBTNID, ULTIMAPAGINARADIOBTNID, 0);
-			xd_btnrad_declare(ALTOVERSOBASSORADIOBTNID, BASSOVERSOALTOTADIOBTNID, 0);
-			
-			// edit text per path doc finale
-			xd_edt_declare(FOLDERFINALEEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIAFOLDERFINALEBTNID, FALSE, CHSIM_NONE);
-			
-			
-			break;
-		}
-		
-		case XDM_TABSHOWING:
-		{
-			// setto l'edit text con il fullpath del doc definitivo
-			xd_edt_set(DOCFINALEEDTID, (*xtPrefPtr).finalePref.docPathFinale, NULL );
-			
-			// setto l'edit text con il fullpath del folder definitivo
-			xd_edt_set(FOLDERFINALEEDTID, (*xtPrefPtr).finalePref.folderPathFinale, NULL );
-			
-			// setto i 2 gruppi di radio bottoni
-			xd_btnrad_setstate((*xtPrefPtr).finalePref.preparaDocumento);
-			xd_btnrad_setstate((*xtPrefPtr).finalePref.posizionamentoIngombri);
-			
-			params->result = XDR_NOTHANDLED;
-			
-			break;
-		}
-		
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_USERACTION:
-		{
-			switch (params->itemid)
-			{
-				case SFOGLIADOCFINALEBTNID:
-				{
-					int32 error = noErr;
-					uchar filePathTmp[MAXPATHNAME] = "";
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					xd_edt_get(DOCFINALEEDTID, filePathTmp, NULL, NULL);									
-					error = SelezionaFileDialog(filePathTmp);
-					
-					// testo nuovo valore edit text
-					xd_edt_set(DOCFINALEEDTID, filePathTmp, 0);
-					STRCPY((*xtPrefPtr).finalePref.docPathFinale, filePathTmp);	
-					
-					break;
-				}
-				
-				case SFOGLIAFOLDERFINALEBTNID:
-				{
-					// variabile per gestione pickfolder
-					uchar thePath[MAXPATHNAME];
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					uchar cartellaFinaleSelezionata[MAXPATHNAME] = "";
-					xd_edt_get(FOLDERFINALEEDTID, cartellaFinaleSelezionata, NULL, NULL);	
-					
-					// gestisco la dialog di seleziona directory
-					if (STRLEN(cartellaFinaleSelezionata) > 0)	
-						STRCPY(thePath, cartellaFinaleSelezionata);
-					else
-						STRCPY(thePath, (*xtPrefPtr).finalePref.folderPathFinale);
-						
-					// apro finestra per selezione cartella		
-					bool8 pickFolderOk = MyPickFolder((uchar*)"Seleziona Cartella Definitivi:",  thePath);
-					
-					if (pickFolderOk == TRUE)
-					{
-						// setto l'edit textcon il nome della cartella edizione appena selezionata
-						STRCAT(thePath, kDirSeparatorChar);
-						xd_edt_set(FOLDERFINALEEDTID, thePath, 0); 	
-						
-						STRCPY((*xtPrefPtr).finalePref.folderPathFinale, thePath);
-					}
-					else
-					{
-						break;
-					}
-					
-					break;	
-				}
-			}
-		}
-		
-		case XDM_VERIFYCONTROLS:
-		{
-			// prendo stato dei radio bottoni 
-			xd_btnrad_getstate(PRIMAPAGINARADIOBTNID, &((*xtPrefPtr).finalePref.preparaDocumento));
-			xd_btnrad_getstate(ALTOVERSOBASSORADIOBTNID, &((*xtPrefPtr).finalePref.posizionamentoIngombri));
-			
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}
-	}
-	
-	return(noErr);
-} // FinaleWap
-
-/* ------------------------------------------------------------------------ *
-
-	DocumentoWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI DocumentoWap(xdwapparamptr params) throw()
-{
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	// variabile d'utilità per le stringhe
-	uchar tmpStr[MAXPATHNAME] = "";
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = DOCUMENTODIALOGID;
-			
-			break;
-		}
-		
-		case XDM_DECLARATIONS:
-		{
-			// dichiaro edit text per misure documento
-			xd_edt_declare(ALTEZZAMODULOEDTID, XEDTF_STANDARD, ALLOK, VDEFUNITS, FIX(0), FIX(999999), VALUERANGE);
-			xd_edt_declare(DISTANZAMODULIEDTID, XEDTF_STANDARD, ALLOK, VDEFUNITS, FIX(0), FIX(999999), VALUERANGE);
-			xd_edt_declare(MODULICOLANNAEDTID, XEDTF_STANDARD, DIGITSOK,  STRINGS, NULL, NULL, NULL);
-			xd_edt_declare(COLONNEPAGINAEDTID, XEDTF_STANDARD, DIGITSOK,  STRINGS, NULL, NULL, NULL);
-			xd_edt_declare(ALTEZZATESTATAEDTID, XEDTF_STANDARD, ALLOK, VDEFUNITS, FIX(0), FIX(999999), VALUERANGE);
-		
-			break;
-		}
-		
-		case XDM_TABSHOWING:
-		{	
-			// setto l'edit text con il fullpath della cartella dati
-			xd_edt_set(ALTEZZAMODULOEDTID, NULL, (*xtPrefPtr).documentoPref.altezzaModulo);
-			xd_edt_set(DISTANZAMODULIEDTID, NULL, (*xtPrefPtr).documentoPref.distanzaModuli);
-			
-			NumToPlatformString((*xtPrefPtr).documentoPref.moduliColonna,  tmpStr);
-			xd_edt_set(MODULICOLANNAEDTID, tmpStr, NULL);
-			
-			NumToPlatformString((*xtPrefPtr).documentoPref.colonnePagina,  tmpStr);
-			xd_edt_set(COLONNEPAGINAEDTID, tmpStr, NULL);
-			
-			xd_edt_set(ALTEZZATESTATAEDTID, NULL, (*xtPrefPtr).documentoPref.altezzaTestata);
-			
-			params->result = XDR_NOTHANDLED;
-		
-			break;	
-		}
-		
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_VERIFYCONTROLS:
-		{	
-			// variabile d'utilità per conversione misure
-			int32 tmpVal;	
-			
-			// prendo nuove misure
-			xd_edt_get(ALTEZZAMODULOEDTID, tmpStr, &(*xtPrefPtr).documentoPref.altezzaModulo, NULL);
-			xd_edt_get(DISTANZAMODULIEDTID, tmpStr, &(*xtPrefPtr).documentoPref.distanzaModuli, NULL);
-			
-			xd_edt_get(MODULICOLANNAEDTID, tmpStr, NULL, NULL);
-			StringToNum(tmpStr, &tmpVal);
-			(*xtPrefPtr).documentoPref.moduliColonna = tmpVal;
-			
-			xd_edt_get(COLONNEPAGINAEDTID, tmpStr, NULL, NULL);
-			StringToNum(tmpStr, &tmpVal);
-			(*xtPrefPtr).documentoPref.colonnePagina = tmpVal;
-			
-			xd_edt_get(ALTEZZATESTATAEDTID, tmpStr, &(*xtPrefPtr).documentoPref.altezzaTestata, NULL);
-				
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}
-	}
-	
-	return(noErr);
-} // DocumentoWap
-
-/* ------------------------------------------------------------------------ *
-
-	DatiWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI DatiWap(xdwapparamptr params) throw()
-{
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = DATIDIALOGID;
-			
-			break;
-		}
-		
-		case XDM_DECLARATIONS:
-		{
-			// edit text percorso cartella dati
-			xd_edt_declare(CARTELLADATIEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIACARTELLADATIBTNID, FALSE, CHSIM_NONE);
-			
-			// campi editabili per estensione doc da impaginare
-			xd_edt_declare(ESTENSIONEDOC1EDTID, XEDTF_STANDARD, ALLOK, STRINGS, NULL, NULL, NULL);
-			xd_edt_declare(ESTENSIONEDOC2EDTID, XEDTF_STANDARD, ALLOK, STRINGS, NULL, NULL, NULL);
-			xd_edt_declare(ESTENSIONEDOC3EDTID, XEDTF_STANDARD, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// check box
-			xd_btnchk_declare(ESTENSIONEDOC1CHECKID, 0);
-			xd_btnchk_declare(ESTENSIONEDOC2CHECKID, 0);
-			xd_btnchk_declare(ESTENSIONEDOC3CHECKID, 0);
-			
-			break;
-		}
-		
-		case XDM_TABSHOWING:
-		{	
-			// setto l'edit text con il fullpath della cartella dati
-			xd_edt_set(CARTELLADATIEDTID, (*xtPrefPtr).datiPref.folderDati, NULL );
-			
-			// setto i 3 edit text con le possibili estensioni da impaginare
-			xd_edt_set(ESTENSIONEDOC1EDTID, (*xtPrefPtr).datiPref.estensione1, NULL);
-			xd_edt_set(ESTENSIONEDOC2EDTID, (*xtPrefPtr).datiPref.estensione2, NULL);
-			xd_edt_set(ESTENSIONEDOC3EDTID, (*xtPrefPtr).datiPref.estensione3, NULL);
-			
-			// setto i 3 check box
-			xd_btnchk_setstate(ESTENSIONEDOC1CHECKID, (*xtPrefPtr).datiPref.impaginaDocEstensione1);
-			xd_btnchk_setstate(ESTENSIONEDOC2CHECKID, (*xtPrefPtr).datiPref.impaginaDocEstensione2);
-			xd_btnchk_setstate(ESTENSIONEDOC3CHECKID, (*xtPrefPtr).datiPref.impaginaDocEstensione3);
-			
-			params->result = XDR_NOTHANDLED;
-		
-			break;	
-		}
-	
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_USERACTION:
-		{
-			switch (params->itemid)
-			{
-				case SFOGLIACARTELLADATIBTNID:
-				{
-					// variabile per gestione pickfolder
-					uchar thePath[MAXPATHNAME];
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					uchar cartellaDatiSelezionata[MAXPATHNAME] = "";
-					xd_edt_get(CARTELLADATIEDTID, cartellaDatiSelezionata, NULL, NULL);	
-					
-					// gestisco la dialog di seleziona directory
-					if (STRLEN(cartellaDatiSelezionata) > 0)	
-						STRCPY(thePath, cartellaDatiSelezionata);
-					else
-						STRCPY(thePath, (*xtPrefPtr).datiPref.folderDati);
-						
-					// apro finestra per selezione cartella		
-					bool8 pickFolderOk = MyPickFolder((uchar*)"Seleziona Cartella Dati:",  thePath);
-					
-					if (pickFolderOk == TRUE)
-					{
-						// setto l'edit textcon il nome della cartella edizione appena selezionata
-						STRCAT(thePath, kDirSeparatorChar);
-						xd_edt_set(CARTELLADATIEDTID, thePath, 0); 	
-						
-						STRCPY((*xtPrefPtr).datiPref.folderDati, thePath);
-					}
-					else
-					{
-						break;
-					}			
-				}
-			}
-		}
-		
-		case XDM_VERIFYCONTROLS:
-		{	
-			// prendo valore edt box
-			xd_edt_get(ESTENSIONEDOC1EDTID, (*xtPrefPtr).datiPref.estensione1, NULL, NULL);
-			xd_edt_get(ESTENSIONEDOC2EDTID, (*xtPrefPtr).datiPref.estensione2, NULL, NULL);
-			xd_edt_get(ESTENSIONEDOC3EDTID, (*xtPrefPtr).datiPref.estensione3, NULL, NULL);
-			
-			// prendo valore check box
-			xd_btnchk_getstate(ESTENSIONEDOC1CHECKID, &(*xtPrefPtr).datiPref.impaginaDocEstensione1);
-			xd_btnchk_getstate(ESTENSIONEDOC2CHECKID, &(*xtPrefPtr).datiPref.impaginaDocEstensione2);
-			xd_btnchk_getstate(ESTENSIONEDOC3CHECKID, &(*xtPrefPtr).datiPref.impaginaDocEstensione3);	
-			
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}	
-	}
-	
-	return(noErr);
-} // DatiWap
-
-/* ------------------------------------------------------------------------ *
-
-	DisposizioneWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI DisposizioneWap(xdwapparamptr params) throw()
-{
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = DISPOSIZIONEDIALOGID;
-			
-			break;
-		}
-		
-		case XDM_DECLARATIONS:
-		{
-			// dichiaro i due radiobottoni per la disposizione
-			xd_btnrad_declare(VERTICALERADIOBTNID, ORIZZONTALERADIOBTNID, 0);
-			
-			break;
-		}
-		
-		case XDM_TABSHOWING:
-		{	
-			// setto i radio bottoni per le opzioni della vista durante l'impaginazione
-			xd_btnrad_setstate((*xtPrefPtr).disposizionePref.tipoDisposizione);
-			
-			params->result = XDR_NOTHANDLED;
-		
-			break;	
-		}
-		
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_VERIFYCONTROLS:
-		{
-			// get the status of the view radio buttons
-			xd_btnrad_getstate(VERTICALERADIOBTNID, &((*xtPrefPtr).disposizionePref.tipoDisposizione));
-			
-			break;
-		}
-		
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}
-	}
-	
-	return(noErr);
-} // PreferenzeWap
-
-/* ------------------------------------------------------------------------ *
-
-	CartelleWap
-	
-* ------------------------------------------------------------------------ */
-int32 XTAPI CartelleWap(xdwapparamptr params) throw()
-{
-	static XtPreferencesPtr xtPrefPtr = NULL;
-	xdlgsetupptr dlgSetUp;
-	
-	params->result = XDR_HANDLED;
-	
-	switch(params->opcode) 
-	{
-		case XDM_DIALOGSETUP:
-		{
-			dlgSetUp = (xdlgsetupptr) params->param1;
-			xtPrefPtr = (XtPreferencesPtr) params->param2;
-			dlgSetUp->dlgresid = CARTELLEDIALOGID;
-			
-			break;
-		}
-		case XDM_DECLARATIONS:
-		{	
-			// edit text per path folder tmp
-			xd_edt_declare(FOLDERTMPEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIAFOLDERTMPBTNID, FALSE, CHSIM_NONE);
-			
-			// edit per path folder last imp
-			xd_edt_declare(FOLDERLASTIMPEDTID, XEDTF_READONLY | XEDTF_MULTILINE, ALLOK, STRINGS, NULL, NULL, NULL);
-			
-			// bottone
-			xd_btnpsh_declare(SFOGLIAFOLDERLASTIMPBTNID, FALSE, CHSIM_NONE);
-		}
-		case XDM_TABSHOWING:
-		{
-			// setto gli edit text
-			xd_edt_set(FOLDERTMPEDTID, (*xtPrefPtr).cartellePref.cartellaTemporanei, NULL );
-			xd_edt_set(FOLDERLASTIMPEDTID, (*xtPrefPtr).cartellePref.cartellaLastImp, NULL );
-			
-			params->result = XDR_NOTHANDLED;
-			
-			break;
-		}
-		case XDM_LOADCONTROLS:
-		{	
-			params->result = XDR_HANDLED;			
-			break;
-		}
-		
-		case XDM_USERACTION:
-		{
-			switch (params->itemid)
-			{
-				case SFOGLIAFOLDERTMPBTNID:
-				{
-					// variabile per gestione pickfolder
-					uchar thePath[MAXPATHNAME];
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					uchar cartellaTmpSelezionata[MAXPATHNAME] = "";
-					xd_edt_get(FOLDERTMPEDTID, cartellaTmpSelezionata, NULL, NULL);	
-					
-					// gestisco la dialog di seleziona directory
-					if (STRLEN(cartellaTmpSelezionata) > 0)	
-						STRCPY(thePath, cartellaTmpSelezionata);
-					else
-						STRCPY(thePath, (*xtPrefPtr).cartellePref.cartellaTemporanei);
-						
-					// apro finestra per selezione cartella		
-					bool8 pickFolderOk = MyPickFolder((uchar*)"Seleziona Cartella Temporanei:",  thePath);
-					
-					if (pickFolderOk == TRUE)
-					{
-						// setto l'edit textcon il nome della cartella edizione appena selezionata
-						STRCAT(thePath, kDirSeparatorChar);
-						xd_edt_set(FOLDERTMPEDTID, thePath, 0); 	
-						
-						STRCPY((*xtPrefPtr).cartellePref.cartellaTemporanei, thePath);
-					}
-					else
-					{
-						break;
-					}
-					
-					break;
-				}
-				
-				case SFOGLIAFOLDERLASTIMPBTNID:
-				{
-					// variabile per gestione pickfolder
-					uchar thePath[MAXPATHNAME];
-					
-					// prende il percorso preesistente e glielo passa in modo che la wd sia già ben settata
-					uchar cartellaLastImpSelezionata[MAXPATHNAME] = "";
-					xd_edt_get(FOLDERLASTIMPEDTID, cartellaLastImpSelezionata, NULL, NULL);	
-					
-					// gestisco la dialog di seleziona directory
-					if (STRLEN(cartellaLastImpSelezionata) > 0)	
-						STRCPY(thePath, cartellaLastImpSelezionata);
-					else
-						STRCPY(thePath, (*xtPrefPtr).cartellePref.cartellaLastImp);
-						
-					// apro finestra per selezione cartella		
-					bool8 pickFolderOk = MyPickFolder((uchar*)"Seleziona Cartella Ultima Impaginazione:",  thePath);
-					
-					if (pickFolderOk == TRUE)
-					{
-						// setto l'edit textcon il nome della cartella edizione appena selezionata
-						STRCAT(thePath, kDirSeparatorChar);
-						xd_edt_set(FOLDERLASTIMPEDTID, thePath, 0); 	
-						
-						STRCPY((*xtPrefPtr).cartellePref.cartellaLastImp, thePath);
-					}
-					else
-					{
-						break;
-					}
-					
-					break;
-				}
-			}
-		}
-		default:
-		{
-			params->result = XDR_NOTHANDLED;
-			break;
-		}
-	}
-	
-	return(noErr);
-} // CartelleWap
+#ifdef _DEBUG
+	CSTRCPY(gXtPreferences.cartellePref.cartellaTemporanei, "C:\\SE\\NECRO\\TMP"); // folder temporanei
+	CSTRCPY(gXtPreferences.cartellePref.cartellaLastImp, "C:\\SE\\NECRO\\LST"); // folder last imp
+#else
+	CSTRCPY(gXtPreferences.cartellePref.cartellaTemporanei, "\\\\DATASERVER\\SE\\NECRO\\TEMP"); // folder temporanei
+	CSTRCPY(gXtPreferences.cartellePref.cartellaLastImp, "\\\\DATASERVER\\SE\\NECRO\\ULTIMA"); // folder last imp
+#endif // _DEBUG
+} // IniziaPreferenzeDiDebug
+#endif // _DEBUG

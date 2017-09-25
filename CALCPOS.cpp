@@ -2315,6 +2315,10 @@ static errorixtension XTAPI EseguiCalcoloPosizionamento() throw()
 		// inserisce i necrologi ordinati
 		InserisciListaNecrologi(&lPagina, &lColonna, lPtrNecrologio);
 
+		// controllo il prossimo defunto
+		if ( lPtrDefunto == NULL ) 
+			break;
+
 		// prendo l'altezza del prossimo defunto
 		lAltezzaDefuntoDoubleFixed = PrendiAltezzaDefunto(lPtrDefunto);
 
